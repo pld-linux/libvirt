@@ -25,7 +25,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.4.2
-Release:	0.1
+Release:	1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
@@ -46,7 +46,7 @@ BuildRequires:	python-devel
 BuildRequires:	readline-devel
 # For mount/umount in FS driver
 BuildRequires:	util-linux
-BuildRequires:	xen-devel >= 3.0.4
+%{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
 # For LVM drivers
 BuildRequires:	lvm2
 BuildRequires:	ncurses-devel
