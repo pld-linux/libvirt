@@ -24,24 +24,26 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.4.2
-Release:	1
+Version:	0.4.5
+Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	c87e3d91eaa9445bb3cb1ba191573c83
+# Source0-md5:	dcb590a6202c332907eae7b44e47ca4b
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
 BuildRequires:	avahi-devel
 BuildRequires:	bridge-utils
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	dnsmasq
+BuildRequires:	gawk
 BuildRequires:	gettext
 BuildRequires:	gnutls-devel
 BuildRequires:	libselinux-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	ncurses-devel
+BuildRequires:	nfs-utils
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
 # For mount/umount in FS driver
@@ -134,14 +136,30 @@ This package contains tools for the libvirt library.
 
 %build
 CPPFLAGS=-std=c99
-%configure \
+./configure \
+        --host=x86_64-pld-linux \
+        --build=x86_64-pld-linux \
+        --prefix=/usr \
+        --exec-prefix=/usr \
+        --bindir=/usr/bin \
+        --sbindir=/usr/sbin \
+        --sysconfdir=/etc \
+        --datadir=/usr/share \
+        --includedir=/usr/include \
+        --libdir=/usr/lib64 \
+        --libexecdir=/usr/lib64 \
+        --localstatedir=/var \
+        --sharedstatedir=/var/lib \
+        --mandir=/usr/share/man \
+        --infodir=/usr/share/info \
+        --x-libraries=/usr/lib64 \
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
 	--with-init-script=redhat \
 	--with-qemud-pid-file=%{_localstatedir}/run/libvirt_qemud.pid \
 	--with-remote-file=%{_localstatedir}/run/libvirtd.pid
 
-%{__make}
+%{__make} AWK=gawk
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -161,6 +179,13 @@ rm -rf $RPM_BUILD_ROOT
 %doc ChangeLog README TODO NEWS
 %attr(755,root,root) %{_libdir}/%{name}.so.*
 #%{_libdir}/%{name}_proxy
+%dir %{_datadir}/augeas
+%dir %{_datadir}/augeas/lenses
+%{_datadir}/augeas/lenses/*.aug
+%dir %{_datadir}/augeas/lenses/tests
+%{_datadir}/augeas/lenses/tests/*.aug
+%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
+%attr(755,root,root) %{_libdir}/libvirt_lxc
 
 %files devel
 %defattr(644,root,root,755)
