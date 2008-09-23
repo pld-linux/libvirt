@@ -60,15 +60,6 @@ BuildRequires:	python
 BuildRequires:	python-devel
 %{?with_qemu:BuildRequires: qemu}
 BuildRequires:	readline-devel
-%if %{with qemu}
-BuildRequires:	/usr/bin/qemu-img
-# From QEMU RPMs
-%else
-%if %{with xen}
-BuildRequires:	/usr/sbin/qcow-create
-# From Xen RPMs
-%endif
-%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # libxenstore is not versionned properly
