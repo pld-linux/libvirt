@@ -175,7 +175,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/augeas/lenses/*.aug
 %dir %{_datadir}/augeas/lenses/tests
 %{_datadir}/augeas/lenses/tests/*.aug
-%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 
 %files devel
