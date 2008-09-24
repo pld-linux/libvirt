@@ -220,3 +220,4 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libvirt_parthelper
 %{_mandir}/man1/virsh.1*
 %dir /var/run/libvirt
+%dir /var/lib/libvirt
