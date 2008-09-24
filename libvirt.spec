@@ -116,6 +116,9 @@ This package contains the Python bindings for the libvirt library.
 Summary:	Tools to interact with virtualization capabilities
 Group:		Base/Kernel
 Requires:	%{name} = %{version}-%{release}
+Requires:	bridge-utils
+Requires:	dnsmasq
+Requires:	iptables
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
@@ -216,3 +219,4 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
 %{_libdir}/libvirt_parthelper
 %{_mandir}/man1/virsh.1*
+%dir /var/run/libvirt
