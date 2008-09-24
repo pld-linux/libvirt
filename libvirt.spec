@@ -31,6 +31,7 @@ Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	dcb590a6202c332907eae7b44e47ca4b
+Source1:	%{name}.init
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
 BuildRequires:	avahi-devel
@@ -157,6 +158,12 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT/etc/sysconfig
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
+
+install qemud/libvirtd.sysconf $RPM_BUILD_ROOT/etc/sysconfig/libvirtd
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
+
 %find_lang %{name}
 
 %clean
@@ -205,7 +212,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/sasl2/libvirt.conf
 %attr(755,root,root) %{_bindir}/virsh
 %attr(755,root,root) %{_sbindir}/libvirtd
-#%attr(755,root,root) %{_sbindir}/libvirt_qemud
-#/etc/rc.d/init.d/libvirtd
+%attr(754,root,root) /etc/rc.d/init.d/libvirtd
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
 %{_libdir}/libvirt_parthelper
 %{_mandir}/man1/virsh.1*
