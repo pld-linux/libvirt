@@ -32,6 +32,8 @@ URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	dcb590a6202c332907eae7b44e47ca4b
 Source1:	%{name}.init
+# upgrade to 0.6.0 required:
+BuildRequires:	security(CVE-2009-0036)
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
 BuildRequires:	avahi-devel
