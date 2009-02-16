@@ -24,16 +24,14 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.4.5
+Version:	0.6.0
 Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	dcb590a6202c332907eae7b44e47ca4b
+# Source0-md5:	8e0120d5452b37179f682031bf0895ea
 Source1:	%{name}.init
-# upgrade to 0.6.0 required:
-BuildRequires:	security(CVE-2009-0036)
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
 BuildRequires:	avahi-devel
@@ -219,6 +217,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/libvirtd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
+%dir /etc/logrotate.d
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %{_libdir}/libvirt_parthelper
 %{_mandir}/man1/virsh.1*
 %dir /var/run/libvirt
