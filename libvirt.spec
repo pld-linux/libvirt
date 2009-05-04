@@ -24,13 +24,13 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.6.0
+Version:	0.6.3
 Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	8e0120d5452b37179f682031bf0895ea
+# Source0-md5:	dd618bf0943a0be853ccc08308c7f427
 Source1:	%{name}.init
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
@@ -132,22 +132,22 @@ This package contains tools for the libvirt library.
 %build
 CPPFLAGS=-std=c99
 ./configure \
-        --host=%{_host} \
-        --build=%{_host} \
-        --prefix=%{_prefix} \
-        --exec-prefix=%{_exec_prefix} \
-        --bindir=%{_bindir} \
-        --sbindir=%{_sbindir} \
-        --sysconfdir=%{_sysconfdir} \
-        --datadir=%{_datadir} \
-        --includedir=%{_includedir} \
-        --libdir=%{_libdir} \
-        --libexecdir=%{_libexecdir} \
-        --localstatedir=%{_localstatedir} \
-        --sharedstatedir=%{_sharedstatedir} \
-        --mandir=%{_mandir} \
-        --infodir=%{_infodir} \
-        --x-libraries=%{_libdir} \
+		--host=%{_host} \
+		--build=%{_host} \
+		--prefix=%{_prefix} \
+		--exec-prefix=%{_exec_prefix} \
+		--bindir=%{_bindir} \
+		--sbindir=%{_sbindir} \
+		--sysconfdir=%{_sysconfdir} \
+		--datadir=%{_datadir} \
+		--includedir=%{_includedir} \
+		--libdir=%{_libdir} \
+		--libexecdir=%{_libexecdir} \
+		--localstatedir=%{_localstatedir} \
+		--sharedstatedir=%{_sharedstatedir} \
+		--mandir=%{_mandir} \
+		--infodir=%{_infodir} \
+		--x-libraries=%{_libdir} \
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
 	--with-init-script=redhat \
@@ -186,6 +186,14 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/augeas/lenses/tests
 %{_datadir}/augeas/lenses/tests/*.aug
 %attr(755,root,root) %{_libdir}/libvirt_lxc
+%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
+%{_datadir}/libvirt/schemas/capability.rng
+%{_datadir}/libvirt/schemas/domain.rng
+%{_datadir}/libvirt/schemas/network.rng
+%{_datadir}/libvirt/schemas/nodedev.rng
+%{_datadir}/libvirt/schemas/storagepool.rng
+%{_datadir}/libvirt/schemas/storagevol.rng
+
 
 %files devel
 %defattr(644,root,root,755)
@@ -212,14 +220,16 @@ rm -rf $RPM_BUILD_ROOT
 %files utils
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt
-%config(noreplace) %verify(not md5 mtime size) /etc/sasl2/libvirt.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl2/libvirt.conf
 %attr(755,root,root) %{_bindir}/virsh
 %attr(755,root,root) %{_sbindir}/libvirtd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
+%attr(755,root,root) %{_bindir}/virt-xml-validate
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
 %dir /etc/logrotate.d
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %{_libdir}/libvirt_parthelper
 %{_mandir}/man1/virsh.1*
+%{_mandir}/man1/virt-xml-validate.1*
 %dir /var/run/libvirt
 %dir /var/lib/libvirt
