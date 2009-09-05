@@ -157,8 +157,7 @@ export CC CFLAGS LDFLAGS CPPFLAGS
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
 	--with-init-script=redhat \
-	--with-qemud-pid-file=%{_localstatedir}/run/libvirt_qemud.pid \
-	--with-remote-file=%{_localstatedir}/run/libvirtd.pid
+	--with-remote-pid-file=%{_localstatedir}/run/libvirtd.pid
 
 %{__make} AWK=gawk
 
