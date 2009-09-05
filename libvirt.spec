@@ -128,9 +128,15 @@ This package contains tools for the libvirt library.
 
 %prep
 %setup -q
+# weird translations
+rm -f po/{my,eu_ES}.{po,gmo}
 
 %build
-CPPFLAGS=-std=c99
+CC="%{__cc}"
+CFLAGS="%{rpmcflags}"
+LDFLAGS="%{rpmldflags}"
+CPPFLAGS="%{rpmcppflags}"
+export CC CFLAGS LDFLAGS CPPFLAGS
 ./configure \
 		--host=%{_host} \
 		--build=%{_host} \
@@ -187,13 +193,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/augeas/lenses/tests/*.aug
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 #%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
-%{_datadir}/libvirt/schemas/capability.rng
-%{_datadir}/libvirt/schemas/domain.rng
-%{_datadir}/libvirt/schemas/interface.rng
-%{_datadir}/libvirt/schemas/network.rng
-%{_datadir}/libvirt/schemas/nodedev.rng
-%{_datadir}/libvirt/schemas/storagepool.rng
-%{_datadir}/libvirt/schemas/storagevol.rng
+%{_datadir}/libvirt/schemas
 
 %files devel
 %defattr(644,root,root,755)
