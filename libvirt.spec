@@ -25,7 +25,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.7.0
-Release:	0.1
+Release:	0.2
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
@@ -35,23 +35,18 @@ Source1:	%{name}.init
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
 BuildRequires:	avahi-devel
-BuildRequires:	bridge-utils
 BuildRequires:	cyrus-sasl-devel
-BuildRequires:	dnsmasq
 BuildRequires:	gawk
 BuildRequires:	gettext
 BuildRequires:	gnutls-devel
 BuildRequires:	libselinux-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	ncurses-devel
-BuildRequires:	nfs-utils
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
 # For mount/umount in FS driver
 BuildRequires:	util-linux
 %{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
-# For LVM drivers
-BuildRequires:	lvm2
 BuildRequires:	ncurses-devel
 # For ISCSI driver
 BuildRequires:	open-iscsi
@@ -116,9 +111,10 @@ This package contains the Python bindings for the libvirt library.
 Summary:	Tools to interact with virtualization capabilities
 Group:		Base/Kernel
 Requires:	%{name} = %{version}-%{release}
-Requires:	bridge-utils
-Requires:	dnsmasq
 Requires:	iptables
+Suggests:	bridge-utils
+Suggests:	dnsmasq
+Suggests:	lvm2
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
@@ -138,26 +134,40 @@ LDFLAGS="%{rpmldflags}"
 CPPFLAGS="%{rpmcppflags}"
 export CC CFLAGS LDFLAGS CPPFLAGS
 ./configure \
-		--host=%{_host} \
-		--build=%{_host} \
-		--prefix=%{_prefix} \
-		--exec-prefix=%{_exec_prefix} \
-		--bindir=%{_bindir} \
-		--sbindir=%{_sbindir} \
-		--sysconfdir=%{_sysconfdir} \
-		--datadir=%{_datadir} \
-		--includedir=%{_includedir} \
-		--libdir=%{_libdir} \
-		--libexecdir=%{_libexecdir} \
-		--localstatedir=%{_localstatedir} \
-		--sharedstatedir=%{_sharedstatedir} \
-		--mandir=%{_mandir} \
-		--infodir=%{_infodir} \
-		--x-libraries=%{_libdir} \
+	--host=%{_host} \
+	--build=%{_host} \
+	--prefix=%{_prefix} \
+	--exec-prefix=%{_exec_prefix} \
+	--bindir=%{_bindir} \
+	--sbindir=%{_sbindir} \
+	--sysconfdir=%{_sysconfdir} \
+	--datadir=%{_datadir} \
+	--includedir=%{_includedir} \
+	--libdir=%{_libdir} \
+	--libexecdir=%{_libexecdir} \
+	--localstatedir=%{_localstatedir} \
+	--sharedstatedir=%{_sharedstatedir} \
+	--mandir=%{_mandir} \
+	--infodir=%{_infodir} \
+	--x-libraries=%{_libdir} \
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
 	--with-init-script=redhat \
-	--with-remote-pid-file=%{_localstatedir}/run/libvirtd.pid
+	--with-remote-pid-file=%{_localstatedir}/run/libvirtd.pid \
+	--with-storage-lvm \
+	PVCREATE=/sbin/pvcreate \
+	VGCREATE=/sbin/vgcreate \
+	LVCREATE=/sbin/lvcreate \
+	PVREMOVE=/sbin/pvremove \
+	VGREMOVE=/sbin/vgremove \
+	LVREMOVE=/sbin/lvremove \
+	VGCHANGE=/sbin/vgchange \
+	  VGSCAN=/sbin/vgscan   \
+	     PVS=/sbin/pvs      \
+	     VGS=/sbin/vgs      \
+	     LVS=/sbin/lvs      \
+	   BRCTL=/sbin/brctl    \
+	SHOWMOUNT=/usr/sbin/showmount
 
 %{__make} AWK=gawk
 
