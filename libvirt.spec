@@ -24,13 +24,13 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.7.0
-Release:	0.2
+Version:	0.7.1
+Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	8c2c14a7695c9c661004bcfc6468d62d
+# Source0-md5:	f1cd360a5da38b847e166c6482141940
 Source1:	%{name}.init
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
@@ -202,7 +202,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/augeas/lenses/tests/*.aug
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 #%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
-%{_datadir}/libvirt/schemas
+%{_datadir}/libvirt
 
 %files devel
 %defattr(644,root,root,755)
