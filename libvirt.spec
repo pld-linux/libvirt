@@ -24,13 +24,13 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.7.1
+Version:	0.7.7
 Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	f1cd360a5da38b847e166c6482141940
+# Source0-md5:	5f315b0bf20e3964f7657ba1e630cd67
 Source1:	%{name}.init
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
@@ -179,7 +179,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/sysconfig
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 
-install qemud/libvirtd.sysconf $RPM_BUILD_ROOT/etc/sysconfig/libvirtd
+#install qemud/libvirtd.sysconf $RPM_BUILD_ROOT/etc/sysconfig/libvirtd
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 
 %find_lang %{name}
@@ -201,8 +201,16 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/augeas/lenses/tests
 %{_datadir}/augeas/lenses/tests/*.aug
 %attr(755,root,root) %{_libdir}/libvirt_lxc
-#%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy
-%{_datadir}/libvirt
+%{?with_polkit:%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy}
+%{_datadir}/libvirt/schemas/capability.rng
+%{_datadir}/libvirt/schemas/domain.rng
+%{_datadir}/libvirt/schemas/interface.rng
+%{_datadir}/libvirt/schemas/network.rng
+%{_datadir}/libvirt/schemas/nodedev.rng
+%{_datadir}/libvirt/schemas/secret.rng
+%{_datadir}/libvirt/schemas/storageencryption.rng
+%{_datadir}/libvirt/schemas/storagepool.rng
+%{_datadir}/libvirt/schemas/storagevol.rng
 
 %files devel
 %defattr(644,root,root,755)
@@ -222,7 +230,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-python-%{version}
 %{py_sitedir}/libvirt.py
-%{py_sitedir}/libvirtmod.a
+#%{py_sitedir}/libvirtmod.a
 %{py_sitedir}/libvirtmod.la
 %{py_sitedir}/libvirtmod.so
 
@@ -234,11 +242,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/libvirtd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
 %attr(755,root,root) %{_bindir}/virt-xml-validate
+%attr(755,root,root) %{_bindir}/virt-pki-validate
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
 %dir /etc/logrotate.d
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %{_libdir}/libvirt_parthelper
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
+%{_mandir}/man1/virt-pki-validate.1*
+%{_datadir}/%{name}/*.xml
 %dir /var/run/libvirt
 %dir /var/lib/libvirt
