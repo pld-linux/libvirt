@@ -165,7 +165,7 @@ rm -f po/{my,eu_ES}.{po,gmo}
 	SHOWMOUNT=/usr/sbin/showmount
 #	--with-driver-modules 
 
-%{__make} AWK=gawk -j1
+%{__make} AWK=gawk
 
 %install
 rm -rf $RPM_BUILD_ROOT
