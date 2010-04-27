@@ -3,7 +3,7 @@
 %bcond_with	xen		# xen
 %bcond_without	xen_proxy		# Xen proxy
 %bcond_without	qemu		# Qemu
-%bcond_with	polkit		# PolicyKit
+%bcond_without	polkit		# PolicyKit
 %bcond_with	lokkit		# Lokkit
 
 # Xen is available only on i386 x86_64 ia64
@@ -24,26 +24,30 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.7.7
+Version:	0.8.0
 Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	5f315b0bf20e3964f7657ba1e630cd67
+# Source0-md5:	189aff9385e4de88a127dbf15495a3af
 Source1:	%{name}.init
+Patch0:		gcrypt.patch
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
-BuildRequires:	avahi-devel
+BuildRequires:	avahi-devel >= 0.6.0
 BuildRequires:	cyrus-sasl-devel
+BuildRequires:	curl-devel >= 7.18.0
+BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext
-BuildRequires:	gnutls-devel
+BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libselinux-devel
-BuildRequires:	libxml2-devel
+BuildRequires:	libxml2-devel >= 2.6.0
 BuildRequires:	ncurses-devel
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
+BuildRequires:	udev-glib-devel >= 145
 # For mount/umount in FS driver
 BuildRequires:	util-linux
 %{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
@@ -51,11 +55,12 @@ BuildRequires:	ncurses-devel
 # For ISCSI driver
 BuildRequires:	open-iscsi
 # For disk driver
-BuildRequires:	parted-devel
+BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	python
 BuildRequires:	python-devel
-%{?with_qemu:BuildRequires: qemu}
 BuildRequires:	readline-devel
+# not yet in PLD
+#BuildRequires:	netcf-devel >= 0.1.4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # libxenstore is not versionned properly
@@ -124,37 +129,27 @@ This package contains tools for the libvirt library.
 
 %prep
 %setup -q
+%patch0 -p1
 # weird translations
 rm -f po/{my,eu_ES}.{po,gmo}
 
 %build
-CC="%{__cc}"
-CFLAGS="%{rpmcflags}"
-LDFLAGS="%{rpmldflags}"
-CPPFLAGS="%{rpmcppflags}"
-export CC CFLAGS LDFLAGS CPPFLAGS
-./configure \
-	--host=%{_host} \
-	--build=%{_host} \
-	--prefix=%{_prefix} \
-	--exec-prefix=%{_exec_prefix} \
-	--bindir=%{_bindir} \
-	--sbindir=%{_sbindir} \
-	--sysconfdir=%{_sysconfdir} \
-	--datadir=%{_datadir} \
-	--includedir=%{_includedir} \
-	--libdir=%{_libdir} \
-	--libexecdir=%{_libexecdir} \
-	--localstatedir=%{_localstatedir} \
-	--sharedstatedir=%{_sharedstatedir} \
-	--mandir=%{_mandir} \
-	--infodir=%{_infodir} \
+%{__libtoolize}
+%{__aclocal} -I gnulib/m4 -I m4
+%{__autoheader}
+%{__autoconf}
+%{__automake}
+
+%configure \
+	--disable-silent-rules \
 	--x-libraries=%{_libdir} \
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
 	--with-init-script=redhat \
 	--with-remote-pid-file=%{_localstatedir}/run/libvirtd.pid \
 	--with-storage-lvm \
+	--without-hal \
+	--with-udev \
 	PVCREATE=/sbin/pvcreate \
 	VGCREATE=/sbin/vgcreate \
 	LVCREATE=/sbin/lvcreate \
@@ -168,8 +163,9 @@ export CC CFLAGS LDFLAGS CPPFLAGS
 	     LVS=/sbin/lvs      \
 	   BRCTL=/sbin/brctl    \
 	SHOWMOUNT=/usr/sbin/showmount
+#	--with-driver-modules 
 
-%{__make} AWK=gawk
+%{__make} AWK=gawk -j1
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -194,19 +190,19 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc ChangeLog README TODO NEWS
 %attr(755,root,root) %{_libdir}/%{name}.so.*
-#%{_libdir}/%{name}_proxy
 %dir %{_datadir}/augeas
 %dir %{_datadir}/augeas/lenses
 %{_datadir}/augeas/lenses/*.aug
 %dir %{_datadir}/augeas/lenses/tests
 %{_datadir}/augeas/lenses/tests/*.aug
 %attr(755,root,root) %{_libdir}/libvirt_lxc
-%{?with_polkit:%{_datadir}/PolicyKit/policy/org.libvirt.unix.policy}
+%{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_datadir}/libvirt/schemas/capability.rng
 %{_datadir}/libvirt/schemas/domain.rng
 %{_datadir}/libvirt/schemas/interface.rng
 %{_datadir}/libvirt/schemas/network.rng
 %{_datadir}/libvirt/schemas/nodedev.rng
+%{_datadir}/libvirt/schemas/nwfilter.rng
 %{_datadir}/libvirt/schemas/secret.rng
 %{_datadir}/libvirt/schemas/storageencryption.rng
 %{_datadir}/libvirt/schemas/storagepool.rng
@@ -230,7 +226,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-python-%{version}
 %{py_sitedir}/libvirt.py
-#%{py_sitedir}/libvirtmod.a
 %{py_sitedir}/libvirtmod.la
 %{py_sitedir}/libvirtmod.so
 
@@ -244,8 +239,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-xml-validate
 %attr(755,root,root) %{_bindir}/virt-pki-validate
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
-%dir /etc/logrotate.d
-%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
 %{_libdir}/libvirt_parthelper
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
