@@ -1,0 +1,11 @@
+--- libvirt-0.8.0/src/Makefile.am.wiget	2010-04-26 01:15:52.502679268 +0200
++++ libvirt-0.8.0/src/Makefile.am	2010-04-26 01:17:14.762667442 +0200
+@@ -380,7 +380,7 @@ libvirt_driver_la_SOURCES = $(DRIVER_SOU
+ 
+ libvirt_driver_la_CFLAGS = $(NUMACTL_CFLAGS)	\
+ 		-I@top_srcdir@/src/conf
+-libvirt_driver_la_LDFLAGS = $(NUMACTL_LIBS)
++libvirt_driver_la_LDFLAGS = $(NUMACTL_LIBS) $(GNUTLS_LIBS)
+ 
+ USED_SYM_FILES = libvirt_private.syms
+ 
