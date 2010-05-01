@@ -24,13 +24,13 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.8.0
+Version:	0.8.1
 Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	189aff9385e4de88a127dbf15495a3af
+# Source0-md5:	2557c08801dfccf07871e4e2e35ccfcd
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
 %{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
