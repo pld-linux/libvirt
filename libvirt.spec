@@ -33,25 +33,36 @@ Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	2557c08801dfccf07871e4e2e35ccfcd
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
-%{?with_lokkit:BuildRequires: /usr/sbin/lokkit}
+%{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
+%{?with_polkit:BuildRequires:	PolicyKit >= 0.6}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
+BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	avahi-devel >= 0.6.0
-BuildRequires:	cyrus-sasl-devel
 BuildRequires:	curl-devel >= 7.18.0
+BuildRequires:	cyrus-sasl-devel
 BuildRequires:	device-mapper-devel >= 1.0.0
-BuildRequires:	gawk
-BuildRequires:	gettext
+BuildRequires:	gettext-devel
 BuildRequires:	gnutls-devel >= 1.0.25
+BuildRequires:	libapparmor-devel
+BuildRequires:	libcap-ng-devel
 BuildRequires:	libselinux-devel
+BuildRequires:	libstdc++-devel
+BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.0
 BuildRequires:	ncurses-devel
+# not yet in PLD
+#BuildRequires:	netcf-devel >= 0.1.4
+BuildRequires:	numactl-devel
+BuildRequires:	perl-tools-pod
+BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
-BuildRequires:	udev-glib-devel >= 145
+BuildRequires:	rpm-pythonprov
+BuildRequires:	udev-devel >= 145
 # For mount/umount in FS driver
 BuildRequires:	util-linux
 %{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
-BuildRequires:	ncurses-devel
 # For ISCSI driver
 BuildRequires:	open-iscsi
 # For disk driver
@@ -59,8 +70,8 @@ BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
-# not yet in PLD
-#BuildRequires:	netcf-devel >= 0.1.4
+BuildRequires:	xmlrpc-c-devel
+BuildRequires:	xorg-lib-libpciaccess-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # libxenstore is not versionned properly
