@@ -24,18 +24,19 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.8.1
+Version:	0.8.2
 Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	2557c08801dfccf07871e4e2e35ccfcd
+# Source0-md5:	14164638fe0e7f65e425acc85dabc517
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
 %{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit >= 0.6}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
+BuildRequires:	augeas-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	avahi-devel >= 0.6.0
@@ -46,19 +47,23 @@ BuildRequires:	gettext-devel
 BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libapparmor-devel
 BuildRequires:	libcap-ng-devel
+BuildRequires:	libnl-devel
+BuildRequires:	libpcap-devel
 BuildRequires:	libselinux-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.0
+BuildRequires:	libxslt-devel
+BuildRequires:	openldap-devel
 BuildRequires:	ncurses-devel
-# not yet in PLD
-#BuildRequires:	netcf-devel >= 0.1.4
+BuildRequires:	netcf-devel >= 0.1.4
 BuildRequires:	numactl-devel
 BuildRequires:	perl-tools-pod
 BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
+BuildRequires:	sqlite3-devel
 BuildRequires:	udev-devel >= 145
 # For mount/umount in FS driver
 BuildRequires:	util-linux
@@ -140,7 +145,7 @@ This package contains tools for the libvirt library.
 
 %prep
 %setup -q
-%patch0 -p1
+#%patch0 -p1
 # weird translations
 rm -f po/{my,eu_ES}.{po,gmo}
 
@@ -150,6 +155,7 @@ rm -f po/{my,eu_ES}.{po,gmo}
 %{__autoheader}
 %{__autoconf}
 %{__automake}
+
 
 %configure \
 	--disable-silent-rules \
@@ -174,7 +180,6 @@ rm -f po/{my,eu_ES}.{po,gmo}
 	     LVS=/sbin/lvs      \
 	   BRCTL=/sbin/brctl    \
 	SHOWMOUNT=/usr/sbin/showmount
-#	--with-driver-modules 
 
 %{__make} AWK=gawk
 
@@ -201,15 +206,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc ChangeLog README TODO NEWS
 %attr(755,root,root) %{_libdir}/%{name}.so.*
-%dir %{_datadir}/augeas
-%dir %{_datadir}/augeas/lenses
-%{_datadir}/augeas/lenses/*.aug
-%dir %{_datadir}/augeas/lenses/tests
-%{_datadir}/augeas/lenses/tests/*.aug
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_datadir}/libvirt/schemas/capability.rng
 %{_datadir}/libvirt/schemas/domain.rng
+%{_datadir}/libvirt/schemas/domainsnapshot.rng
 %{_datadir}/libvirt/schemas/interface.rng
 %{_datadir}/libvirt/schemas/network.rng
 %{_datadir}/libvirt/schemas/nodedev.rng
@@ -247,16 +248,21 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virsh
 %attr(755,root,root) %{_sbindir}/libvirtd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
+%attr(754,root,root) /etc/rc.d/init.d/libvirt-guests
 %attr(755,root,root) %{_bindir}/virt-xml-validate
 %attr(755,root,root) %{_bindir}/virt-pki-validate
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
 %{_libdir}/libvirt_parthelper
+%{_libdir}/virt-aa-helper
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1*
 %{_datadir}/%{name}/*.xml
+%{_datadir}/augeas/lenses/*.aug
+%{_datadir}/augeas/lenses/tests/*.aug
 %dir /var/run/libvirt
 %dir /var/lib/libvirt
