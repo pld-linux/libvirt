@@ -24,13 +24,13 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.8.2
-Release:	0.1
+Version:	0.8.8
+Release:	1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	14164638fe0e7f65e425acc85dabc517
+# Source0-md5:	ac9235576352b84b8cb17df7456bbdfc
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
 %{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
@@ -47,7 +47,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libapparmor-devel
 BuildRequires:	libcap-ng-devel
-BuildRequires:	libnl-devel
+BuildRequires:	libnl1-devel
 BuildRequires:	libpcap-devel
 BuildRequires:	libselinux-devel
 BuildRequires:	libstdc++-devel
@@ -205,7 +205,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc ChangeLog README TODO NEWS
-%attr(755,root,root) %{_libdir}/%{name}.so.*
+%attr(755,root,root) %{_libdir}/%{name}*.so.*
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_datadir}/libvirt/schemas/capability.rng
@@ -226,8 +226,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_datadir}/gtk-doc/html/%{name}
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
-%{_libdir}/%{name}.so
-%{_libdir}/%{name}.la
+%{_libdir}/%{name}*.so
+%{_libdir}/%{name}*.la
 %{_pkgconfigdir}/%{name}.pc
 
 %files static
@@ -261,6 +261,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1*
+%{_mandir}/man8/libvirtd.8*
 %{_datadir}/%{name}/*.xml
 %{_datadir}/augeas/lenses/*.aug
 %{_datadir}/augeas/lenses/tests/*.aug
