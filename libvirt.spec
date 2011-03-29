@@ -25,7 +25,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.8.8
-Release:	2
+Release:	3
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
@@ -160,6 +160,7 @@ rm -f po/{my,eu_ES}.{po,gmo}
 %configure \
 	--disable-silent-rules \
 	--with-html-dir=%{_gtkdocdir} \
+	--with-html-subdir=%{name} \
 	--x-libraries=%{_libdir} \
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
@@ -187,6 +188,7 @@ rm -f po/{my,eu_ES}.{po,gmo}
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
+	DEVHELP_DIR=%{_gtkdocdir}/%{name}/devhelp \
 	DESTDIR=$RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT/etc/sysconfig
