@@ -25,7 +25,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.8.8
-Release:	1
+Release:	2
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
@@ -159,6 +159,7 @@ rm -f po/{my,eu_ES}.{po,gmo}
 
 %configure \
 	--disable-silent-rules \
+	--with-html-dir=%{_gtkdocdir} \
 	--x-libraries=%{_libdir} \
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
@@ -208,6 +209,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/%{name}*.so.*
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
+%dir %{_datadir}/libvirt
+%dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/capability.rng
 %{_datadir}/libvirt/schemas/domain.rng
 %{_datadir}/libvirt/schemas/domainsnapshot.rng
@@ -223,7 +226,7 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-%{version}
-%doc %{_datadir}/gtk-doc/html/%{name}
+%doc %{_gtkdocdir}/%{name}
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
 %{_libdir}/%{name}*.so
