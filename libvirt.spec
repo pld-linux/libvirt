@@ -25,7 +25,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.8.8
-Release:	3
+Release:	3.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
@@ -33,6 +33,7 @@ Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	ac9235576352b84b8cb17df7456bbdfc
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
+Patch1:		%{name}-sasl.patch
 %{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
 %{?with_polkit:BuildRequires:	PolicyKit >= 0.6}
 %{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
@@ -146,6 +147,8 @@ This package contains tools for the libvirt library.
 %prep
 %setup -q
 #%patch0 -p1
+%patch1 -p1
+
 # weird translations
 rm -f po/{my,eu_ES}.{po,gmo}
 
@@ -249,7 +252,7 @@ rm -rf $RPM_BUILD_ROOT
 %files utils
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl2/libvirt.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl/libvirt.conf
 %attr(755,root,root) %{_bindir}/virsh
 %attr(755,root,root) %{_sbindir}/libvirtd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
