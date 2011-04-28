@@ -25,7 +25,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.8.8
-Release:	3.1
+Release:	4
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
