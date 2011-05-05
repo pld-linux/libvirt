@@ -5,6 +5,7 @@
 %bcond_without	qemu		# Qemu
 %bcond_without	polkit		# PolicyKit
 %bcond_with	lokkit		# Lokkit
+%bcond_with	netcf		# host interfaces support
 
 # Xen is available only on i386 x86_64 ia64
 %ifnarch %{ix86} %{x8664} ia64
@@ -24,19 +25,17 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.8.8
-Release:	4
+Version:	0.9.1
+Release:	0.1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	ac9235576352b84b8cb17df7456bbdfc
+# Source0-md5:	4182dbe290cca4344a5387950dc06433
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
 Patch1:		%{name}-sasl.patch
 %{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
-%{?with_polkit:BuildRequires:	PolicyKit >= 0.6}
-%{?with_polkit:BuildRequires:	PolicyKit-devel >= 0.6}
 BuildRequires:	augeas-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -55,13 +54,19 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.0
 BuildRequires:	libxslt-devel
+# For ISCSI driver
+BuildRequires:	open-iscsi
 BuildRequires:	openldap-devel
 BuildRequires:	ncurses-devel
-BuildRequires:	netcf-devel >= 0.1.4
+%{?with_netcf:BuildRequires:	netcf-devel >= 0.1.4}
 BuildRequires:	numactl-devel
+BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	perl-tools-pod
+%{?with_polkit:BuildRequires:	polkit >= 0.90}
 BuildRequires:	pkgconfig
+BuildRequires:	python
 BuildRequires:	python-devel
+BuildRequires:	readline-devel
 BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	sqlite3-devel
@@ -69,15 +74,19 @@ BuildRequires:	udev-devel >= 145
 # For mount/umount in FS driver
 BuildRequires:	util-linux
 %{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
-# For ISCSI driver
-BuildRequires:	open-iscsi
 # For disk driver
-BuildRequires:	parted-devel >= 1.8.0
-BuildRequires:	python
-BuildRequires:	python-devel
-BuildRequires:	readline-devel
 BuildRequires:	xmlrpc-c-devel
 BuildRequires:	xorg-lib-libpciaccess-devel
+BuildRequires:	yajl-devel
+Requires:	bridge-utils
+Requires:	dmidecode
+Requires:	dnsmasq
+Requires:	ebtables
+Requires:	gawk
+Requires:	iptables
+Requires:	polkit
+# for management through ssh
+Requires:	netcat-openbsd
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # libxenstore is not versionned properly
@@ -148,7 +157,6 @@ This package contains tools for the libvirt library.
 %setup -q
 #%patch0 -p1
 %patch1 -p1
-
 # weird translations
 rm -f po/{my,eu_ES}.{po,gmo}
 
@@ -167,6 +175,7 @@ rm -f po/{my,eu_ES}.{po,gmo}
 	--x-libraries=%{_libdir} \
 	%{!?with_xen:--without-xen} \
 	%{!?with_qemu:--without-qemu} \
+	%{!?with_netcf:--without-netcf} \
 	--with-init-script=redhat \
 	--with-remote-pid-file=%{_localstatedir}/run/libvirtd.pid \
 	--with-storage-lvm \
@@ -184,7 +193,10 @@ rm -f po/{my,eu_ES}.{po,gmo}
 	     VGS=/sbin/vgs      \
 	     LVS=/sbin/lvs      \
 	   BRCTL=/sbin/brctl    \
-	SHOWMOUNT=/usr/sbin/showmount
+	SHOWMOUNT=/usr/sbin/showmount \
+	IPTABLES_PATH=/usr/sbin/iptables \
+	IP6TABLES_PATH=/usr/sbin/ip6tables \
+	EBTABLES_PATH=/usr/sbin/ebtables
 
 %{__make} AWK=gawk
 
@@ -213,6 +225,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc ChangeLog README TODO NEWS
 %attr(755,root,root) %{_libdir}/%{name}*.so.*
 %attr(755,root,root) %{_libdir}/libvirt_lxc
+%attr(755,root,root) %{_libdir}/libvirt_iohelper
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %dir %{_datadir}/libvirt
 %dir %{_datadir}/libvirt/schemas
@@ -241,6 +254,7 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/%{name}.a
+%{_libdir}/%{name}-qemu.a
 
 %files -n python-%{name}
 %defattr(644,root,root,755)
@@ -261,6 +275,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/virt-pki-validate
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml

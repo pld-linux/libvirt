@@ -281,6 +281,6 @@ diff -ru libvirt-0.8.8/tests/qemuxml2argvtest.c libvirt-0.8.8-sasl/tests/qemuxml
      driver.vncSASL = 1;
 -    driver.vncSASLdir = strdup("/root/.sasl2");
 +    driver.vncSASLdir = strdup("/root/.sasl");
-     DO_TEST("graphics-vnc-sasl", QEMUD_CMD_FLAG_VGA, false);
+     DO_TEST("graphics-vnc-sasl", false, QEMU_CAPS_VGA);
      driver.vncTLS = 1;
      driver.vncTLSx509verify = 1;
