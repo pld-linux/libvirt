@@ -25,13 +25,13 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.9.1
-Release:	0.1
+Version:	0.9.3
+Release:	1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	4182dbe290cca4344a5387950dc06433
+# Source0-md5:	04f47fad7d0c614af9dcc5d1351c2148
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
 Patch1:		%{name}-sasl.patch
@@ -54,8 +54,6 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.0
 BuildRequires:	libxslt-devel
-# For ISCSI driver
-BuildRequires:	open-iscsi
 BuildRequires:	openldap-devel
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.1.4}
@@ -177,7 +175,6 @@ rm -f po/{my,eu_ES}.{po,gmo}
 	%{!?with_qemu:--without-qemu} \
 	%{!?with_netcf:--without-netcf} \
 	--with-init-script=redhat \
-	--with-remote-pid-file=%{_localstatedir}/run/libvirtd.pid \
 	--with-storage-lvm \
 	--without-hal \
 	--with-udev \
@@ -196,7 +193,8 @@ rm -f po/{my,eu_ES}.{po,gmo}
 	SHOWMOUNT=/usr/sbin/showmount \
 	IPTABLES_PATH=/usr/sbin/iptables \
 	IP6TABLES_PATH=/usr/sbin/ip6tables \
-	EBTABLES_PATH=/usr/sbin/ebtables
+	EBTABLES_PATH=/usr/sbin/ebtables \
+	ISCSIADM=/sbin/iscsiadm
 
 %{__make} AWK=gawk
 
