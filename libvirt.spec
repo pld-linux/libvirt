@@ -26,7 +26,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.9.3
-Release:	1
+Release:	2
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
@@ -157,6 +157,9 @@ This package contains tools for the libvirt library.
 %patch1 -p1
 # weird translations
 rm -f po/{my,eu_ES}.{po,gmo}
+
+mv po/vi_VN.po po/vi.po
+mv po/vi_VN.gmo po/vi.gmo
 
 %build
 %{__libtoolize}
