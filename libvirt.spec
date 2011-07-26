@@ -26,7 +26,7 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
 Version:	0.9.3
-Release:	2
+Release:	3
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
@@ -76,15 +76,6 @@ BuildRequires:	util-linux
 BuildRequires:	xmlrpc-c-devel
 BuildRequires:	xorg-lib-libpciaccess-devel
 BuildRequires:	yajl-devel
-Requires:	bridge-utils
-Requires:	dmidecode
-Requires:	dnsmasq
-Requires:	ebtables
-Requires:	gawk
-Requires:	iptables
-Requires:	polkit
-# for management through ssh
-Requires:	netcat-openbsd
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # libxenstore is not versionned properly
@@ -140,10 +131,17 @@ This package contains the Python bindings for the libvirt library.
 Summary:	Tools to interact with virtualization capabilities
 Group:		Base/Kernel
 Requires:	%{name} = %{version}-%{release}
-Requires:	iptables
+Suggests:	iptables
 Suggests:	bridge-utils
+Suggests:	dmidecode
 Suggests:	dnsmasq
+Suggests:	ebtables
+Suggests:	gawk
+Suggests:	iptables
 Suggests:	lvm2
+# for management through ssh
+Suggests:	netcat-openbsd
+Suggests:	polkit
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
