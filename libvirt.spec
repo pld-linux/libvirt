@@ -25,13 +25,13 @@
 
 Summary:	Toolkit to interact with virtualization capabilities
 Name:		libvirt
-Version:	0.9.3
-Release:	5
+Version:	0.9.6
+Release:	1
 License:	LGPL
 Group:		Base/Kernel
 URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	04f47fad7d0c614af9dcc5d1351c2148
+# Source0-md5:	b74df374b524d00a22a6c89cfc23099f
 Source1:	%{name}.init
 Patch0:		gcrypt.patch
 Patch1:		%{name}-sasl.patch
@@ -228,11 +228,14 @@ rm -rf $RPM_BUILD_ROOT
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %dir %{_datadir}/libvirt
 %dir %{_datadir}/libvirt/schemas
+%{_datadir}/libvirt/schemas/basictypes.rng
 %{_datadir}/libvirt/schemas/capability.rng
 %{_datadir}/libvirt/schemas/domain.rng
+%{_datadir}/libvirt/schemas/domaincommon.rng
 %{_datadir}/libvirt/schemas/domainsnapshot.rng
 %{_datadir}/libvirt/schemas/interface.rng
 %{_datadir}/libvirt/schemas/network.rng
+%{_datadir}/libvirt/schemas/networkcommon.rng
 %{_datadir}/libvirt/schemas/nodedev.rng
 %{_datadir}/libvirt/schemas/nwfilter.rng
 %{_datadir}/libvirt/schemas/secret.rng
@@ -259,8 +262,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-python-%{version}
 %{py_sitedir}/libvirt.py
+%{py_sitedir}/libvirt_qemu.py
 %{py_sitedir}/libvirtmod.la
-%{py_sitedir}/libvirtmod.so
+%{py_sitedir}/libvirtmod_qemu.la
+%attr(755,root,root) %{py_sitedir}/libvirtmod.so
+%attr(755,root,root) %{py_sitedir}/libvirtmod_qemu.so
 
 %files utils
 %defattr(644,root,root,755)
