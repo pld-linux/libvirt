@@ -1,10 +1,11 @@
+# openwsman (>= 2.2.3), sanlock, xenapi (libxenserver), xenlight (libxenlight)?
+# --with-driver-modules ?
 #
 # Conditional build:
 %bcond_with	xen		# xen
 %bcond_without	xen_proxy	# Xen proxy
 %bcond_without	qemu		# Qemu
 %bcond_without	polkit		# PolicyKit
-%bcond_with	lokkit		# Lokkit
 %bcond_with	netcf		# host interfaces support
 
 # qemu available only on x86 and ppc
@@ -34,7 +35,7 @@ Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Patch0:		%{name}-sasl.patch
 URL:		http://www.libvirt.org/
-%{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
+BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -42,16 +43,19 @@ BuildRequires:	avahi-devel >= 0.6.0
 BuildRequires:	curl-devel >= 7.18.0
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	device-mapper-devel >= 1.0.0
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-devel >= 0.17
 BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libapparmor-devel
-BuildRequires:	libcap-ng-devel
-BuildRequires:	libnl1-devel
-BuildRequires:	libpcap-devel
-BuildRequires:	libselinux-devel
+BuildRequires:	libblkid-devel >= 2.17
+BuildRequires:	libcap-ng-devel >= 0.4.0
+BuildRequires:	libgcrypt-devel
+BuildRequires:	libnl1-devel >= 1.1
+BuildRequires:	libpcap-devel >= 1.0.0
+BuildRequires:	libselinux-devel >= 2.0.82
+BuildRequires:	libssh2-devel >= 1.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
-BuildRequires:	libxml2-devel >= 2.6.0
+BuildRequires:	libxml2-devel >= 1:2.6.0
 BuildRequires:	libxslt-devel
 BuildRequires:	openldap-devel
 BuildRequires:	ncurses-devel
@@ -64,18 +68,22 @@ BuildRequires:	pkgconfig
 BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
-BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.219
-BuildRequires:	sqlite3-devel
 BuildRequires:	udev-devel >= 145
-# For mount/umount in FS driver
-BuildRequires:	util-linux
 %{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
 # For disk driver
-BuildRequires:	xmlrpc-c-devel
-BuildRequires:	xorg-lib-libpciaccess-devel
+BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
 BuildRequires:	yajl-devel
+Requires:	curl-libs >= 7.18.0
+Requires:	device-mapper >= 1.0.0
+Requires:	gnutls >= 1.0.25
+Requires:	libcap-ng >= 0.4.0
+Requires:	libnl1 >= 1.1
+Requires:	libpcap >= 1.0.0
+Requires:	libselinux >= 2.0.82
+Requires:	libssh2 >= 1.0
+Requires:	libxml2 >= 1:2.6.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # libxenstore is not versionned properly
@@ -168,6 +176,11 @@ Summary:	Tools to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi
 Group:		Base/Kernel
 Requires:	%{name} = %{version}-%{release}
+Requires:	avahi-libs >= 0.6.0
+Requires:	libblkid >= 2.17
+Requires:	parted-libs >= 1.8.0
+Requires:	udev-libs >= 145
+Requires:	xorg-lib-libpciaccess >= 0.10.0
 Suggests:	iptables
 Suggests:	bridge-utils
 Suggests:	dmidecode
@@ -178,7 +191,7 @@ Suggests:	iptables
 Suggests:	lvm2
 # for management through ssh
 Suggests:	netcat-openbsd
-Suggests:	polkit
+Suggests:	polkit >= 0.90
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
@@ -205,8 +218,8 @@ mv po/vi_VN.gmo po/vi.gmo
 %build
 %{__libtoolize}
 %{__aclocal} -I gnulib/m4 -I m4
-%{__autoheader}
 %{__autoconf}
+%{__autoheader}
 %{__automake}
 
 %configure \
@@ -232,14 +245,23 @@ mv po/vi_VN.gmo po/vi.gmo
 	     PVS=/sbin/pvs      \
 	     VGS=/sbin/vgs      \
 	     LVS=/sbin/lvs      \
+	      TC=/sbin/tc \
 	   BRCTL=/sbin/brctl    \
+	MOUNT=/bin/mount \
+	UMOUNT=/bin/umount \
+	MKFS=/sbin/mkfs \
 	SHOWMOUNT=/usr/sbin/showmount \
 	IPTABLES_PATH=/usr/sbin/iptables \
 	IP6TABLES_PATH=/usr/sbin/ip6tables \
 	EBTABLES_PATH=/usr/sbin/ebtables \
-	ISCSIADM=/sbin/iscsiadm
+	ISCSIADM=/sbin/iscsiadm \
+	DNSMASQ=/usr/sbin/dnsmasq \
+	RADVD=/usr/sbin/radvd \
+	UDEVADM=/sbin/udevadm \
+	MODPROBE=/sbin/modprobe
 
-%{__make} AWK=gawk
+%{__make} \
+	AWK=gawk
 
 %install
 rm -rf $RPM_BUILD_ROOT
