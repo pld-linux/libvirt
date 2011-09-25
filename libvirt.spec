@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_with	xen		# xen
-%bcond_without	xen_proxy		# Xen proxy
+%bcond_without	xen_proxy	# Xen proxy
 %bcond_without	qemu		# Qemu
 %bcond_without	polkit		# PolicyKit
 %bcond_with	lokkit		# Lokkit
@@ -29,12 +29,11 @@ Version:	0.9.6
 Release:	1
 License:	LGPL
 Group:		Base/Kernel
-URL:		http://www.libvirt.org/
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	b74df374b524d00a22a6c89cfc23099f
 Source1:	%{name}.init
-Patch0:		gcrypt.patch
-Patch1:		%{name}-sasl.patch
+Patch0:		%{name}-sasl.patch
+URL:		http://www.libvirt.org/
 %{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
 BuildRequires:	augeas-devel
 BuildRequires:	autoconf
@@ -67,6 +66,7 @@ BuildRequires:	python-devel
 BuildRequires:	readline-devel
 BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
+BuildRequires:	rpmbuild(macros) >= 1.219
 BuildRequires:	sqlite3-devel
 BuildRequires:	udev-devel >= 145
 # For mount/umount in FS driver
@@ -116,7 +116,7 @@ capabilities of recent versions of Linux.
 This package contains the static libraries needed for developing
 programs using the libvirt library.
 
-%package -n	python-%{name}
+%package -n python-%{name}
 Summary:	Python bindings to interact with virtualization capabilities
 Group:		Development/Languages/Python
 Requires:	%{name} = %{version}-%{release}
@@ -151,10 +151,10 @@ This package contains tools for the libvirt library.
 
 %prep
 %setup -q
-#%patch0 -p1
-%patch1 -p1
+%patch0 -p1
+
 # weird translations
-rm -f po/{my,eu_ES}.{po,gmo}
+%{__rm} po/{my,eu_ES}.{po,gmo}
 
 mv po/vi_VN.po po/vi.po
 mv po/vi_VN.gmo po/vi.gmo
@@ -165,7 +165,6 @@ mv po/vi_VN.gmo po/vi.gmo
 %{__autoheader}
 %{__autoconf}
 %{__automake}
-
 
 %configure \
 	--disable-silent-rules \
@@ -211,21 +210,27 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 #install qemud/libvirtd.sysconf $RPM_BUILD_ROOT/etc/sysconfig/libvirtd
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 
+%py_comp $RPM_BUILD_ROOT%{py_sitedir}
+%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
+%py_postclean
+
 %find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc ChangeLog README TODO NEWS
-%attr(755,root,root) %{_libdir}/%{name}*.so.*
+%attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvirt.so.0
+%attr(755,root,root) %{_libdir}/libvirt-qemu.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 %attr(755,root,root) %{_libdir}/libvirt_iohelper
-%{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %dir %{_datadir}/libvirt
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
@@ -245,28 +250,28 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%doc %{_docdir}/%{name}-%{version}
-%doc %{_gtkdocdir}/%{name}
-%dir %{_includedir}/%{name}
-%{_includedir}/%{name}/*.h
-%{_libdir}/%{name}*.so
-%{_libdir}/%{name}*.la
+%attr(755,root,root) %{_libdir}/libvirt.so
+%attr(755,root,root) %{_libdir}/libvirt-qemu.so
+%{_libdir}/libvirt.la
+%{_libdir}/libvirt-qemu.la
+%{_gtkdocdir}/%{name}
+%{_includedir}/%{name}
 %{_pkgconfigdir}/%{name}.pc
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/%{name}.a
-%{_libdir}/%{name}-qemu.a
+%{_libdir}/libvirt.a
+%{_libdir}/libvirt-qemu.a
 
 %files -n python-%{name}
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-python-%{version}
-%{py_sitedir}/libvirt.py
-%{py_sitedir}/libvirt_qemu.py
-%{py_sitedir}/libvirtmod.la
-%{py_sitedir}/libvirtmod_qemu.la
 %attr(755,root,root) %{py_sitedir}/libvirtmod.so
 %attr(755,root,root) %{py_sitedir}/libvirtmod_qemu.so
+%{py_sitedir}/libvirt.py[co]
+%{py_sitedir}/libvirt_qemu.py[co]
+%{py_sitedir}/libvirtmod.la
+%{py_sitedir}/libvirtmod_qemu.la
 
 %files utils
 %defattr(644,root,root,755)
@@ -286,6 +291,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
 %{_libdir}/libvirt_parthelper
 %{_libdir}/virt-aa-helper
+%{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1*
