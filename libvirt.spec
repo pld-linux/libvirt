@@ -7,27 +7,27 @@
 %bcond_with	lokkit		# Lokkit
 %bcond_with	netcf		# host interfaces support
 
-# Xen is available only on i386 x86_64 ia64
+# qemu available only on x86 and ppc
+%ifnarch %{ix86} %{x8664} ppc
+%undefine	with_qemu
+%endif
+# Xen is available only on i686 x86_64 ia64
 %ifnarch %{ix86} %{x8664} ia64
 %undefine	with_xen
 %endif
 %ifarch i386 i486 i586
 %undefine	with_xen
 %endif
-
 %if %{without xen}
 %undefine	with_xen_proxy
 %endif
 
-%ifnarch %{ix86} %{x8664} ppc
-%undefine	with_qemu
-%endif
-
 Summary:	Toolkit to interact with virtualization capabilities
+Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.6
 Release:	1
-License:	LGPL
+License:	LGPL v2.1+
 Group:		Base/Kernel
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	b74df374b524d00a22a6c89cfc23099f
@@ -36,7 +36,7 @@ Patch0:		%{name}-sasl.patch
 URL:		http://www.libvirt.org/
 %{?with_lokkit:BuildRequires:	/usr/sbin/lokkit}
 BuildRequires:	augeas-devel
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-devel >= 0.6.0
 BuildRequires:	curl-devel >= 7.18.0
@@ -92,8 +92,21 @@ instance. The library aim at providing long term stable C API
 initially for the Xen paravirtualization but should be able to
 integrate other virtualization mechanisms if needed.
 
+%description -l pl.UTF-8
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami
+wirtualizacji obecnych wersji Linuksa.
+
+Wirtualizacja w systemie operacyjnym Linux oznacza możliwość
+jednoczesnego uruchamiania wielu instancji systemu operacyjnego na
+pojedynczym systemie sprzętowym, którego podstawowe zasoby są
+zarządzane przez instancję Linuksa. Celem biblioteki jest zapewnienie
+długotrwale stabilnego API C, początkowo do parawirtualizacji Xen, ale
+dającej się zintegrować w razie potrzeby z innymi mechanizmami
+wirtualizacji.
+
 %package devel
-Summary:	Development tools for programs using libvirt
+Summary:	Development files for programs using libvirt
+Summary(pl.UTF-8):	Pliki programistyczne do programów wykorzystujących libvirt
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 %{?with_xen:Requires: xen-devel}
@@ -102,22 +115,39 @@ Requires:	%{name} = %{version}-%{release}
 Libvirt is a C toolkit to interact with the virtualization
 capabilities of recent versions of Linux.
 
-This package contains the header files and libraries needed for
-developing programs using the libvirt library.
+This package contains the header files needed for developing programs
+using the libvirt library.
+
+%description devel -l pl.UTF-8
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami
+wirtualizacji obecnych wersji Linuksa.
+
+Ten pakiet zawiera pliki nagłówkowe potrzebne do tworzenia programów
+wykorzystujących bibliotekę libvirt.
 
 %package static
 Summary:	Development static libraries for programs using libvirt
+Summary(pl.UTF-8):	Statyczne biblioteki programistyczne do programów wykorzystujących libvirt
 Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Libvirt is a C toolkit to interact with the virtualization
 capabilities of recent versions of Linux.
 
-This package contains the static libraries needed for developing
-programs using the libvirt library.
+This package contains the static libraries for developing programs
+using the libvirt library.
+
+%description static -l pl.UTF-8
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami
+wirtualizacji obecnych wersji Linuksa.
+
+Ten pakiet zawiera biblioteki statyczne do tworzenia programów
+wykorzystujących bibliotekę libvirt.
 
 %package -n python-%{name}
 Summary:	Python bindings to interact with virtualization capabilities
+Summary(pl.UTF-8):	Wiązania Pythona do współpracy z funkcjami wirtualizacji
 Group:		Development/Languages/Python
 Requires:	%{name} = %{version}-%{release}
 
@@ -127,8 +157,15 @@ capabilities of recent versions of Linux.
 
 This package contains the Python bindings for the libvirt library.
 
+%description -n	python-%{name} -l pl.UTF-8
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami
+wirtualizacji obecnych wersji Linuksa.
+
+Ten pakiet zawiera wiązania Pythona do biblioteki libvirt.
+
 %package utils
 Summary:	Tools to interact with virtualization capabilities
+Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi
 Group:		Base/Kernel
 Requires:	%{name} = %{version}-%{release}
 Suggests:	iptables
@@ -148,6 +185,12 @@ Libvirt is a C toolkit to interact with the virtualization
 capabilities of recent versions of Linux.
 
 This package contains tools for the libvirt library.
+
+%description utils -l pl.UTF-8
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami
+wirtualizacji obecnych wersji Linuksa.
+
+Ten pakiet zawiera narzędzia do biblioteki libvirt.
 
 %prep
 %setup -q
