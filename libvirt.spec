@@ -117,7 +117,20 @@ Summary:	Development files for programs using libvirt
 Summary(pl.UTF-8):	Pliki programistyczne do programów wykorzystujących libvirt
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	audit-libs-devel
+Requires:	curl-devel >= 7.18.0
+Requires:	device-mapper-devel >= 1.0.0
+Requires:	gnutls-devel >= 1.0.25
+Requires:	libapparmor-devel
+Requires:	libcap-ng-devel >= 0.4.0
+Requires:	libgcrypt-devel
+Requires:	libnl1-devel >= 1.1
+Requires:	libpcap-devel >= 1.0.0
+Requires:	libselinux-devel >= 2.0.82
+Requires:	libxml2-devel >= 1:2.6.0
+Requires:	numactl-devel
 %{?with_xen:Requires: xen-devel}
+Requires:	yajl-devel
 
 %description devel
 Libvirt is a C toolkit to interact with the virtualization
@@ -278,6 +291,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_postclean
+%{__rm} $RPM_BUILD_ROOT%{py_sitedir}/*.la
 
 %find_lang %{name}
 
@@ -335,8 +349,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/libvirtmod_qemu.so
 %{py_sitedir}/libvirt.py[co]
 %{py_sitedir}/libvirt_qemu.py[co]
-%{py_sitedir}/libvirtmod.la
-%{py_sitedir}/libvirtmod_qemu.la
 
 %files utils
 %defattr(644,root,root,755)
