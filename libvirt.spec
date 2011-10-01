@@ -1,4 +1,4 @@
-# openwsman (>= 2.2.3), sanlock, xenapi (libxenserver), xenlight (libxenlight)?
+# sanlock, xenapi (libxenserver), xenlight (libxenlight)?
 # --with-driver-modules ?
 #
 # Conditional build:
@@ -58,6 +58,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.0
 BuildRequires:	libxslt-devel
 BuildRequires:	openldap-devel
+BuildRequires:	openwsman-devel >= 2.2.3
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.1.4}
 BuildRequires:	numactl-devel
@@ -84,6 +85,7 @@ Requires:	libpcap >= 1.0.0
 Requires:	libselinux >= 2.0.82
 Requires:	libssh2 >= 1.0
 Requires:	libxml2 >= 1:2.6.0
+Requires:	openwsman-libs >= 2.2.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # libxenstore is not versionned properly
@@ -129,6 +131,7 @@ Requires:	libpcap-devel >= 1.0.0
 Requires:	libselinux-devel >= 2.0.82
 Requires:	libxml2-devel >= 1:2.6.0
 Requires:	numactl-devel
+Requires:	openwsman-devel >= 2.2.3
 %{?with_xen:Requires: xen-devel}
 Requires:	yajl-devel
 
