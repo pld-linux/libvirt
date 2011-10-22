@@ -1,4 +1,4 @@
-# sanlock, xenapi (libxenserver), xenlight (libxenlight)?
+# xenapi (libxenserver), xenlight (libxenlight)?
 # --with-driver-modules ?
 #
 # Conditional build:
@@ -6,6 +6,7 @@
 %bcond_without	xen_proxy	# Xen proxy
 %bcond_without	qemu		# Qemu
 %bcond_without	polkit		# PolicyKit
+%bcond_without	sanlock		# sanlock storage lock manager
 %bcond_with	netcf		# host interfaces support
 
 # qemu available only on x86 and ppc
@@ -71,6 +72,7 @@ BuildRequires:	python-devel
 BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.219
+%{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
 BuildRequires:	udev-devel >= 145
 %{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
 # For disk driver
@@ -221,6 +223,18 @@ wirtualizacji obecnych wersji Linuksa.
 
 Ten pakiet zawiera narzędzia do biblioteki libvirt.
 
+%package lock-sanlock
+Summary:	Sanlock lock manager plugin for libvirt
+Summary(pl.UTF-8):	Zarządca blokad sanlock dla biblioteki libvirt
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description lock-sanlock
+Sanlock lock manager plugin for libvirt.
+
+%description lock-sanlock -l pl.UTF-8
+Zarządca blokad sanlock dla biblioteki libvirt.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -239,17 +253,6 @@ mv po/vi_VN.gmo po/vi.gmo
 %{__automake}
 
 %configure \
-	--disable-silent-rules \
-	--with-html-dir=%{_gtkdocdir} \
-	--with-html-subdir=%{name} \
-	--x-libraries=%{_libdir} \
-	%{!?with_xen:--without-xen} \
-	%{!?with_qemu:--without-qemu} \
-	%{!?with_netcf:--without-netcf} \
-	--with-init-script=redhat \
-	--with-storage-lvm \
-	--without-hal \
-	--with-udev \
 	PVCREATE=/sbin/pvcreate \
 	VGCREATE=/sbin/vgcreate \
 	LVCREATE=/sbin/lvcreate \
@@ -274,7 +277,19 @@ mv po/vi_VN.gmo po/vi.gmo
 	DNSMASQ=/usr/sbin/dnsmasq \
 	RADVD=/usr/sbin/radvd \
 	UDEVADM=/sbin/udevadm \
-	MODPROBE=/sbin/modprobe
+	MODPROBE=/sbin/modprobe \
+	--disable-silent-rules \
+	--with-html-dir=%{_gtkdocdir} \
+	--with-html-subdir=%{name} \
+	--with-init-script=redhat \
+	--with-storage-lvm \
+	--with-udev \
+	--without-hal \
+	%{!?with_netcf:--without-netcf} \
+	%{!?with_sanlock:--without-sanlock} \
+	%{!?with_qemu:--without-qemu} \
+	%{!?with_xen:--without-xen} \
+	--x-libraries=%{_libdir}
 
 %{__make} \
 	AWK=gawk
@@ -296,6 +311,10 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 %py_postclean
 %{__rm} $RPM_BUILD_ROOT%{py_sitedir}/*.la
 
+%if %{with sanlock}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.{a,la}
+%endif
+
 %find_lang %{name}
 
 %clean
@@ -313,6 +332,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
 %attr(755,root,root) %{_libdir}/libvirt_lxc
 %attr(755,root,root) %{_libdir}/libvirt_iohelper
+%attr(755,root,root) %{_libdir}/virt-aa-helper
+%dir %{_libdir}/libvirt
+%dir %{_libdir}/libvirt/lock-driver
 %dir %{_datadir}/libvirt
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
@@ -329,6 +351,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/libvirt/schemas/storageencryption.rng
 %{_datadir}/libvirt/schemas/storagepool.rng
 %{_datadir}/libvirt/schemas/storagevol.rng
+
+%if %{with sanlock}
+%files lock-sanlock
+%attr(755,root,root) %{_sbindir}/virt-sanlock-cleanup
+%attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
+%dir /var/lib/libvirt/sanlock
+%{_mandir}/man8/virt-sanlock-cleanup.8*
+%endif
 
 %files devel
 %defattr(644,root,root,755)
@@ -369,8 +399,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
-%{_libdir}/libvirt_parthelper
-%{_libdir}/virt-aa-helper
+%attr(755,root,root) %{_libdir}/libvirt_parthelper
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-xml-validate.1*
@@ -379,5 +408,24 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/*.xml
 %{_datadir}/augeas/lenses/*.aug
 %{_datadir}/augeas/lenses/tests/*.aug
-%dir /var/run/libvirt
+%attr(711,root,root) %dir /var/cache/libvirt
 %dir /var/lib/libvirt
+%attr(711,root,root) %dir /var/lib/libvirt/boot
+%dir /var/lib/libvirt/dnsmasq
+%attr(711,root,root) %dir /var/lib/libvirt/images
+%attr(700,root,root) %dir /var/lib/libvirt/lxc
+%attr(700,root,root) %dir /var/lib/libvirt/network
+%attr(700,root,root) %dir /var/lib/libvirt/uml
+%dir /var/log/libvirt
+%attr(700,root,root) %dir /var/log/libvirt/lxc
+%attr(700,root,root) %dir /var/log/libvirt/uml
+%dir /var/run/libvirt
+%attr(700,root,root) %dir /var/run/libvirt/lxc
+%if %{with qemu}
+# %attr(750,qemu,qemu) ?
+%dir /var/cache/libvirt/qemu
+# %attr(750,qemu,qemu) ?
+%dir /var/lib/libvirt/qemu
+%attr(700,root,root) %dir /var/log/libvirt/qemu
+%attr(700,root,root) %dir /var/run/libvirt/qemu
+%endif
