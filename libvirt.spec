@@ -195,6 +195,8 @@ Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi
 Group:		Base/Kernel
 Requires:	%{name} = %{version}-%{release}
 Requires:	avahi-libs >= 0.6.0
+# /etc/init.d/libvirt-guests[37]: .: /usr/bin/gettext.sh: not found, some better split needed
+Requires:	gettext-devel
 Requires:	libblkid >= 2.17
 Requires:	parted-libs >= 1.8.0
 Requires:	udev-libs >= 145
