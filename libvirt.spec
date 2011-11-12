@@ -6,7 +6,7 @@
 %bcond_without	xen_proxy	# Xen proxy
 %bcond_without	qemu		# Qemu
 %bcond_without	polkit		# PolicyKit
-%bcond_without	sanlock		# sanlock storage lock manager
+%bcond_with	sanlock		# sanlock storage lock manager
 %bcond_with	netcf		# host interfaces support
 
 # qemu available only on x86 and ppc
@@ -27,12 +27,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	0.9.6
+Version:	0.9.7
 Release:	1
 License:	LGPL v2.1+
 Group:		Base/Kernel
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	b74df374b524d00a22a6c89cfc23099f
+# Source0-md5:	4308b3f4d23f5b0c5196260a9a22a38b
 Source1:	%{name}.init
 Patch0:		%{name}-sasl.patch
 URL:		http://www.libvirt.org/
@@ -336,7 +336,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvirt_iohelper
 %attr(755,root,root) %{_libdir}/virt-aa-helper
 %dir %{_libdir}/libvirt
+%if %{with sanlock}
 %dir %{_libdir}/libvirt/lock-driver
+%endif
 %dir %{_datadir}/libvirt
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
