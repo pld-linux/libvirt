@@ -262,6 +262,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	VGREMOVE=/sbin/vgremove \
 	LVREMOVE=/sbin/lvremove \
 	VGCHANGE=/sbin/vgchange \
+	LVCHANGE=/sbin/lvchange \
 	  VGSCAN=/sbin/vgscan   \
 	     PVS=/sbin/pvs      \
 	     VGS=/sbin/vgs      \
