@@ -44,6 +44,7 @@ BuildRequires:	avahi-devel >= 0.6.0
 BuildRequires:	curl-devel >= 7.18.0
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	device-mapper-devel >= 1.0.0
+BuildRequires:	gawk
 BuildRequires:	gettext-devel >= 0.17
 BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libapparmor-devel
@@ -269,6 +270,8 @@ mv po/vi_VN.gmo po/vi.gmo
 	     LVS=/sbin/lvs      \
 	      TC=/sbin/tc \
 	   BRCTL=/sbin/brctl    \
+	ISCSIADM=/sbin/iscsiadm	\
+	SHOWMOUNT=/usr/sbin/showmount \
 	MOUNT=/bin/mount \
 	UMOUNT=/bin/umount \
 	MKFS=/sbin/mkfs \
