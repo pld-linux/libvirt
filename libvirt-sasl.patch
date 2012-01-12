@@ -26,16 +26,16 @@ diff -ru libvirt-0.8.8/daemon/Makefile.am libvirt-0.8.8-sasl/daemon/Makefile.am
  # the WITH_LIBVIRTD conditional
  if HAVE_SASL
  install-data-sasl:
--	mkdir -p $(DESTDIR)$(sysconfdir)/sasl2/
+-	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sasl2/
 -	$(INSTALL_DATA) $(srcdir)/libvirtd.sasl $(DESTDIR)$(sysconfdir)/sasl2/libvirt.conf
-+	mkdir -p $(DESTDIR)$(sysconfdir)/sasl/
++	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sasl/
 +	$(INSTALL_DATA) $(srcdir)/libvirtd.sasl $(DESTDIR)$(sysconfdir)/sasl/libvirt.conf
  
  uninstall-data-sasl:
 -	rm -f $(DESTDIR)$(sysconfdir)/sasl2/libvirt.conf
--	rmdir $(DESTDIR)$(sysconfdir)/sasl2/
+-	rmdir $(DESTDIR)$(sysconfdir)/sasl2/ || :
 +	rm -f $(DESTDIR)$(sysconfdir)/sasl/libvirt.conf
-+	rmdir $(DESTDIR)$(sysconfdir)/sasl/
++	rmdir $(DESTDIR)$(sysconfdir)/sasl/ || :
  else
  install-data-sasl:
  uninstall-data-sasl:
