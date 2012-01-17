@@ -28,13 +28,14 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.9
-Release:	1
+Release:	1.1
 License:	LGPL v2.1+
 Group:		Base/Kernel
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	37c4bf8cdd4c76150bc0c1d249945d27
 Source1:	%{name}.init
 Patch0:		%{name}-sasl.patch
+Patch1:		%{name}-scsi-git.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -241,6 +242,7 @@ Zarządca blokad sanlock dla biblioteki libvirt.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
