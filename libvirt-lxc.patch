@@ -1,0 +1,84 @@
+diff -ur libvirt-0.9.9/src/lxc/lxc_controller.c libvirt-0.9.9-lxc/src/lxc/lxc_controller.c
+--- libvirt-0.9.9/src/lxc/lxc_controller.c	2011-12-29 08:26:45.000000000 +0100
++++ libvirt-0.9.9-lxc/src/lxc/lxc_controller.c	2012-01-24 00:37:37.856545745 +0100
+@@ -707,6 +707,14 @@
+ static bool quit = false;
+ static virMutex lock;
+ static int sigpipe[2];
++static pid_t initpid = -1;
++
++static void lxcSignalINTHandler(int signum ATTRIBUTE_UNUSED)
++{
++    if (initpid <= 0)
++	return;
++    kill(initpid, SIGINT);
++}
+ 
+ static void lxcSignalChildHandler(int signum ATTRIBUTE_UNUSED)
+ {
+@@ -1072,6 +1082,12 @@
+         goto cleanup;
+     }
+ 
++    if (signal(SIGINT, lxcSignalINTHandler) == SIG_ERR) {
++        virReportSystemError(errno, "%s",
++                             _("Cannot install signal handler"));
++        goto cleanup;
++    }
++
+     VIR_DEBUG("serverFd=%d clientFd=%d",
+               serverFd, clientFd);
+     virResetLastError();
+@@ -1430,6 +1446,7 @@
+         goto cleanup;
+     VIR_FORCE_CLOSE(control[1]);
+     VIR_FORCE_CLOSE(containerhandshake[1]);
++    initpid = container;
+ 
+     if (lxcControllerMoveInterfaces(nveths, veths, container) < 0)
+         goto cleanup;
+diff -ur libvirt-0.9.9/src/lxc/lxc_driver.c libvirt-0.9.9-lxc/src/lxc/lxc_driver.c
+--- libvirt-0.9.9/src/lxc/lxc_driver.c	2011-12-29 08:26:45.000000000 +0100
++++ libvirt-0.9.9-lxc/src/lxc/lxc_driver.c	2012-01-24 13:58:05.548702741 +0100
+@@ -3732,6 +3732,33 @@
+ }
+ 
+ static int
++lxcDomainShutdown (virDomainPtr dom)
++{
++    lxc_driver_t *driver = dom->conn->privateData;
++    virDomainObjPtr vm;
++    int ret = -1;
++
++    lxcDriverLock(driver);
++    vm = virDomainFindByUUID(&driver->domains, dom->uuid);
++
++    if (vm->pid <= 0) {
++        lxcError(VIR_ERR_INTERNAL_ERROR,
++                 _("Invalid PID %d for container"), vm->pid);
++        goto cleanup;
++    }
++
++    if (kill(vm->pid, SIGINT) < -1)
++	goto cleanup;
++    ret = 0;
++
++cleanup:
++    if (vm)
++        virDomainObjUnlock(vm);
++    lxcDriverUnlock(driver);
++    return ret;
++}
++
++static int
+ lxcDomainOpenConsole(virDomainPtr dom,
+                       const char *dev_name,
+                       virStreamPtr st,
+@@ -3847,6 +3874,7 @@
+     .domainLookupByName = lxcDomainLookupByName, /* 0.4.2 */
+     .domainSuspend = lxcDomainSuspend, /* 0.7.2 */
+     .domainResume = lxcDomainResume, /* 0.7.2 */
++    .domainShutdown = lxcDomainShutdown,
+     .domainDestroy = lxcDomainDestroy, /* 0.4.4 */
+     .domainDestroyFlags = lxcDomainDestroyFlags, /* 0.9.4 */
+     .domainGetOSType = lxcGetOSType, /* 0.4.2 */
