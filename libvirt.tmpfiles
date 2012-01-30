@@ -1,0 +1,3 @@
+d /var/run/libvirt 0755 root root -
+d /var/run/libvirt/lxc 0700 root root -
+d /var/run/libvirt/qemu 0700 root root -
