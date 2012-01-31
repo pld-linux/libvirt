@@ -34,6 +34,7 @@ Group:		Base/Kernel
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 # Source0-md5:	37c4bf8cdd4c76150bc0c1d249945d27
 Source1:	%{name}.init
+Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-scsi-git.patch
 Patch2:		%{name}-lxc.patch
@@ -308,15 +309,16 @@ mv po/vi_VN.gmo po/vi.gmo
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d} \
+	$RPM_BUILD_ROOT/usr/lib/tmpfiles.d
+
 %{__make} install \
 	DEVHELP_DIR=%{_gtkdocdir}/%{name}/devhelp \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/etc/sysconfig
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-
 #install qemud/libvirtd.sysconf $RPM_BUILD_ROOT/etc/sysconfig/libvirtd
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
+install %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
@@ -422,6 +424,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/*.xml
 %{_datadir}/augeas/lenses/*.aug
 %{_datadir}/augeas/lenses/tests/*.aug
+/usr/lib/tmpfiles.d/%{name}.conf
 %attr(711,root,root) %dir /var/cache/libvirt
 %dir /var/lib/libvirt
 %attr(711,root,root) %dir /var/lib/libvirt/boot
