@@ -8,6 +8,13 @@
 %bcond_without	polkit		# PolicyKit
 %bcond_with	sanlock		# sanlock storage lock manager
 %bcond_with	netcf		# host interfaces support
+%bcond_without	uml		# UML support
+%bcond_without	openvz		# OpenVZ support
+%bcond_without	phyp		# PHYP support
+%bcond_without	xenapi		# XenAPI support
+%bcond_without	libxl		# libxenlight
+%bcond_without	esx		# ESX support
+%bcond_without	hyperv		# Hyper-V support
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -74,7 +81,7 @@ BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
 BuildRequires:	udev-devel >= 145
 %{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
@@ -202,6 +209,7 @@ Requires:	avahi-libs >= 0.6.0
 Requires:	gettext-devel
 Requires:	libblkid >= 2.17
 Requires:	parted-libs >= 1.8.0
+Requires:	systemd-units >= 37-0.10
 Requires:	udev-libs >= 145
 Requires:	xorg-lib-libpciaccess >= 0.10.0
 Suggests:	iptables
@@ -215,6 +223,7 @@ Suggests:	lvm2
 # for management through ssh
 Suggests:	netcat-openbsd
 Suggests:	polkit >= 0.90
+Suggests:	scrub
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
@@ -287,18 +296,37 @@ mv po/vi_VN.gmo po/vi.gmo
 	RADVD=/usr/sbin/radvd \
 	UDEVADM=/sbin/udevadm \
 	MODPROBE=/sbin/modprobe \
+	SCRUB=/usr/bin/scrub \
 	--disable-silent-rules \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
 	--with-init-script=redhat \
 	--with-storage-lvm \
+	--with-storage-fs \
+	--with-storage-iscsi \
+	--with-storage-scsi \
+	--with-storage-mpath \
+	--with-storage-disk \
+	--with-macvtap \
+	--with-virtualport \
+	--with-scrub \
 	--with-udev \
 	--without-hal \
+	--with-lxc \
+	--with-vbox=%{_libdir}/VirtualBox \
 	%{!?with_netcf:--without-netcf} \
 	%{!?with_sanlock:--without-sanlock} \
 	%{!?with_qemu:--without-qemu} \
 	%{!?with_xen:--without-xen} \
-	--x-libraries=%{_libdir}
+	%{!?with_uml:--without-uml} \
+	%{!?with_openvz:--without-openvz} \
+	%{!?with_phyp:--without-phyp} \
+	%{!?with_xenapi:--without-xenapi} \
+	%{!?with_libxl:--without-libxl} \
+	%{!?with_esx:--without-esx} \
+	%{!?with_hyperv:--without-hyperv} \
+	--x-libraries=%{_libdir} \
+	--with-init-script=systemd
 
 %{__make} \
 	AWK=gawk
@@ -332,6 +360,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
+
+%post utils
+%systemd_post libvirtd.service
+NORESTART=1
+%systemd_post libvirt-guests.service
+
+%preun utils
+%systemd_preun libvirtd.service
+%systemd_preun libvirt-guests.service
+
+%postun utils
+%systemd_reload
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
@@ -399,21 +439,26 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl/libvirt.conf
-%attr(755,root,root) %{_bindir}/virsh
-%attr(755,root,root) %{_sbindir}/libvirtd
-%attr(754,root,root) /etc/rc.d/init.d/libvirtd
-%attr(754,root,root) /etc/rc.d/init.d/libvirt-guests
-%attr(755,root,root) %{_bindir}/virt-xml-validate
-%attr(755,root,root) %{_bindir}/virt-pki-validate
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
+%attr(754,root,root) /etc/rc.d/init.d/libvirtd
+%attr(754,root,root) /etc/rc.d/init.d/libvirt-guests
+%{systemdunitdir}/libvirtd.service
+%{systemdunitdir}/libvirt-guests.service
+%config(noreplace) %verify(not md5 mtime size) /etc/sysctl.d/libvirtd
+%attr(755,root,root) %{_sbindir}/libvirtd
+%attr(755,root,root) %{_bindir}/virsh
+%attr(755,root,root) %{_bindir}/virt-host-validate
+%attr(755,root,root) %{_bindir}/virt-xml-validate
+%attr(755,root,root) %{_bindir}/virt-pki-validate
 %attr(755,root,root) %{_libdir}/libvirt_parthelper
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_mandir}/man1/virsh.1*
+%{_mandir}/man1/virt-host-validate.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1*
 %{_mandir}/man8/libvirtd.8*
