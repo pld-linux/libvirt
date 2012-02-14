@@ -36,7 +36,7 @@ Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
-Patch2:		%{name}-lxc.patch
+Patch1:		%{name}-lxc.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -243,7 +243,7 @@ Zarządca blokad sanlock dla biblioteki libvirt.
 %prep
 %setup -q
 %patch0 -p1
-%patch2 -p1
+%patch1 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
