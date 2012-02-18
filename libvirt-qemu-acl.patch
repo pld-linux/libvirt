@@ -1,0 +1,77 @@
+From: Neil Wilson <neil@brightbox.co.uk>
+To: libvir-list@redhat.com
+Date: Mon, 10 Jan 2011 09:52:56 +0000
+Message-ID: <1294653176.3013.16.camel@lenovo-3000-n100>
+
+Hi,
+
+Here's the patch to add basic ACL support to QEMU within libvirt. Like
+SASL it's ignored by RHEL5's default qemu. Newer qemu picks it up as
+expected and you can manipulate the acls using 'virsh'. 
+
+
+diff --git a/src/qemu/qemu.conf b/src/qemu/qemu.conf
+index ba41f80..7ab5eee 100644
+--- a/src/qemu/qemu.conf
++++ b/src/qemu/qemu.conf
+@@ -71,6 +71,15 @@
+ # vnc_sasl = 1
+ 
+ 
++# Enable the VNC access control lists. When switched on this will
++# initially block all vnc users from accessing the vnc server. To
++# add and remove ids from the ACLs you will need to send the appropriate
++# commands to the qemu monitor as required by your particular version of
++# QEMU. See the QEMU documentation for more details.
++# 
++# vnc_acl = 1
++
++
+ # The default SASL configuration file is located in /etc/sasl/
+ # When running libvirtd unprivileged, it may be desirable to
+ # override the configs in this location. Set this parameter to
+diff --git a/src/qemu/qemu_command.c b/src/qemu/qemu_command.c
+index 7dd8e03..0ffeaab 100644
+--- a/src/qemu/qemu_command.c
++++ b/src/qemu/qemu_command.c
+@@ -3542,8 +3542,11 @@ qemuBuildCommandLine(virConnectPtr conn,
+                     virCommandAddEnvPair(cmd, "SASL_CONF_DIR",
+                                          driver->vncSASLdir);
+ 
+-                /* TODO: Support ACLs later */
+             }
++
++	    if (driver->vncACL) 
++	        virBufferAddLit(&opt, ",acl");
++	    
+         }
+ 
+         virCommandAddArg(cmd, "-vnc");
+diff --git a/src/qemu/qemu_conf.c b/src/qemu/qemu_conf.c
+index e1502dc..806432d 100644
+--- a/src/qemu/qemu_conf.c
++++ b/src/qemu/qemu_conf.c
+@@ -204,6 +204,10 @@ int qemudLoadDriverConfig(struct qemud_driver *driver,
+         }
+     }
+ 
++    p = virConfGetValue (conf, "vnc_acl");
++    CHECK_TYPE ("vnc_acl", VIR_CONF_LONG);
++    if (p) driver->vncACL = p->l;
++
+     p = virConfGetValue (conf, "spice_tls");
+     CHECK_TYPE ("spice_tls", VIR_CONF_LONG);
+     if (p) driver->spiceTLS = p->l;
+diff --git a/src/qemu/qemu_conf.h b/src/qemu/qemu_conf.h
+index 83ddedd..3e7506d 100644
+--- a/src/qemu/qemu_conf.h
++++ b/src/qemu/qemu_conf.h
+@@ -85,6 +85,7 @@ struct qemud_driver {
+     unsigned int vncTLS : 1;
+     unsigned int vncTLSx509verify : 1;
+     unsigned int vncSASL : 1;
++    unsigned int vncACL : 1;
+     char *vncTLSx509certdir;
+     char *vncListen;
+     char *vncPassword;
+
