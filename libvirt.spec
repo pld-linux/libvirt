@@ -44,6 +44,7 @@ Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
+Patch2:		libvirt-qemu-acl.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -253,6 +254,7 @@ Zarządca blokad sanlock dla biblioteki libvirt.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
