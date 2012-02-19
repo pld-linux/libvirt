@@ -51,6 +51,18 @@ stop() {
         fi
 }
 
+reload() {
+	if [ ! -f /var/lock/subsys/libvirtd ]; then
+		msg_not_running libvirtd
+		RETVAL=7
+		return
+	fi
+
+	msg_reloading libvirtd
+	killproc libvirtd -HUP
+	RETVAL=$?
+}
+
 condrestart() {
         if [ -f /var/lock/subsys/libvirtd ]; then
                 stop
@@ -76,11 +88,14 @@ case "$1" in
   try-restart)
         condrestart 0
         ;;
+  reload|force-reload)
+	reload
+	;;
   status)
         status libvirtd
         ;;
   *)
-        msg_usage "$0 {start|stop|restart|try-restart|status}"
+        msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|status}"
         exit 3
 esac
 
