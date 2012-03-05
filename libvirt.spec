@@ -98,9 +98,6 @@ Requires:	libxml2 >= 1:2.6.0
 Requires:	openwsman-libs >= 2.2.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-# libxenstore is not versionned properly
-%define		_noautoreq	devel(libxenstore.*)
-
 %description
 Libvirt is a C toolkit to interact with the virtualization
 capabilities of recent versions of Linux.
