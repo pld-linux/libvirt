@@ -2,7 +2,7 @@
 # --with-driver-modules ?
 #
 # Conditional build:
-%bcond_with	xen		# xen
+%bcond_without	xen		# xen
 %bcond_without	xen_proxy	# Xen proxy
 %bcond_without	qemu		# Qemu
 %bcond_without	polkit		# PolicyKit
@@ -20,11 +20,8 @@
 %ifnarch %{ix86} %{x8664} ppc
 %undefine	with_qemu
 %endif
-# Xen is available only on i686 x86_64 ia64
+# Xen is available only on x86 and ia64
 %ifnarch %{ix86} %{x8664} ia64
-%undefine	with_xen
-%endif
-%ifarch i386 i486 i586
 %undefine	with_xen
 %endif
 %if %{without xen}
@@ -85,7 +82,7 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
 BuildRequires:	udev-devel >= 145
-%{?with_xen:BuildRequires:	xen-devel >= 3.0.4}
+%{?with_xen:BuildRequires:	xen-devel >= 4.1.2}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
 BuildRequires:	yajl-devel
