@@ -30,7 +30,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.10
-Release:	5
+Release:	6
 License:	LGPL v2.1+
 Group:		Base/Kernel
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -471,8 +471,9 @@ NORESTART=1
 %attr(700,root,root) %dir /var/lib/libvirt/network
 %attr(700,root,root) %dir /var/lib/libvirt/uml
 %dir /var/log/libvirt
+%{?with_libxl:%attr(700,root,root) %dir /var/log/libvirt/libxl}
 %attr(700,root,root) %dir /var/log/libvirt/lxc
-%attr(700,root,root) %dir /var/log/libvirt/uml
+%{?with_uml:%attr(700,root,root) %dir /var/log/libvirt/uml}
 %dir /var/run/libvirt
 %attr(700,root,root) %dir /var/run/libvirt/lxc
 %if %{with qemu}
