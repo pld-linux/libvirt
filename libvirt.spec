@@ -1,5 +1,3 @@
-# xenapi (libxenserver), xenlight (libxenlight)?
-# --with-driver-modules ?
 #
 # Conditional build:
 %bcond_without	xen		# xen
@@ -32,7 +30,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.10
-Release:	4
+Release:	5
 License:	LGPL v2.1+
 Group:		Base/Kernel
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -42,6 +40,7 @@ Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
 Patch2:		libvirt-qemu-acl.patch
+Patch3:		libvirt-xend.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -249,6 +248,7 @@ Zarządca blokad sanlock dla biblioteki libvirt.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}

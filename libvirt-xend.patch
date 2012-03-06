@@ -1,0 +1,44 @@
+--- libvirt-0.9.10/src/xen/xen_driver.c~	2012-02-13 08:06:23.000000000 +0100
++++ libvirt-0.9.10/src/xen/xen_driver.c	2012-03-06 14:03:45.273637374 +0100
+@@ -240,7 +240,7 @@
+     int status;
+     int ret = 0;
+ 
+-    cmd = virCommandNewArgList("/usr/sbin/xend", "status", NULL);
++    cmd = virCommandNewArgList("/sbin/service", "xend", "status", NULL);
+     if (virCommandRun(cmd, &status) == 0 && status == 0)
+         ret = 1;
+     virCommandFree(cmd);
+--- libvirt-0.9.10/src/libxl/libxl_driver.c~	2012-02-06 03:50:50.000000000 +0100
++++ libvirt-0.9.10/src/libxl/libxl_driver.c	2012-03-06 14:27:35.983701925 +0100
+@@ -840,7 +840,7 @@
+     }
+ 
+     /* Disable driver if legacy xen toolstack (xend) is in use */
+-    cmd = virCommandNewArgList("/usr/sbin/xend", "status", NULL);
++    cmd = virCommandNewArgList("/sbin/service", "xend", "status", NULL);
+     if (virCommandRun(cmd, &status) == 0 && status == 0) {
+         VIR_INFO("Legacy xen tool stack seems to be in use, disabling "
+                   "libxenlight driver.");
+--- libvirt-0.9.10/tests/statstest.c~	2011-11-22 02:52:24.000000000 +0100
++++ libvirt-0.9.10/tests/statstest.c	2012-03-06 14:36:59.970394039 +0100
+@@ -56,7 +56,7 @@
+     uname(&ut);
+     if (strstr(ut.release, "xen") == NULL)
+         return EXIT_AM_SKIP;
+-    cmd = virCommandNewArgList("/usr/sbin/xend", "status", NULL);
++    cmd = virCommandNewArgList("/sbin/service", "xend", "status", NULL);
+     if (virCommandRun(cmd, &status) != 0 || status != 0) {
+         virCommandFree(cmd);
+         return EXIT_AM_SKIP;
+--- libvirt-0.9.10/tests/reconnect.c~	2011-11-22 02:52:24.000000000 +0100
++++ libvirt-0.9.10/tests/reconnect.c	2012-03-06 14:37:27.777061955 +0100
+@@ -29,7 +29,7 @@
+     uname(&ut);
+     if (strstr(ut.release, "xen") == NULL)
+         return EXIT_AM_SKIP;
+-    cmd = virCommandNewArgList("/usr/sbin/xend", "status", NULL);
++    cmd = virCommandNewArgList("/sbin/service", "xend", "status", NULL);
+     if (virCommandRun(cmd, &status) != 0 || status != 0) {
+         virCommandFree(cmd);
+         return EXIT_AM_SKIP;
