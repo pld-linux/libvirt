@@ -30,7 +30,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.10
-Release:	8
+Release:	9
 License:	LGPL v2.1+
 Group:		Base/Kernel
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -200,8 +200,7 @@ Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi
 Group:		Base/Kernel
 Requires:	%{name} = %{version}-%{release}
 Requires:	avahi-libs >= 0.6.0
-# /etc/init.d/libvirt-guests[37]: .: /usr/bin/gettext.sh: not found, some better split needed
-Requires:	gettext-devel
+Requires:	gettext >= 0.18.1.1-6
 Requires:	libblkid >= 2.17
 Requires:	parted-libs >= 1.8.0
 Requires:	systemd-units >= 37-0.10
