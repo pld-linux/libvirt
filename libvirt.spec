@@ -26,15 +26,16 @@
 %undefine	with_xen_proxy
 %endif
 
+%define		pre	rc1
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	0.9.10
-Release:	9
+Version:	0.9.11
+Release:	0.%{pre}.1
 License:	LGPL v2.1+
 Group:		Base/Kernel
-Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	a424bb793521e637349da47e93dd5fff
+Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}%{?pre:-%{pre}}.tar.gz
+# Source0-md5:	483a0d6fde47cc09fd0989a93492f283
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -42,6 +43,8 @@ Patch1:		%{name}-lxc.patch
 Patch2:		libvirt-qemu-acl.patch
 Patch3:		libvirt-xend.patch
 Patch4:		lxc-without-selinux.patch
+# upstream fixes
+Patch100:	query-parameters.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -250,6 +253,7 @@ Zarządca blokad sanlock dla biblioteki libvirt.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch100 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
@@ -294,6 +298,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	UDEVADM=/sbin/udevadm \
 	MODPROBE=/sbin/modprobe \
 	SCRUB=/usr/bin/scrub \
+	OVSVSCTL=/usr/bin/ovs-vsctl \
 	--disable-silent-rules \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
@@ -415,6 +420,7 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so
 %{_libdir}/libvirt.la
 %{_libdir}/libvirt-qemu.la
+%{_datadir}/%{name}/api
 %{_gtkdocdir}/%{name}
 %{_includedir}/%{name}
 %{_pkgconfigdir}/%{name}.pc
