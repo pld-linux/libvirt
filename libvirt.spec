@@ -1,18 +1,21 @@
 #
 # Conditional build:
-%bcond_without	xen		# xen
-%bcond_without	xen_proxy	# Xen proxy
-%bcond_without	qemu		# Qemu
-%bcond_without	polkit		# PolicyKit
-%bcond_with	sanlock		# sanlock storage lock manager
-%bcond_with	netcf		# host interfaces support
-%bcond_without	uml		# UML support
+%bcond_without	esx		# VMware ESX support
+%bcond_without	hyperv		# Hyper-V support
+%bcond_without	libxl		# libxenlight
+%bcond_without	lxc		# LXC support
+%bcond_without	netcf		# host interfaces support
 %bcond_without	openvz		# OpenVZ support
 %bcond_without	phyp		# PHYP support
-%bcond_without	xenapi		# XenAPI support
-%bcond_without	libxl		# libxenlight
-%bcond_without	esx		# ESX support
-%bcond_without	hyperv		# Hyper-V support
+%bcond_without	polkit		# PolicyKit
+%bcond_without	qemu		# Qemu
+%bcond_without	sanlock		# sanlock storage lock manager
+%bcond_without	uml		# UML support
+%bcond_without	vbox		# VirtualBox support
+%bcond_without	vmware		# VMware Workstation/Player support
+%bcond_with	xenapi		# XenAPI support
+%bcond_without	xen_proxy	# Xen proxy
+%bcond_without	xen		# xen
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -26,25 +29,24 @@
 %undefine	with_xen_proxy
 %endif
 
-%define		pre	rc1
+%define		pre	rc2
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.11
 Release:	0.%{pre}.1
 License:	LGPL v2.1+
-Group:		Base/Kernel
+Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}%{?pre:-%{pre}}.tar.gz
-# Source0-md5:	483a0d6fde47cc09fd0989a93492f283
+# Source0-md5:	7c63519e2b8340165d9b915af49a8169
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
-Patch2:		libvirt-qemu-acl.patch
-Patch3:		libvirt-xend.patch
+Patch2:		%{name}-qemu-acl.patch
+Patch3:		%{name}-xend.patch
 Patch4:		lxc-without-selinux.patch
-# upstream fixes
-Patch100:	query-parameters.patch
+Patch5:		%{name}-driver-modules.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -69,11 +71,11 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.0
 BuildRequires:	libxslt-devel
-BuildRequires:	openldap-devel
-BuildRequires:	openwsman-devel >= 2.2.3
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.1.4}
 BuildRequires:	numactl-devel
+BuildRequires:	openldap-devel
+BuildRequires:	openwsman-devel >= 2.2.3
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	perl-tools-pod
 %{?with_polkit:BuildRequires:	polkit >= 0.90}
@@ -91,7 +93,6 @@ BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
 BuildRequires:	yajl-devel
 Requires:	curl-libs >= 7.18.0
 Requires:	device-mapper >= 1.0.0
-Requires:	gnutls >= 1.0.25
 Requires:	libcap-ng >= 0.4.0
 Requires:	libnl1 >= 1.1
 Requires:	libpcap >= 1.0.0
@@ -113,8 +114,8 @@ initially for the Xen paravirtualization but should be able to
 integrate other virtualization mechanisms if needed.
 
 %description -l pl.UTF-8
-Libvirt to zestaw narzędzi w C do współpracy z funkcjami
-wirtualizacji obecnych wersji Linuksa.
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
+obecnych wersji Linuksa.
 
 Wirtualizacja w systemie operacyjnym Linux oznacza możliwość
 jednoczesnego uruchamiania wielu instancji systemu operacyjnego na
@@ -153,8 +154,8 @@ This package contains the header files needed for developing programs
 using the libvirt library.
 
 %description devel -l pl.UTF-8
-Libvirt to zestaw narzędzi w C do współpracy z funkcjami
-wirtualizacji obecnych wersji Linuksa.
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
+obecnych wersji Linuksa.
 
 Ten pakiet zawiera pliki nagłówkowe potrzebne do tworzenia programów
 wykorzystujących bibliotekę libvirt.
@@ -173,8 +174,8 @@ This package contains the static libraries for developing programs
 using the libvirt library.
 
 %description static -l pl.UTF-8
-Libvirt to zestaw narzędzi w C do współpracy z funkcjami
-wirtualizacji obecnych wersji Linuksa.
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
+obecnych wersji Linuksa.
 
 Ten pakiet zawiera biblioteki statyczne do tworzenia programów
 wykorzystujących bibliotekę libvirt.
@@ -192,47 +193,10 @@ capabilities of recent versions of Linux.
 This package contains the Python bindings for the libvirt library.
 
 %description -n	python-%{name} -l pl.UTF-8
-Libvirt to zestaw narzędzi w C do współpracy z funkcjami
-wirtualizacji obecnych wersji Linuksa.
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
+obecnych wersji Linuksa.
 
 Ten pakiet zawiera wiązania Pythona do biblioteki libvirt.
-
-%package utils
-Summary:	Tools to interact with virtualization capabilities
-Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi
-Group:		Base/Kernel
-Requires:	%{name} = %{version}-%{release}
-Requires:	avahi-libs >= 0.6.0
-Requires:	gettext >= 0.18.1.1-6
-Requires:	libblkid >= 2.17
-Requires:	parted-libs >= 1.8.0
-Requires:	systemd-units >= 37-0.10
-Requires:	udev-libs >= 145
-Requires:	xorg-lib-libpciaccess >= 0.10.0
-Suggests:	iptables
-Suggests:	bridge-utils
-Suggests:	dmidecode
-Suggests:	dnsmasq
-Suggests:	ebtables
-Suggests:	gawk
-Suggests:	iptables
-Suggests:	lvm2
-# for management through ssh
-Suggests:	netcat-openbsd
-Suggests:	polkit >= 0.90
-Suggests:	scrub
-
-%description utils
-Libvirt is a C toolkit to interact with the virtualization
-capabilities of recent versions of Linux.
-
-This package contains tools for the libvirt library.
-
-%description utils -l pl.UTF-8
-Libvirt to zestaw narzędzi w C do współpracy z funkcjami
-wirtualizacji obecnych wersji Linuksa.
-
-Ten pakiet zawiera narzędzia do biblioteki libvirt.
 
 %package lock-sanlock
 Summary:	Sanlock lock manager plugin for libvirt
@@ -246,6 +210,215 @@ Sanlock lock manager plugin for libvirt.
 %description lock-sanlock -l pl.UTF-8
 Zarządca blokad sanlock dla biblioteki libvirt.
 
+%package daemon
+Summary:	Server side daemon and supporting files for libvirt library
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
+Requires:	avahi-libs >= 0.6.0
+Requires:	iproute2
+Requires:	libblkid >= 2.17
+Provides:	libvirt(hypervisor)
+Requires:	parted-libs >= 1.8.0
+# Needed for probing the power management features of the host.
+Requires:	pm-utils
+Requires:	systemd-units >= 37-0.10
+Requires:	udev-libs >= 145
+Requires:	util-linux
+Requires:	virtual(module-tools)
+Requires:	xorg-lib-libpciaccess >= 0.10.0
+Requires(post):	systemd-units
+Requires(preun):	systemd-units
+Requires(postun):	systemd-units
+Suggests:	bridge-utils
+Suggests:	cyrus-sasl
+Suggests:	cyrus-sasl-digest-md5
+Suggests:	dmidecode
+Suggests:	dnsmasq >= 2.41
+Suggests:	ebtables
+Suggests:	gawk
+Suggests:	glusterfs-client >= 2.0.1
+Suggests:	iptables
+Suggests:	iptables
+Suggests:	libcgroup
+Suggests:	lvm2
+Suggests:	numad
+Suggests:	open-iscsi
+Suggests:	parted
+Suggests:	polkit >= 0.93
+Suggests:	radvd
+Suggests:	scrub
+
+%description daemon
+Server side daemon required to manage the virtualization capabilities
+of recent versions of Linux. Requires a hypervisor specific sub-RPM
+for specific drivers.
+
+%package daemon-esx
+Summary:	Server side daemon & driver required to run VMware ESX guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-esx
+Server side daemon and driver required to manage the virtualization
+capabilities of the VMware ESX emulators
+
+%package daemon-hyperv
+Summary:	Server side daemon & driver required to run Microsoft Hyper-V guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-hyperv
+Server side daemon and driver required to manage the virtualization
+capabilities of the Microsoft Hyper-V emulators
+
+%package daemon-libxl
+Summary:	Server side daemon & driver required to run XEN guests (xenlight)
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Requires:	/usr/sbin/qcow-create
+Requires:	xen
+Provides:	libvirt(hypervisor)
+
+%description daemon-libxl
+Server side daemon and driver required to manage the virtualization
+capabilities of XEN via xenlight interface
+
+%package daemon-lxc
+Summary:	Server side daemon & driver required to run LXC guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-lxc
+Server side daemon and driver required to manage the virtualization
+capabilities of LXC
+
+%package daemon-openvz
+Summary:	Server side daemon & driver required to run OpenVZ guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-openvz
+Server side daemon and driver required to manage the virtualization
+capabilities of OpenVZ
+
+%package daemon-phyp
+Summary:	Server side daemon & driver required to run Power Hypervisors guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-phyp
+Server side daemon and driver required to manage the virtualization
+capabilities of Power Hypervisors
+
+%package daemon-qemu
+Summary:	Server side daemon & driver required to run QEMU guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Requires:	/usr/bin/qemu-img
+Requires:	qemu
+Requires:	bzip2
+Requires:	gzip
+Requires:	lzop
+Requires:	xz
+Provides:	libvirt(hypervisor)
+
+%description daemon-qemu
+Server side daemon and driver required to manage the virtualization
+capabilities of the QEMU emulators
+
+%package daemon-uml
+Summary:	Server side daemon & driver required to run UML guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-uml
+Server side daemon and driver required to manage the virtualization
+capabilities of UML
+
+%package daemon-vbox
+Summary:	Server side daemon & driver required to run Oracle VirtualBox guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-vbox
+Server side daemon and driver required to manage the virtualization
+capabilities of Oracle VirtualBox
+
+%package daemon-vmware
+Summary:	Server side daemon & driver required to run VMware Workstation guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-vmware
+Server side daemon and driver required to manage the virtualization
+capabilities of VMware Workstation
+
+%package daemon-xen
+Summary:	Server side daemon & driver required to run XEN guests
+Group:		Development/Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Requires:	/usr/sbin/qcow-create
+Requires:	xen
+Requires:	xen-xend
+Provides:	libvirt(hypervisor)
+
+%description daemon-xen
+Server side daemon and driver required to manage the virtualization
+capabilities of XEN
+
+%package client
+Summary:	Client side library and utilities of the libvirt library
+Group:		Applications/System
+Requires:	gettext >= 0.18.1.1-6
+Requires:	gnutls >= 1.0.25
+Requires:	netcat-openbsd
+Requires(post):	systemd-units
+Requires(preun):	systemd-units
+Requires(postun):	systemd-units
+
+%description client
+Shared libraries and client binaries needed to access to the
+virtualization capabilities of recent versions of Linux (and other
+OSes).
+
+%package utils
+Summary:	Tools to interact with virtualization capabilities
+Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi
+Group:		Applications/System
+Requires:	%{name}-client = %{version}-%{release}
+Requires:	%{name}-daemon = %{version}-%{release}
+Requires:	%{name}-daemon-esx = %{version}-%{release}
+Requires:	%{name}-daemon-hyperv = %{version}-%{release}
+Requires:	%{name}-daemon-libxl = %{version}-%{release}
+Requires:	%{name}-daemon-lxc = %{version}-%{release}
+Requires:	%{name}-daemon-openvz = %{version}-%{release}
+Requires:	%{name}-daemon-phyp = %{version}-%{release}
+Requires:	%{name}-daemon-qemu = %{version}-%{release}
+Requires:	%{name}-daemon-uml = %{version}-%{release}
+Requires:	%{name}-daemon-vbox = %{version}-%{release}
+Requires:	%{name}-daemon-vmware = %{version}-%{release}
+Requires:	%{name}-daemon-xen = %{version}-%{release}
+
+%description utils
+Libvirt is a C toolkit to interact with the virtualization
+capabilities of recent versions of Linux.
+
+This package contains tools for the libvirt library.
+
+%description utils -l pl.UTF-8
+Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
+obecnych wersji Linuksa.
+
+Ten pakiet zawiera narzędzia do biblioteki libvirt.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -253,7 +426,7 @@ Zarządca blokad sanlock dla biblioteki libvirt.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch100 -p1
+%patch5 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
@@ -299,6 +472,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	MODPROBE=/sbin/modprobe \
 	SCRUB=/usr/bin/scrub \
 	OVSVSCTL=/usr/bin/ovs-vsctl \
+	NUMAD=/usr/bin/numad \
 	--disable-silent-rules \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
@@ -311,22 +485,38 @@ mv po/vi_VN.gmo po/vi.gmo
 	--with-storage-disk \
 	--with-macvtap \
 	--with-virtualport \
-	--with-scrub \
 	--with-udev \
+	--with-libssh2 \
+	--with-avahi \
+	--with-audit \
+	--with-libblkid \
+	--with-macvtap \
+	--with-virtualport \
+	--with-numad \
+	--with-numactl \
+	--with-sasl \
+	--with-yajl \
+	--with-selinux \
+	--with-apparmor \
+	--with-qemu-user=qemu \
+	--with-qemu-group=qemu \
 	--without-hal \
-	--with-lxc \
-	--with-vbox=%{_libdir}/VirtualBox \
-	%{!?with_netcf:--without-netcf} \
-	%{!?with_sanlock:--without-sanlock} \
-	%{!?with_qemu:--without-qemu} \
-	%{!?with_xen:--without-xen} \
-	%{!?with_uml:--without-uml} \
-	%{!?with_openvz:--without-openvz} \
-	%{!?with_phyp:--without-phyp} \
-	%{!?with_xenapi:--without-xenapi} \
-	%{!?with_libxl:--without-libxl} \
-	%{!?with_esx:--without-esx} \
-	%{!?with_hyperv:--without-hyperv} \
+	--with-driver-modules \
+	%{__with_without polkit} \
+	%{__with_without esx} \
+	%{__with_without hyperv} \
+	%{__with_without libxl} \
+	%{__with_without lxc} \
+	%{__with_without netcf} \
+	%{__with_without openvz} \
+	%{__with_without phyp} \
+	%{__with_without qemu} \
+	%{__with_without sanlock} \
+	%{__with_without uml} \
+	%{__with_without vbox vbox %{_libdir}/VirtualBox} \
+	%{__with_without vmware} \
+	%{__with_without xen} \
+	%{__with_without xenapi} \
 	--x-libraries=%{_libdir} \
 	--with-init-script=systemd
 
@@ -336,20 +526,22 @@ mv po/vi_VN.gmo po/vi.gmo
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d} \
-	$RPM_BUILD_ROOT/usr/lib/tmpfiles.d
+	$RPM_BUILD_ROOT%{systemdtmpfilesdir}
 
 %{__make} install \
 	DEVHELP_DIR=%{_gtkdocdir}/%{name}/devhelp \
 	DESTDIR=$RPM_BUILD_ROOT
 
-#install qemud/libvirtd.sysconf $RPM_BUILD_ROOT/etc/sysconfig/libvirtd
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
-install %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
+install %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_postclean
 %{__rm} $RPM_BUILD_ROOT%{py_sitedir}/*.la
+
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.{a,la}
 
 %if %{with sanlock}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.{a,la}
@@ -363,63 +555,54 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
-%post utils
+%post daemon
 %systemd_post libvirtd.service
+
+%preun daemon
+%systemd_preun libvirtd.service
+
+%postun daemon
+%systemd_reload
+
+%post client
 NORESTART=1
 %systemd_post libvirt-guests.service
 
-%preun utils
-%systemd_preun libvirtd.service
+%preun client
 %systemd_preun libvirt-guests.service
 
-%postun utils
+%postun client
 %systemd_reload
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc ChangeLog README TODO NEWS
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt.so.0
+%if %{with qemu}
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
-%attr(755,root,root) %{_libdir}/libvirt_lxc
-%attr(755,root,root) %{_libdir}/libvirt_iohelper
-%attr(755,root,root) %{_libdir}/virt-aa-helper
-%dir %{_libdir}/libvirt
-%if %{with sanlock}
-%dir %{_libdir}/libvirt/lock-driver
 %endif
-%dir %{_datadir}/libvirt
-%dir %{_datadir}/libvirt/schemas
-%{_datadir}/libvirt/schemas/basictypes.rng
-%{_datadir}/libvirt/schemas/capability.rng
-%{_datadir}/libvirt/schemas/domain.rng
-%{_datadir}/libvirt/schemas/domaincommon.rng
-%{_datadir}/libvirt/schemas/domainsnapshot.rng
-%{_datadir}/libvirt/schemas/interface.rng
-%{_datadir}/libvirt/schemas/network.rng
-%{_datadir}/libvirt/schemas/networkcommon.rng
-%{_datadir}/libvirt/schemas/nodedev.rng
-%{_datadir}/libvirt/schemas/nwfilter.rng
-%{_datadir}/libvirt/schemas/secret.rng
-%{_datadir}/libvirt/schemas/storageencryption.rng
-%{_datadir}/libvirt/schemas/storagepool.rng
-%{_datadir}/libvirt/schemas/storagevol.rng
+%dir %{_libdir}/libvirt
 
 %if %{with sanlock}
 %files lock-sanlock
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/virt-sanlock-cleanup
+%dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
+%{_datadir}/augeas/lenses/libvirt_sanlock.aug
+%{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
 %dir /var/lib/libvirt/sanlock
 %{_mandir}/man8/virt-sanlock-cleanup.8*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf
 %endif
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt.so
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so
-%{_libdir}/libvirt.la
-%{_libdir}/libvirt-qemu.la
 %{_datadir}/%{name}/api
 %{_gtkdocdir}/%{name}
 %{_includedir}/%{name}
@@ -438,56 +621,172 @@ NORESTART=1
 %{py_sitedir}/libvirt.py[co]
 %{py_sitedir}/libvirt_qemu.py[co]
 
-%files utils
+%files daemon
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt
+%doc docs/*.xml
+%dir %{_sysconfdir}/libvirt
+%dir %attr(700,root,root) %{_sysconfdir}/libvirt/nwfilter
+%dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu
+%dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks
+%dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks/autostart
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirtd.conf
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/default.xml
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/autostart/default.xml
+%config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/nwfilter/*.xml
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl/libvirt.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
-%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
-%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
-%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
-%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
-%attr(754,root,root) /etc/rc.d/init.d/libvirt-guests
 %{systemdunitdir}/libvirtd.service
-%{systemdunitdir}/libvirt-guests.service
 %config(noreplace) %verify(not md5 mtime size) /etc/sysctl.d/libvirtd
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
+%attr(755,root,root) %{_libdir}/libvirt_iohelper
+%attr(755,root,root) %{_libdir}/libvirt_parthelper
+%attr(755,root,root) %{_libdir}/virt-aa-helper
 %attr(755,root,root) %{_sbindir}/libvirtd
+%{_datadir}/augeas/lenses/libvirtd.aug
+%{_datadir}/augeas/lenses/tests/test_libvirtd.aug
+%{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
+%{_mandir}/man8/libvirtd.8*
+%dir /var/lib/libvirt
+%dir /var/lib/libvirt/dnsmasq
+%attr(711,root,root) %dir /var/lib/libvirt/boot
+%attr(700,root,root) %dir /var/lib/libvirt/network
+%attr(711,root,root) %dir /var/lib/libvirt/images
+%attr(711,root,root) %dir /var/lib/libvirt/filesystems
+%attr(700,root,root) %dir /var/log/libvirt
+%attr(711,root,root) %dir /var/cache/libvirt
+%dir /var/run/libvirt
+%dir /var/run/libvirt/network
+%{systemdtmpfilesdir}/%{name}.conf
+%dir %{_libdir}/libvirt/connection-driver
+%{?with_netcf:%{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so}
+%{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_nodedev.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_remote.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
+%{_libdir}/libvirt/connection-driver/libvirt_driver_test.so
+
+%if %{with_esx}
+%files daemon-esx
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_esx.so
+%endif
+
+%if %{with_hyperv}
+%files daemon-hyperv
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_hyperv.so
+%endif
+
+%if %{with_libxl}
+%files daemon-libxl
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
+%attr(700,root,root) %dir /var/lib/libvirt/libxl
+%attr(700,root,root) %dir /var/run/libvirt/libxl
+%attr(700,root,root) %dir /var/log/libvirt/libxl
+%endif
+
+%if %{with_lxc}
+%files daemon-lxc
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/lxc.conf
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
+%attr(700,root,root) %dir /var/lib/libvirt/lxc
+%attr(700,root,root) %dir /var/run/libvirt/lxc
+%attr(700,root,root) %dir /var/log/libvirt/lxc
+%{_datadir}/augeas/lenses/libvirtd_lxc.aug
+%{_datadir}/augeas/lenses/tests/test_libvirtd_lxc.aug
+%attr(755,root,root) %{_libdir}/libvirt_lxc
+%{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
+%endif
+
+%if %{with_openvz}
+%files daemon-openvz
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_openvz.so
+%endif
+
+%if %{with_phyp}
+%files daemon-phyp
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_phyp.so
+%endif
+
+%if %{with qemu}
+%files daemon-qemu
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu.conf
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
+%attr(750,qemu,qemu) %dir /var/cache/libvirt/qemu
+%attr(750,qemu,qemu) %dir /var/lib/libvirt/qemu
+%attr(700,root,root) %dir /var/log/libvirt/qemu
+%attr(700,root,root) %dir /var/run/libvirt/qemu
+%{_datadir}/augeas/lenses/libvirtd_qemu.aug
+%{_datadir}/augeas/lenses/tests/test_libvirtd_qemu.aug
+%{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
+%endif
+
+%if %{with_uml}
+%files daemon-uml
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
+%attr(700,root,root) %dir /var/lib/libvirt/uml
+%attr(700,root,root) %dir /var/run/libvirt/uml
+%attr(700,root,root) %dir /var/log/libvirt/uml
+%endif
+
+%if %{with_vbox}
+%files daemon-vbox
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
+%endif
+
+%if %{with_vmware}
+%files daemon-vmware
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_vmware.so
+%endif
+
+%if %{with_xen}
+%files daemon-xen
+%defattr(644,root,root,755)
+%{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
+%endif
+
+%files client
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
+%attr(754,root,root) /etc/rc.d/init.d/libvirt-guests
+%{systemdunitdir}/libvirt-guests.service
 %attr(755,root,root) %{_bindir}/virsh
 %attr(755,root,root) %{_bindir}/virt-host-validate
 %attr(755,root,root) %{_bindir}/virt-xml-validate
 %attr(755,root,root) %{_bindir}/virt-pki-validate
-%attr(755,root,root) %{_libdir}/libvirt_parthelper
-%{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-host-validate.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1*
-%{_mandir}/man8/libvirtd.8*
-%{_datadir}/%{name}/*.xml
-%{_datadir}/augeas/lenses/*.aug
-%{_datadir}/augeas/lenses/tests/*.aug
-/usr/lib/tmpfiles.d/%{name}.conf
-%attr(711,root,root) %dir /var/cache/libvirt
-%dir /var/lib/libvirt
-%attr(711,root,root) %dir /var/lib/libvirt/boot
-%dir /var/lib/libvirt/dnsmasq
-%attr(711,root,root) %dir /var/lib/libvirt/images
-%attr(700,root,root) %dir /var/lib/libvirt/lxc
-%attr(700,root,root) %dir /var/lib/libvirt/network
-%attr(700,root,root) %dir /var/lib/libvirt/uml
-%dir /var/log/libvirt
-%{?with_libxl:%attr(700,root,root) %dir /var/log/libvirt/libxl}
-%attr(700,root,root) %dir /var/log/libvirt/lxc
-%{?with_uml:%attr(700,root,root) %dir /var/log/libvirt/uml}
-%dir /var/run/libvirt
-%attr(700,root,root) %dir /var/run/libvirt/lxc
-%if %{with qemu}
-# %attr(750,qemu,qemu) ?
-%dir /var/cache/libvirt/qemu
-# %attr(750,qemu,qemu) ?
-%dir /var/lib/libvirt/qemu
-%attr(700,root,root) %dir /var/log/libvirt/qemu
-%attr(700,root,root) %dir /var/run/libvirt/qemu
-%endif
+%dir %{_datadir}/libvirt
+%{_datadir}/libvirt/cpu_map.xml
+%dir %{_datadir}/libvirt/schemas
+%{_datadir}/libvirt/schemas/basictypes.rng
+%{_datadir}/libvirt/schemas/capability.rng
+%{_datadir}/libvirt/schemas/domain.rng
+%{_datadir}/libvirt/schemas/domaincommon.rng
+%{_datadir}/libvirt/schemas/domainsnapshot.rng
+%{_datadir}/libvirt/schemas/interface.rng
+%{_datadir}/libvirt/schemas/network.rng
+%{_datadir}/libvirt/schemas/networkcommon.rng
+%{_datadir}/libvirt/schemas/nodedev.rng
+%{_datadir}/libvirt/schemas/nwfilter.rng
+%{_datadir}/libvirt/schemas/secret.rng
+%{_datadir}/libvirt/schemas/storageencryption.rng
+%{_datadir}/libvirt/schemas/storagepool.rng
+%{_datadir}/libvirt/schemas/storagevol.rng
+
+%files utils
+%defattr(644,root,root,755)
