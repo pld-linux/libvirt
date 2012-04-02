@@ -1,0 +1,26 @@
+diff -ur libvirt-0.9.11/src/Makefile.am libvirt-0.9.11-mod/src/Makefile.am
+--- libvirt-0.9.11/src/Makefile.am	2012-03-23 14:56:20.000000000 +0100
++++ libvirt-0.9.11-mod/src/Makefile.am	2012-04-01 11:47:02.416334370 +0200
+@@ -648,10 +648,10 @@
+ 		-I$(top_srcdir)/src/rpc				\
+ 		$(AM_CFLAGS)
+ libvirt_driver_remote_la_LDFLAGS = $(AM_LDFLAGS)
+-libvirt_driver_remote_la_LIBADD = $(GNUTLS_LIBS) \
+-                libvirt-net-rpc-client.la \
+-                libvirt-net-rpc-server.la \
+-                libvirt-net-rpc.la
++libvirt_driver_remote_la_LIBADD = $(GNUTLS_LIBS)
++libvirt_la_BUILT_LIBADD += libvirt-net-rpc-client.la \
++                           libvirt-net-rpc-server.la \
++                           libvirt-net-rpc.la
+ if WITH_DRIVER_MODULES
+ libvirt_driver_remote_la_LIBADD += ../gnulib/lib/libgnu.la
+ libvirt_driver_remote_la_LDFLAGS += -module -avoid-version
+@@ -1070,7 +1070,6 @@
+ endif
+ 
+ if WITH_DRIVER_MODULES
+-libvirt_driver_nodedev_la_LIBADD += ../gnulib/lib/libgnu.la
+ libvirt_driver_nodedev_la_LDFLAGS += -module -avoid-version
+ endif
+ endif
