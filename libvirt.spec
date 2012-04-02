@@ -37,7 +37,7 @@ Version:	0.9.11
 Release:	0.%{pre}.1
 License:	LGPL v2.1+
 Group:		Libraries
-Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}%{?pre:-%{pre}}.tar.gz
+Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}-%{pre}.tar.gz
 # Source0-md5:	7c63519e2b8340165d9b915af49a8169
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
