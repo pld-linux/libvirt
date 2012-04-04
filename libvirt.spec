@@ -29,16 +29,16 @@
 %undefine	with_xen_proxy
 %endif
 
-%define		pre	rc2
+#define		pre	rc2
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.11
-Release:	0.%{pre}.1
+Release:	0.1
 License:	LGPL v2.1+
 Group:		Libraries
-Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}-%{pre}.tar.gz
-# Source0-md5:	7c63519e2b8340165d9b915af49a8169
+Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
+# Source0-md5:	6e9fab115075a8fd21d9bd0d7e558a52
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
