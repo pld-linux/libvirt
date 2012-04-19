@@ -78,7 +78,7 @@ diff -ur libvirt-0.9.9/src/lxc/lxc_driver.c libvirt-0.9.9-lxc/src/lxc/lxc_driver
      .domainLookupByName = lxcDomainLookupByName, /* 0.4.2 */
      .domainSuspend = lxcDomainSuspend, /* 0.7.2 */
      .domainResume = lxcDomainResume, /* 0.7.2 */
-+    .domainShutdown = lxcDomainShutdown, /* 0.9.10 */
++    .domainShutdown = lxcDomainShutdown, /* PLD */
      .domainDestroy = lxcDomainDestroy, /* 0.4.4 */
      .domainDestroyFlags = lxcDomainDestroyFlags, /* 0.9.4 */
      .domainGetOSType = lxcGetOSType, /* 0.4.2 */
