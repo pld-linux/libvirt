@@ -659,31 +659,30 @@ NORESTART=1
 %dir /var/run/libvirt/network
 %{systemdtmpfilesdir}/%{name}.conf
 %dir %{_libdir}/libvirt/connection-driver
-%{?with_netcf:%{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so}
-%{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_nodedev.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_remote.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
-%{_libdir}/libvirt/connection-driver/libvirt_driver_test.so
+%{?with_netcf:%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so}
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nodedev.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_test.so
 
 %if %{with_esx}
 %files daemon-esx
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_esx.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_esx.so
 %endif
 
 %if %{with_hyperv}
 %files daemon-hyperv
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_hyperv.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_hyperv.so
 %endif
 
 %if %{with_libxl}
 %files daemon-libxl
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
 %attr(700,root,root) %dir /var/lib/libvirt/libxl
 %attr(700,root,root) %dir /var/run/libvirt/libxl
 %attr(700,root,root) %dir /var/log/libvirt/libxl
@@ -700,19 +699,19 @@ NORESTART=1
 %{_datadir}/augeas/lenses/libvirtd_lxc.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd_lxc.aug
 %attr(755,root,root) %{_libdir}/libvirt_lxc
-%{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %endif
 
 %if %{with_openvz}
 %files daemon-openvz
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_openvz.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_openvz.so
 %endif
 
 %if %{with_phyp}
 %files daemon-phyp
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_phyp.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_phyp.so
 %endif
 
 %if %{with qemu}
@@ -726,13 +725,13 @@ NORESTART=1
 %attr(700,root,root) %dir /var/run/libvirt/qemu
 %{_datadir}/augeas/lenses/libvirtd_qemu.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd_qemu.aug
-%{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
 %endif
 
 %if %{with_uml}
 %files daemon-uml
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
 %attr(700,root,root) %dir /var/lib/libvirt/uml
 %attr(700,root,root) %dir /var/run/libvirt/uml
@@ -742,19 +741,19 @@ NORESTART=1
 %if %{with_vbox}
 %files daemon-vbox
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %endif
 
 %if %{with_vmware}
 %files daemon-vmware
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_vmware.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vmware.so
 %endif
 
 %if %{with_xen}
 %files daemon-xen
 %defattr(644,root,root,755)
-%{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %endif
 
 %files client
