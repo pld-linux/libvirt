@@ -666,19 +666,19 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_test.so
 
-%if %{with_esx}
+%if %{with esx}
 %files daemon-esx
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_esx.so
 %endif
 
-%if %{with_hyperv}
+%if %{with hyperv}
 %files daemon-hyperv
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_hyperv.so
 %endif
 
-%if %{with_libxl}
+%if %{with libxl}
 %files daemon-libxl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
@@ -687,7 +687,7 @@ NORESTART=1
 %attr(700,root,root) %dir /var/log/libvirt/libxl
 %endif
 
-%if %{with_lxc}
+%if %{with lxc}
 %files daemon-lxc
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/lxc.conf
@@ -701,13 +701,13 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %endif
 
-%if %{with_openvz}
+%if %{with openvz}
 %files daemon-openvz
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_openvz.so
 %endif
 
-%if %{with_phyp}
+%if %{with phyp}
 %files daemon-phyp
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_phyp.so
@@ -727,7 +727,7 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
 %endif
 
-%if %{with_uml}
+%if %{with uml}
 %files daemon-uml
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
@@ -737,19 +737,19 @@ NORESTART=1
 %attr(700,root,root) %dir /var/log/libvirt/uml
 %endif
 
-%if %{with_vbox}
+%if %{with vbox}
 %files daemon-vbox
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %endif
 
-%if %{with_vmware}
+%if %{with vmware}
 %files daemon-vmware
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vmware.so
 %endif
 
-%if %{with_xen}
+%if %{with xen}
 %files daemon-xen
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
