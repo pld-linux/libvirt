@@ -112,6 +112,8 @@ instance. The library aim at providing long term stable C API
 initially for the Xen paravirtualization but should be able to
 integrate other virtualization mechanisms if needed.
 
+This package contains the base libraries and configuration file.
+
 %description -l pl.UTF-8
 Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
 obecnych wersji Linuksa.
@@ -123,6 +125,8 @@ zarządzane przez instancję Linuksa. Celem biblioteki jest zapewnienie
 długotrwale stabilnego API C, początkowo do parawirtualizacji Xen, ale
 dającej się zintegrować w razie potrzeby z innymi mechanizmami
 wirtualizacji.
+
+Ten pakiet zawiera podstawowe biblioteki oraz plik konfiguracyjny.
 
 %package devel
 Summary:	Development files for programs using libvirt
@@ -211,6 +215,7 @@ Zarządca blokad sanlock dla biblioteki libvirt.
 
 %package daemon
 Summary:	Server side daemon and supporting files for libvirt library
+Summary(pl.UTF-8):	Demon działający po stronie serwera oraz pliki wspierające dla biblioteki libvirt
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	avahi-libs >= 0.6.0
@@ -252,71 +257,107 @@ Server side daemon required to manage the virtualization capabilities
 of recent versions of Linux. Requires a hypervisor specific sub-RPM
 for specific drivers.
 
+%description daemon -l pl.UTF-8
+Demon działający po stronie serwera wymagany do zarządzania funkcjami
+wirtualizacji nowych wersji Linuksa. Wymaga podpakietu specyficznego
+dla hipernadzorcy.
+
 %package daemon-esx
-Summary:	Server side daemon & driver required to run VMware ESX guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run VMware ESX guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości VMware ESX
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-esx
-Server side daemon and driver required to manage the virtualization
-capabilities of the VMware ESX emulators
+Server side driver required to manage the virtualization capabilities
+of the VMware ESX emulators.
+
+%description daemon-esx -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji emulatora VMware ESX.
 
 %package daemon-hyperv
-Summary:	Server side daemon & driver required to run Microsoft Hyper-V guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run Microsoft Hyper-V guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Microsoft Hyper-V
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-hyperv
-Server side daemon and driver required to manage the virtualization
-capabilities of the Microsoft Hyper-V emulators
+Server side driver required to manage the virtualization capabilities
+of the Microsoft Hyper-V emulators.
+
+%description daemon-hyperv -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji emulatora Microsoft Hyper-V.
 
 %package daemon-libxl
-Summary:	Server side daemon & driver required to run XEN guests (xenlight)
-Group:		Development/Libraries
+Summary:	Server side driver required to run XEN guests (xenlight)
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN (xenlight)
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	/usr/sbin/qcow-create
 Requires:	xen
 Provides:	libvirt(hypervisor)
 
 %description daemon-libxl
-Server side daemon and driver required to manage the virtualization
-capabilities of XEN via xenlight interface
+Server side driver required to manage the virtualization capabilities
+of XEN via xenlight interface.
+
+%description daemon-libxl -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji XEN poprzez interfejs xenlight.
 
 %package daemon-lxc
-Summary:	Server side daemon & driver required to run LXC guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run LXC guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości LXC
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-lxc
-Server side daemon and driver required to manage the virtualization
-capabilities of LXC
+Server side driver required to manage the virtualization capabilities
+of LXC.
+
+%description daemon-lxc -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji LXC.
 
 %package daemon-openvz
-Summary:	Server side daemon & driver required to run OpenVZ guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run OpenVZ guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości OpenVZ
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-openvz
-Server side daemon and driver required to manage the virtualization
-capabilities of OpenVZ
+Server side driver required to manage the virtualization capabilities
+of OpenVZ.
+
+%description daemon-openvz -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji OpenVZ.
 
 %package daemon-phyp
-Summary:	Server side daemon & driver required to run Power Hypervisors guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run Power Hypervisors guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Power Hypervisors
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-phyp
-Server side daemon and driver required to manage the virtualization
-capabilities of Power Hypervisors
+Server side driver required to manage the virtualization capabilities
+of Power Hypervisors.
+
+%description daemon-phyp -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji Power Hypervisors.
 
 %package daemon-qemu
-Summary:	Server side daemon & driver required to run QEMU guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run QEMU guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości QEMU
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	/usr/bin/qemu-img
 Requires:	qemu
@@ -327,42 +368,62 @@ Requires:	xz
 Provides:	libvirt(hypervisor)
 
 %description daemon-qemu
-Server side daemon and driver required to manage the virtualization
-capabilities of the QEMU emulators
+Server side driver required to manage the virtualization capabilities
+of the QEMU emulators.
+
+%description daemon-qemu -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji emulatora QEMU.
 
 %package daemon-uml
-Summary:	Server side daemon & driver required to run UML guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run UML guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości UML
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-uml
-Server side daemon and driver required to manage the virtualization
-capabilities of UML
+Server side driver required to manage the virtualization capabilities
+of UML.
+
+%description daemon-uml -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji UML.
 
 %package daemon-vbox
-Summary:	Server side daemon & driver required to run Oracle VirtualBox guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run Oracle VirtualBox guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Oracle VirtualBox
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-vbox
-Server side daemon and driver required to manage the virtualization
-capabilities of Oracle VirtualBox
+Server side driver required to manage the virtualization capabilities
+of Oracle VirtualBox.
+
+%description daemon-vbox -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji Oracle VirtualBox.
 
 %package daemon-vmware
-Summary:	Server side daemon & driver required to run VMware Workstation guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run VMware Workstation guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości VMware Workstation
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
 
 %description daemon-vmware
-Server side daemon and driver required to manage the virtualization
-capabilities of VMware Workstation
+Server side driver required to manage the virtualization capabilities
+of VMware Workstation.
+
+%description daemon-vmware -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji VMware Workstation.
 
 %package daemon-xen
-Summary:	Server side daemon & driver required to run XEN guests
-Group:		Development/Libraries
+Summary:	Server side driver required to run XEN guests
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN
+Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	/usr/sbin/qcow-create
 Requires:	xen
@@ -370,11 +431,16 @@ Requires:	xen-xend
 Provides:	libvirt(hypervisor)
 
 %description daemon-xen
-Server side daemon and driver required to manage the virtualization
-capabilities of XEN
+Server side driver required to manage the virtualization capabilities
+of XEN.
+
+%description daemon-xen -l pl.UTF-8
+Sterownik wymagany po stronie serwera do zarządzania funkcjami
+wirtualizacji XEN.
 
 %package client
-Summary:	Client side library and utilities of the libvirt library
+Summary:	Client side utilities of the libvirt library
+Summary(pl.UTF-8):	Narzędzia klienckie do biblioteki libvirt
 Group:		Applications/System
 Requires:	gettext >= 0.18.1.1-6
 Requires:	gnutls >= 1.0.25
@@ -384,13 +450,16 @@ Requires(preun):	systemd-units
 Requires(postun):	systemd-units
 
 %description client
-Shared libraries and client binaries needed to access to the
-virtualization capabilities of recent versions of Linux (and other
-OSes).
+Client binaries needed to access to the virtualization capabilities of
+recent versions of Linux (and other OSes).
+
+%description client -l pl.UTF-8
+Programy klienckie potrzebne do funkcji wirtualizacji nowych wersji
+Linuksa (oraz innych systemów operacyjnych).
 
 %package utils
-Summary:	Tools to interact with virtualization capabilities
-Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi
+Summary:	Tools to interact with virtualization capabilities (metapackage)
+Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi (metapakiet)
 Group:		Applications/System
 Requires:	%{name}-client = %{version}-%{release}
 Requires:	%{name}-daemon = %{version}-%{release}
@@ -410,13 +479,14 @@ Requires:	%{name}-daemon-xen = %{version}-%{release}
 Libvirt is a C toolkit to interact with the virtualization
 capabilities of recent versions of Linux.
 
-This package contains tools for the libvirt library.
+This is metapackage gathering all tools for the libvirt library.
 
 %description utils -l pl.UTF-8
 Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
 obecnych wersji Linuksa.
 
-Ten pakiet zawiera narzędzia do biblioteki libvirt.
+To jest metapakiet zbierający wszystkie narzędzia przeznaczone dla
+biblioteki libvirt.
 
 %prep
 %setup -q
@@ -576,6 +646,7 @@ NORESTART=1
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc ChangeLog README TODO NEWS
+%dir %{_sysconfdir}/libvirt
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt.so.0
@@ -584,19 +655,6 @@ NORESTART=1
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
 %endif
 %dir %{_libdir}/libvirt
-
-%if %{with sanlock}
-%files lock-sanlock
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_sbindir}/virt-sanlock-cleanup
-%dir %{_libdir}/libvirt/lock-driver
-%attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
-%{_datadir}/augeas/lenses/libvirt_sanlock.aug
-%{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
-%dir /var/lib/libvirt/sanlock
-%{_mandir}/man8/virt-sanlock-cleanup.8*
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf
-%endif
 
 %files devel
 %defattr(644,root,root,755)
@@ -620,10 +678,22 @@ NORESTART=1
 %{py_sitedir}/libvirt.py[co]
 %{py_sitedir}/libvirt_qemu.py[co]
 
+%if %{with sanlock}
+%files lock-sanlock
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/virt-sanlock-cleanup
+%dir %{_libdir}/libvirt/lock-driver
+%attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
+%{_datadir}/augeas/lenses/libvirt_sanlock.aug
+%{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
+%dir /var/lib/libvirt/sanlock
+%{_mandir}/man8/virt-sanlock-cleanup.8*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf
+%endif
+
 %files daemon
 %defattr(644,root,root,755)
 %doc docs/*.xml
-%dir %{_sysconfdir}/libvirt
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/nwfilter
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks
