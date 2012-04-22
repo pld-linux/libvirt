@@ -2,20 +2,19 @@
 # Conditional build:
 %bcond_without	esx		# VMware ESX support
 %bcond_without	hyperv		# Hyper-V support
-%bcond_without	libxl		# libxenlight
+%bcond_without	libxl		# libxenlight support
 %bcond_without	lxc		# LXC support
 %bcond_without	netcf		# host interfaces support
 %bcond_without	openvz		# OpenVZ support
 %bcond_without	phyp		# PHYP support
-%bcond_without	polkit		# PolicyKit
-%bcond_without	qemu		# Qemu
+%bcond_without	polkit		# PolicyKit support
+%bcond_without	qemu		# Qemu support
 %bcond_without	sanlock		# sanlock storage lock manager
 %bcond_without	uml		# UML support
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
-%bcond_with	xenapi		# XenAPI support
-%bcond_without	xen_proxy	# Xen proxy
-%bcond_without	xen		# xen
+%bcond_with	xenapi		# Xen API (Citrix XenServer) support
+%bcond_without	xen		# Xen support
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -25,10 +24,6 @@
 %ifnarch %{ix86} %{x8664} ia64
 %undefine	with_xen
 %endif
-%if %{without xen}
-%undefine	with_xen_proxy
-%endif
-
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
@@ -85,7 +80,7 @@ BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
-BuildRequires:	udev-devel >= 145
+BuildRequires:	udev-devel >= 1:145
 %{?with_xen:BuildRequires:	xen-devel >= 4.1.2}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
@@ -222,11 +217,12 @@ Requires:	avahi-libs >= 0.6.0
 Requires:	iproute2
 Requires:	libblkid >= 2.17
 Provides:	libvirt(hypervisor)
+%{?with_netcf:Requires:	netcf >= 0.1.4}
 Requires:	parted-libs >= 1.8.0
 # Needed for probing the power management features of the host.
 Requires:	pm-utils
 Requires:	systemd-units >= 37-0.10
-Requires:	udev-libs >= 145
+Requires:	udev-libs >= 1:145
 Requires:	util-linux
 Requires:	virtual(module-tools)
 Requires:	xorg-lib-libpciaccess >= 0.10.0
