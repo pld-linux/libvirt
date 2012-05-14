@@ -27,12 +27,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	0.9.11
-Release:	2
+Version:	0.9.12
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	6e9fab115075a8fd21d9bd0d7e558a52
+# Source0-md5:	5e842bc55733ceba60c64767580ff3e4
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -41,7 +41,6 @@ Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-xend.patch
 Patch4:		lxc-without-selinux.patch
 Patch5:		%{name}-driver-modules.patch
-Patch6:		%{name}-uri-user.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -493,7 +492,6 @@ biblioteki libvirt.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
