@@ -1,22 +1,102 @@
-diff -ur libvirt-0.9.9/src/lxc/lxc_controller.c libvirt-0.9.9-lxc/src/lxc/lxc_controller.c
---- libvirt-0.9.9/src/lxc/lxc_controller.c	2011-12-29 08:26:45.000000000 +0100
-+++ libvirt-0.9.9-lxc/src/lxc/lxc_controller.c	2012-01-24 00:37:37.856545745 +0100
-@@ -707,6 +707,14 @@
+diff -ur libvirt-0.9.12/src/lxc/lxc_controller.c libvirt-0.9.12-lxc/src/lxc/lxc_controller.c
+--- libvirt-0.9.12/src/lxc/lxc_controller.c	2012-05-17 11:55:25.719689270 +0200
++++ libvirt-0.9.12-lxc/src/lxc/lxc_controller.c	2012-05-17 11:54:54.623023703 +0200
+@@ -43,6 +43,7 @@
+ #include <dirent.h>
+ #include <grp.h>
+ #include <sys/stat.h>
++#include <sys/time.h>
+ 
+ #if HAVE_CAPNG
+ # include <cap-ng.h>
+@@ -559,6 +560,7 @@
+     return ret;
+ }
+ 
++static virCgroupPtr domain_cgroup = NULL;
+ 
+ /**
+  * lxcSetContainerResources
+@@ -618,10 +620,13 @@
+                              _("Unable to add task %d to cgroup for domain %s"),
+                              getpid(), def->name);
+     }
++    domain_cgroup = cgroup;
++    goto out;
+ 
+ cleanup:
+-    virCgroupFree(&driver);
+     virCgroupFree(&cgroup);
++out:
++    virCgroupFree(&driver);
+ 
+     return rc;
+ }
+@@ -710,6 +715,63 @@
  static bool quit = false;
  static virMutex lock;
  static int sigpipe[2];
 +static pid_t initpid = -1;
 +
++static void lxcSignalALRMHandler(int signum ATTRIBUTE_UNUSED)
++{
++    int tasks = 0;
++    char *keypath = NULL;
++    int rc = -1;
++    FILE *fp;
++
++    if (initpid <= 0)
++        return;
++    if (domain_cgroup == NULL)
++        return;
++
++    rc = virCgroupPathOfController(domain_cgroup, -1, "tasks", &keypath);
++    if (rc != 0) {
++        VIR_DEBUG("No path of cgroup tasks");
++        return;
++    }
++
++    if (!(fp = fopen(keypath, "r"))) {
++        VIR_DEBUG("Failed to read %s: %m\n", keypath);
++        return;
++    }
++    while (!feof(fp)) {
++        unsigned long pid_value;
++        if (fscanf(fp, "%lu", &pid_value) != 1) {
++            if (feof(fp))
++                 break;
++            rc = -errno;
++            VIR_DEBUG("Failed to read %s: %m\n", keypath);
++            fclose(fp);
++            return;
++        }
++        tasks++;
++    }
++    fclose(fp);
++    VIR_DEBUG("Tasks left: %d", tasks);
++    # Kill init if it's the only process left beside container controller process
++    if (tasks == 2)
++        kill(initpid, SIGKILL);
++}
++
 +static void lxcSignalINTHandler(int signum ATTRIBUTE_UNUSED)
 +{
++    struct itimerval timer;
++
 +    if (initpid <= 0)
-+	return;
++        return;
 +    kill(initpid, SIGINT);
++
++    timer.it_interval.tv_sec = 1;
++    timer.it_interval.tv_usec = 0;
++    timer.it_value.tv_sec = 1;
++    timer.it_value.tv_usec = 0;
++    setitimer(ITIMER_REAL, &timer, NULL);
 +}
  
  static void lxcSignalChildHandler(int signum ATTRIBUTE_UNUSED)
  {
-@@ -1072,6 +1082,12 @@
+@@ -1135,6 +1196,18 @@
          goto cleanup;
      }
  
@@ -26,10 +106,16 @@ diff -ur libvirt-0.9.9/src/lxc/lxc_controller.c libvirt-0.9.9-lxc/src/lxc/lxc_co
 +        goto cleanup;
 +    }
 +
++    if (signal(SIGALRM, lxcSignalALRMHandler) == SIG_ERR) {
++        virReportSystemError(errno, "%s",
++                             _("Cannot install signal handler"));
++        goto cleanup;
++    }
++
      VIR_DEBUG("serverFd=%d clientFd=%d",
                serverFd, clientFd);
      virResetLastError();
-@@ -1430,6 +1446,7 @@
+@@ -1554,6 +1627,7 @@
          goto cleanup;
      VIR_FORCE_CLOSE(control[1]);
      VIR_FORCE_CLOSE(containerhandshake[1]);
@@ -37,10 +123,10 @@ diff -ur libvirt-0.9.9/src/lxc/lxc_controller.c libvirt-0.9.9-lxc/src/lxc/lxc_co
  
      if (lxcControllerMoveInterfaces(nveths, veths, container) < 0)
          goto cleanup;
-diff -ur libvirt-0.9.9/src/lxc/lxc_driver.c libvirt-0.9.9-lxc/src/lxc/lxc_driver.c
---- libvirt-0.9.9/src/lxc/lxc_driver.c	2011-12-29 08:26:45.000000000 +0100
-+++ libvirt-0.9.9-lxc/src/lxc/lxc_driver.c	2012-01-24 13:58:05.548702741 +0100
-@@ -3732,6 +3732,33 @@
+diff -ur libvirt-0.9.12/src/lxc/lxc_driver.c libvirt-0.9.12-lxc/src/lxc/lxc_driver.c
+--- libvirt-0.9.12/src/lxc/lxc_driver.c	2012-05-02 05:08:53.000000000 +0200
++++ libvirt-0.9.12-lxc/src/lxc/lxc_driver.c	2012-05-16 19:54:48.946901077 +0200
+@@ -3751,6 +3751,58 @@
  }
  
  static int
@@ -48,10 +134,24 @@ diff -ur libvirt-0.9.9/src/lxc/lxc_driver.c libvirt-0.9.9-lxc/src/lxc/lxc_driver
 +{
 +    lxc_driver_t *driver = dom->conn->privateData;
 +    virDomainObjPtr vm;
++    virDomainEventPtr event = NULL;
 +    int ret = -1;
 +
 +    lxcDriverLock(driver);
 +    vm = virDomainFindByUUID(&driver->domains, dom->uuid);
++    if (!vm) {
++        char uuidstr[VIR_UUID_STRING_BUFLEN];
++        virUUIDFormat(dom->uuid, uuidstr);
++        lxcError(VIR_ERR_NO_DOMAIN,
++                 _("No domain with matching uuid '%s'"), uuidstr);
++        goto cleanup;
++    }
++
++    if (!virDomainObjIsActive(vm)) {
++        lxcError(VIR_ERR_OPERATION_INVALID,
++                 "%s", _("Domain is not running"));
++        goto cleanup;
++    }
 +
 +    if (vm->pid <= 0) {
 +        lxcError(VIR_ERR_INTERNAL_ERROR,
@@ -60,12 +160,23 @@ diff -ur libvirt-0.9.9/src/lxc/lxc_driver.c libvirt-0.9.9-lxc/src/lxc/lxc_driver
 +    }
 +
 +    if (kill(vm->pid, SIGINT) < -1)
-+	goto cleanup;
++        goto cleanup;
 +    ret = 0;
++
++    event = virDomainEventNewFromObj(vm,
++                                     VIR_DOMAIN_EVENT_STOPPED,
++                                     VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN);
++    virDomainAuditStop(vm, "shutdown");
++    if (!vm->persistent) {
++        virDomainRemoveInactive(&driver->domains, vm);
++        vm = NULL;
++    }
 +
 +cleanup:
 +    if (vm)
 +        virDomainObjUnlock(vm);
++    if (event)
++        lxcDomainEventQueue(driver, event);
 +    lxcDriverUnlock(driver);
 +    return ret;
 +}
@@ -74,7 +185,7 @@ diff -ur libvirt-0.9.9/src/lxc/lxc_driver.c libvirt-0.9.9-lxc/src/lxc/lxc_driver
  lxcDomainOpenConsole(virDomainPtr dom,
                        const char *dev_name,
                        virStreamPtr st,
-@@ -3847,6 +3874,7 @@
+@@ -3866,6 +3918,7 @@
      .domainLookupByName = lxcDomainLookupByName, /* 0.4.2 */
      .domainSuspend = lxcDomainSuspend, /* 0.7.2 */
      .domainResume = lxcDomainResume, /* 0.7.2 */
