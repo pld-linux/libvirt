@@ -49,6 +49,7 @@ BuildRequires:	automake
 BuildRequires:	avahi-devel >= 0.6.0
 BuildRequires:	curl-devel >= 7.18.0
 BuildRequires:	cyrus-sasl-devel
+BuildRequires:	dbus-devel >= 1.0.0
 BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext-devel >= 0.17
@@ -57,7 +58,7 @@ BuildRequires:	libapparmor-devel
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
 BuildRequires:	libgcrypt-devel
-BuildRequires:	libnl1-devel >= 1.1
+BuildRequires:	libnl-devel >= 3.2
 BuildRequires:	libpcap-devel >= 1.0.0
 BuildRequires:	libselinux-devel >= 2.0.82
 BuildRequires:	libssh2-devel >= 1.0
@@ -88,7 +89,7 @@ BuildRequires:	yajl-devel
 Requires:	curl-libs >= 7.18.0
 Requires:	device-mapper >= 1.0.0
 Requires:	libcap-ng >= 0.4.0
-Requires:	libnl1 >= 1.1
+Requires:	libnl >= 3.2
 Requires:	libpcap >= 1.0.0
 Requires:	libselinux >= 2.0.82
 Requires:	libssh2 >= 1.0
@@ -130,12 +131,13 @@ Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	audit-libs-devel
 Requires:	curl-devel >= 7.18.0
+Requires:	dbus-devel >= 1.0.0
 Requires:	device-mapper-devel >= 1.0.0
 Requires:	gnutls-devel >= 1.0.25
 Requires:	libapparmor-devel
 Requires:	libcap-ng-devel >= 0.4.0
 Requires:	libgcrypt-devel
-Requires:	libnl1-devel >= 1.1
+Requires:	libnl-devel >= 3.2
 Requires:	libpcap-devel >= 1.0.0
 Requires:	libselinux-devel >= 2.0.82
 Requires:	libxml2-devel >= 1:2.6.0
@@ -243,7 +245,7 @@ Suggests:	libcgroup
 Suggests:	lvm2
 Suggests:	numad
 Suggests:	open-iscsi
-Suggests:	parted
+Suggests:	parted >= 1.8.0
 Suggests:	polkit >= 0.93
 Suggests:	radvd
 Suggests:	scrub
