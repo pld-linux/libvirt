@@ -74,7 +74,7 @@ diff -ur libvirt-0.9.12/src/lxc/lxc_controller.c libvirt-0.9.12-lxc/src/lxc/lxc_
 +    }
 +    fclose(fp);
 +    VIR_DEBUG("Tasks left: %d", tasks);
-+    # Kill init if it's the only process left beside container controller process
++    /* Kill init if it's the only process left beside container controller process */
 +    if (tasks == 2)
 +        kill(initpid, SIGKILL);
 +}
