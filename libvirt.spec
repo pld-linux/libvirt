@@ -247,7 +247,7 @@ Suggests:	numad
 Suggests:	open-iscsi
 Suggests:	parted >= 1.8.0
 Suggests:	polkit >= 0.93
-Suggests:	radvd
+#Suggests:	radvd
 Suggests:	scrub
 
 %description daemon
