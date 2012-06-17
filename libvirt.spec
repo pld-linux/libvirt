@@ -28,7 +28,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.9.12
-Release:	3
+Release:	4
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -653,6 +653,7 @@ NORESTART=1
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
 %endif
 %dir %{_libdir}/libvirt
+%dir %{_datadir}/libvirt
 
 %files devel
 %defattr(644,root,root,755)
@@ -836,7 +837,6 @@ NORESTART=1
 %{_mandir}/man1/virt-host-validate.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1*
-%dir %{_datadir}/libvirt
 %{_datadir}/libvirt/cpu_map.xml
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
