@@ -27,20 +27,18 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	0.9.12
-Release:	4
+Version:	0.9.13
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	5e842bc55733ceba60c64767580ff3e4
+# Source0-md5:	86cbe53ee662e3b9e8bb0c63c737ba27
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
 Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-xend.patch
-Patch4:		lxc-without-selinux.patch
-Patch5:		%{name}-driver-modules.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -95,6 +93,12 @@ Requires:	libselinux >= 2.0.82
 Requires:	libssh2 >= 1.0
 Requires:	libxml2 >= 1:2.6.0
 Requires:	openwsman-libs >= 2.2.3
+Obsoletes:	libvirt-daemon-esx
+Obsoletes:	libvirt-daemon-hyperv
+Obsoletes:	libvirt-daemon-openvz
+Obsoletes:	libvirt-daemon-phyp
+Obsoletes:	libvirt-daemon-vbox
+Obsoletes:	libvirt-daemon-vmware
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -260,36 +264,6 @@ Demon działający po stronie serwera wymagany do zarządzania funkcjami
 wirtualizacji nowych wersji Linuksa. Wymaga podpakietu specyficznego
 dla hipernadzorcy.
 
-%package daemon-esx
-Summary:	Server side driver required to run VMware ESX guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości VMware ESX
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-esx
-Server side driver required to manage the virtualization capabilities
-of the VMware ESX emulators.
-
-%description daemon-esx -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji emulatora VMware ESX.
-
-%package daemon-hyperv
-Summary:	Server side driver required to run Microsoft Hyper-V guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Microsoft Hyper-V
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-hyperv
-Server side driver required to manage the virtualization capabilities
-of the Microsoft Hyper-V emulators.
-
-%description daemon-hyperv -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji emulatora Microsoft Hyper-V.
-
 %package daemon-libxl
 Summary:	Server side driver required to run XEN guests (xenlight)
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN (xenlight)
@@ -321,36 +295,6 @@ of LXC.
 %description daemon-lxc -l pl.UTF-8
 Sterownik wymagany po stronie serwera do zarządzania funkcjami
 wirtualizacji LXC.
-
-%package daemon-openvz
-Summary:	Server side driver required to run OpenVZ guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości OpenVZ
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-openvz
-Server side driver required to manage the virtualization capabilities
-of OpenVZ.
-
-%description daemon-openvz -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji OpenVZ.
-
-%package daemon-phyp
-Summary:	Server side driver required to run Power Hypervisors guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Power Hypervisors
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-phyp
-Server side driver required to manage the virtualization capabilities
-of Power Hypervisors.
-
-%description daemon-phyp -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji Power Hypervisors.
 
 %package daemon-qemu
 Summary:	Server side driver required to run QEMU guests
@@ -387,36 +331,6 @@ of UML.
 %description daemon-uml -l pl.UTF-8
 Sterownik wymagany po stronie serwera do zarządzania funkcjami
 wirtualizacji UML.
-
-%package daemon-vbox
-Summary:	Server side driver required to run Oracle VirtualBox guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Oracle VirtualBox
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-vbox
-Server side driver required to manage the virtualization capabilities
-of Oracle VirtualBox.
-
-%description daemon-vbox -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji Oracle VirtualBox.
-
-%package daemon-vmware
-Summary:	Server side driver required to run VMware Workstation guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości VMware Workstation
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-vmware
-Server side driver required to manage the virtualization capabilities
-of VMware Workstation.
-
-%description daemon-vmware -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji VMware Workstation.
 
 %package daemon-xen
 Summary:	Server side driver required to run XEN guests
@@ -492,8 +406,6 @@ biblioteki libvirt.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
@@ -733,19 +645,6 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_test.so
-
-%if %{with esx}
-%files daemon-esx
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_esx.so
-%endif
-
-%if %{with hyperv}
-%files daemon-hyperv
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_hyperv.so
-%endif
 
 %if %{with libxl}
 %files daemon-libxl
@@ -770,18 +669,6 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %endif
 
-%if %{with openvz}
-%files daemon-openvz
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_openvz.so
-%endif
-
-%if %{with phyp}
-%files daemon-phyp
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_phyp.so
-%endif
-
 %if %{with qemu}
 %files daemon-qemu
 %defattr(644,root,root,755)
@@ -804,18 +691,6 @@ NORESTART=1
 %attr(700,root,root) %dir /var/lib/libvirt/uml
 %attr(700,root,root) %dir /var/run/libvirt/uml
 %attr(700,root,root) %dir /var/log/libvirt/uml
-%endif
-
-%if %{with vbox}
-%files daemon-vbox
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
-%endif
-
-%if %{with vmware}
-%files daemon-vmware
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vmware.so
 %endif
 
 %if %{with xen}

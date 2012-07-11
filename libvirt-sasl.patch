@@ -40,44 +40,6 @@ diff -ru libvirt-0.8.8/daemon/Makefile.am libvirt-0.8.8-sasl/daemon/Makefile.am
  install-data-sasl:
  uninstall-data-sasl:
 diff -ru libvirt-0.8.8/daemon/test_libvirtd.aug libvirt-0.8.8-sasl/daemon/test_libvirtd.aug
---- libvirt-0.8.8/daemon/test_libvirtd.aug	2011-01-31 02:30:59.000000000 +0100
-+++ libvirt-0.8.8-sasl/daemon/test_libvirtd.aug	2011-04-28 11:45:47.697741165 +0200
-@@ -108,7 +108,7 @@
- #          the network providing auth (eg, TLS/x509 certificates)
- #
- #  - sasl: use SASL infrastructure. The actual auth scheme is then
--#          controlled from /etc/sasl2/libvirt.conf. For the TCP
-+#          controlled from /etc/sasl/libvirt.conf. For the TCP
- #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
- #          For non-TCP or TLS sockets,  any scheme is allowed.
- #
-@@ -139,7 +139,7 @@
- # If you don't enable SASL, then all TCP traffic is cleartext.
- # Don't do this outside of a dev/test scenario. For real world
- # use, always enable SASL and use the GSSAPI or DIGEST-MD5
--# mechanism in /etc/sasl2/libvirt.conf
-+# mechanism in /etc/sasl/libvirt.conf
- auth_tcp = \"sasl\"
- 
- # Change the authentication scheme for TLS sockets.
-@@ -383,7 +383,7 @@
-         { "#comment" = "the network providing auth (eg, TLS/x509 certificates)" }
-         { "#comment" = "" }
-         { "#comment" = "- sasl: use SASL infrastructure. The actual auth scheme is then" }
--        { "#comment" = "controlled from /etc/sasl2/libvirt.conf. For the TCP" }
-+        { "#comment" = "controlled from /etc/sasl/libvirt.conf. For the TCP" }
-         { "#comment" = "socket only GSSAPI & DIGEST-MD5 mechanisms will be used." }
-         { "#comment" = "For non-TCP or TLS sockets,  any scheme is allowed." }
-         { "#comment" = "" }
-@@ -414,7 +414,7 @@
-         { "#comment" = "If you don't enable SASL, then all TCP traffic is cleartext." }
-         { "#comment" = "Don't do this outside of a dev/test scenario. For real world" }
-         { "#comment" = "use, always enable SASL and use the GSSAPI or DIGEST-MD5" }
--        { "#comment" = "mechanism in /etc/sasl2/libvirt.conf" }
-+        { "#comment" = "mechanism in /etc/sasl/libvirt.conf" }
-         { "auth_tcp" = "sasl" }
-         { "#empty" }
-         { "#comment" = "Change the authentication scheme for TLS sockets." }
 diff -ru libvirt-0.8.8/docs/auth.html libvirt-0.8.8-sasl/docs/auth.html
 --- libvirt-0.8.8/docs/auth.html	2011-02-17 05:13:12.000000000 +0100
 +++ libvirt-0.8.8-sasl/docs/auth.html	2011-04-28 11:45:43.429741167 +0200
@@ -126,9 +88,8 @@ diff -ru libvirt-0.8.8/libvirt.spec.in libvirt-0.8.8-sasl/libvirt.spec.in
  %endif
  
  %files devel
-diff -ru libvirt-0.8.8/src/qemu/qemu.conf libvirt-0.8.8-sasl/src/qemu/qemu.conf
---- libvirt-0.8.8/src/qemu/qemu.conf	2011-02-16 07:36:53.000000000 +0100
-+++ libvirt-0.8.8-sasl/src/qemu/qemu.conf	2011-04-28 11:45:47.091741165 +0200
+--- libvirt-0.9.13/src/qemu/qemu.conf.orig	2012-05-31 16:23:22.000000000 +0200
++++ libvirt-0.9.13/src/qemu/qemu.conf	2012-07-08 11:37:16.366378718 +0200
 @@ -74,18 +74,18 @@
  # Examples include vinagre, virt-viewer and virt-manager
  # itself. UltraVNC, RealVNC, TightVNC do not support this
@@ -137,7 +98,7 @@ diff -ru libvirt-0.8.8/src/qemu/qemu.conf libvirt-0.8.8-sasl/src/qemu/qemu.conf
 +# It is necessary to configure /etc/sasl/qemu.conf to choose
  # the desired SASL plugin (eg, GSSPI for Kerberos)
  #
- # vnc_sasl = 1
+ #vnc_sasl = 1
  
  
 -# The default SASL configuration file is located in /etc/sasl2/
@@ -146,58 +107,12 @@ diff -ru libvirt-0.8.8/src/qemu/qemu.conf libvirt-0.8.8-sasl/src/qemu/qemu.conf
  # override the configs in this location. Set this parameter to
  # point to the directory, and create a qemu.conf in that location
  #
--# vnc_sasl_dir = "/some/directory/sasl2"
-+# vnc_sasl_dir = "/some/directory/sasl"
+-#vnc_sasl_dir = "/some/directory/sasl2"
++#vnc_sasl_dir = "/some/directory/sasl"
  
  
- 
+ # QEMU implements an extension for providing audio over a VNC connection,
 diff -ru libvirt-0.8.8/src/qemu/test_libvirtd_qemu.aug libvirt-0.8.8-sasl/src/qemu/test_libvirtd_qemu.aug
---- libvirt-0.8.8/src/qemu/test_libvirtd_qemu.aug	2011-01-31 02:30:59.000000000 +0100
-+++ libvirt-0.8.8-sasl/src/qemu/test_libvirtd_qemu.aug	2011-04-28 11:45:47.103741165 +0200
-@@ -67,18 +67,18 @@
- # Examples include vinagre, virt-viewer and virt-manager
- # itself. UltraVNC, RealVNC, TightVNC do not support this
- #
--# It is necessary to configure /etc/sasl2/qemu.conf to choose
-+# It is necessary to configure /etc/sasl/qemu.conf to choose
- # the desired SASL plugin (eg, GSSPI for Kerberos)
- #
- vnc_sasl = 1
- 
- 
--# The default SASL configuration file is located in /etc/sasl2/
-+# The default SASL configuration file is located in /etc/sasl/
- # When running libvirtd unprivileged, it may be desirable to
- # override the configs in this location. Set this parameter to
- # point to the directory, and create a qemu.conf in that location
- #
--vnc_sasl_dir = \"/some/directory/sasl2\"
-+vnc_sasl_dir = \"/some/directory/sasl\"
- 
- security_driver = \"selinux\"
- 
-@@ -181,18 +181,18 @@
- { "#comment" = "Examples include vinagre, virt-viewer and virt-manager" }
- { "#comment" = "itself. UltraVNC, RealVNC, TightVNC do not support this" }
- { "#comment" = "" }
--{ "#comment" = "It is necessary to configure /etc/sasl2/qemu.conf to choose" }
-+{ "#comment" = "It is necessary to configure /etc/sasl/qemu.conf to choose" }
- { "#comment" = "the desired SASL plugin (eg, GSSPI for Kerberos)" }
- { "#comment" = "" }
- { "vnc_sasl" = "1" }
- { "#empty" }
- { "#empty" }
--{ "#comment" = "The default SASL configuration file is located in /etc/sasl2/" }
-+{ "#comment" = "The default SASL configuration file is located in /etc/sasl/" }
- { "#comment" = "When running libvirtd unprivileged, it may be desirable to" }
- { "#comment" = "override the configs in this location. Set this parameter to" }
- { "#comment" = "point to the directory, and create a qemu.conf in that location" }
- { "#comment" = "" }
--{ "vnc_sasl_dir" = "/some/directory/sasl2" }
-+{ "vnc_sasl_dir" = "/some/directory/sasl" }
- { "#empty" }
- { "security_driver" = "selinux" }
- { "#empty" }
 diff -ru libvirt-0.8.8/tests/confdata/libvirtd.conf libvirt-0.8.8-sasl/tests/confdata/libvirtd.conf
 --- libvirt-0.8.8/tests/confdata/libvirtd.conf	2010-05-27 14:03:22.000000000 +0200
 +++ libvirt-0.8.8-sasl/tests/confdata/libvirtd.conf	2011-04-28 11:45:46.878741165 +0200

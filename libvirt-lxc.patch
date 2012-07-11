@@ -1,15 +1,14 @@
-diff -ur libvirt-0.9.12/src/lxc/lxc_controller.c libvirt-0.9.12-lxc/src/lxc/lxc_controller.c
---- libvirt-0.9.12/src/lxc/lxc_controller.c	2012-05-17 11:55:25.719689270 +0200
-+++ libvirt-0.9.12-lxc/src/lxc/lxc_controller.c	2012-05-17 11:54:54.623023703 +0200
-@@ -43,6 +43,7 @@
- #include <dirent.h>
+--- libvirt-0.9.13/src/lxc/lxc_controller.c.orig	2012-06-25 09:06:18.000000000 +0200
++++ libvirt-0.9.13/src/lxc/lxc_controller.c	2012-07-08 11:48:06.949684744 +0200
+@@ -44,6 +44,7 @@
  #include <grp.h>
  #include <sys/stat.h>
+ #include <time.h>
 +#include <sys/time.h>
  
  #if HAVE_CAPNG
  # include <cap-ng.h>
-@@ -559,6 +560,7 @@
+@@ -558,6 +559,7 @@
      return ret;
  }
  
@@ -17,7 +16,7 @@ diff -ur libvirt-0.9.12/src/lxc/lxc_controller.c libvirt-0.9.12-lxc/src/lxc/lxc_
  
  /**
   * lxcSetContainerResources
-@@ -618,10 +620,13 @@
+@@ -617,10 +619,13 @@
                               _("Unable to add task %d to cgroup for domain %s"),
                               getpid(), def->name);
      }
@@ -32,7 +31,7 @@ diff -ur libvirt-0.9.12/src/lxc/lxc_controller.c libvirt-0.9.12-lxc/src/lxc/lxc_
  
      return rc;
  }
-@@ -710,6 +715,63 @@
+@@ -709,6 +714,63 @@
  static bool quit = false;
  static virMutex lock;
  static int sigpipe[2];
@@ -96,7 +95,7 @@ diff -ur libvirt-0.9.12/src/lxc/lxc_controller.c libvirt-0.9.12-lxc/src/lxc/lxc_
  
  static void lxcSignalChildHandler(int signum ATTRIBUTE_UNUSED)
  {
-@@ -1135,6 +1196,18 @@
+@@ -1134,6 +1196,18 @@
          goto cleanup;
      }
  
@@ -115,7 +114,7 @@ diff -ur libvirt-0.9.12/src/lxc/lxc_controller.c libvirt-0.9.12-lxc/src/lxc/lxc_
      VIR_DEBUG("serverFd=%d clientFd=%d",
                serverFd, clientFd);
      virResetLastError();
-@@ -1554,6 +1627,7 @@
+@@ -1539,6 +1613,7 @@
          goto cleanup;
      VIR_FORCE_CLOSE(control[1]);
      VIR_FORCE_CLOSE(containerhandshake[1]);
