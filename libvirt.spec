@@ -13,7 +13,7 @@
 %bcond_without	uml		# UML support
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
-%bcond_with	xenapi		# Xen API (Citrix XenServer) support
+%bcond_without	xenapi		# Xen API (Citrix XenServer) support
 %bcond_without	xen		# Xen support
 
 # qemu available only on x86 and ppc
@@ -62,6 +62,7 @@ BuildRequires:	libselinux-devel >= 2.0.82
 BuildRequires:	libssh2-devel >= 1.0
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
+%{?with_xenapi:BuildRequires:	libxenserver-devel}
 BuildRequires:	libxml2-devel >= 1:2.6.0
 BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel
@@ -375,16 +376,10 @@ Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi (met
 Group:		Applications/System
 Requires:	%{name}-client = %{version}-%{release}
 Requires:	%{name}-daemon = %{version}-%{release}
-Requires:	%{name}-daemon-esx = %{version}-%{release}
-Requires:	%{name}-daemon-hyperv = %{version}-%{release}
 Requires:	%{name}-daemon-libxl = %{version}-%{release}
 Requires:	%{name}-daemon-lxc = %{version}-%{release}
-Requires:	%{name}-daemon-openvz = %{version}-%{release}
-Requires:	%{name}-daemon-phyp = %{version}-%{release}
 Requires:	%{name}-daemon-qemu = %{version}-%{release}
 Requires:	%{name}-daemon-uml = %{version}-%{release}
-Requires:	%{name}-daemon-vbox = %{version}-%{release}
-Requires:	%{name}-daemon-vmware = %{version}-%{release}
 Requires:	%{name}-daemon-xen = %{version}-%{release}
 
 %description utils
