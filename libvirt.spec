@@ -1,4 +1,7 @@
 #
+# TODO:
+#   --with-storage-rbd (ceph)
+#   --with-storage-sheepdog (COLLIE program)
 # Conditional build:
 %bcond_without	esx		# VMware ESX support
 %bcond_without	hyperv		# Hyper-V support
@@ -27,12 +30,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	0.10.1
+Version:	0.10.2
 Release:	0.1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	5f628e53437b0b0e78477904ba3310af
+# Source0-md5:	a5e50860d9da238ba270b528411c4a0d
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -59,7 +62,7 @@ BuildRequires:	libgcrypt-devel
 BuildRequires:	libnl-devel >= 3.2
 BuildRequires:	libpcap-devel >= 1.0.0
 BuildRequires:	libselinux-devel >= 2.0.82
-BuildRequires:	libssh2-devel >= 1.0
+BuildRequires:	libssh2-devel >= 1.3
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 %{?with_xenapi:BuildRequires:	libxenserver-devel}
@@ -91,7 +94,7 @@ Requires:	libcap-ng >= 0.4.0
 Requires:	libnl >= 3.2
 Requires:	libpcap >= 1.0.0
 Requires:	libselinux >= 2.0.82
-Requires:	libssh2 >= 1.0
+Requires:	libssh2 >= 1.3
 Requires:	libxml2 >= 1:2.6.0
 Requires:	openwsman-libs >= 2.2.3
 Obsoletes:	libvirt-daemon-esx
