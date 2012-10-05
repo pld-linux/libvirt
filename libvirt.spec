@@ -1,8 +1,8 @@
 #
 # TODO:
-#   --with-storage-rbd (ceph)
 #   --with-storage-sheepdog (COLLIE program)
 # Conditional build:
+%bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	esx		# VMware ESX support
 %bcond_without	hyperv		# Hyper-V support
 %bcond_without	libxl		# libxenlight support
@@ -455,12 +455,13 @@ mv po/vi_VN.gmo po/vi.gmo
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
 	--with-init-script=redhat \
-	--with-storage-lvm \
+	--with-storage-disk \
 	--with-storage-fs \
 	--with-storage-iscsi \
-	--with-storage-scsi \
+	--with-storage-lvm \
 	--with-storage-mpath \
-	--with-storage-disk \
+	--with-storage-rbd%{!?with_ceph:=no} \
+	--with-storage-scsi \
 	--with-macvtap \
 	--with-virtualport \
 	--with-udev \
