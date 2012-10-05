@@ -48,6 +48,7 @@ BuildRequires:	augeas-devel
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-devel >= 0.6.0
+%{?with_ceph:BuildRequires:	ceph-devel}
 BuildRequires:	curl-devel >= 7.18.0
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	dbus-devel >= 1.0.0
