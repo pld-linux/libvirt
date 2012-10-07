@@ -1,6 +1,4 @@
 #
-# TODO:
-#   --with-storage-sheepdog (COLLIE program)
 # Conditional build:
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	esx		# VMware ESX support
@@ -258,6 +256,7 @@ Suggests:	parted >= 1.8.0
 Suggests:	polkit >= 0.93
 #Suggests:	radvd
 Suggests:	scrub
+#Suggests:	sheepdog
 
 %description daemon
 Server side daemon required to manage the virtualization capabilities
@@ -452,6 +451,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	SCRUB=/usr/bin/scrub \
 	OVSVSCTL=/usr/bin/ovs-vsctl \
 	NUMAD=/usr/bin/numad \
+	COLLIE=/usr/sbin/collie \
 	--disable-silent-rules \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
@@ -463,6 +463,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	--with-storage-mpath \
 	--with-storage-rbd%{!?with_ceph:=no} \
 	--with-storage-scsi \
+	--with-storage-sheepdog \
 	--with-macvtap \
 	--with-virtualport \
 	--with-udev \
