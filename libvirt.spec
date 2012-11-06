@@ -1,4 +1,7 @@
 #
+# TODO: seems that lxc patch is not needed anymore, verify that before removing
+#
+#
 # Conditional build:
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	esx		# VMware ESX support
@@ -29,7 +32,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	0.10.2
-Release:	0.1
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
