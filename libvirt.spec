@@ -58,7 +58,6 @@ BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext-devel >= 0.17
 BuildRequires:	gnutls-devel >= 1.0.25
-BuildRequires:	leveldb-devel
 BuildRequires:	libapparmor-devel
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
