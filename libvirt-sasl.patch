@@ -174,8 +174,8 @@ diff -ru libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.arg
  LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test \
 -SASL_CONF_DIR=/root/.sasl2 QEMU_AUDIO_DRV=none /usr/bin/qemu -S -M pc -m 214 \
 +SASL_CONF_DIR=/root/.sasl QEMU_AUDIO_DRV=none /usr/bin/qemu -S -M pc -m 214 \
- -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -hda \
- /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -usb -vnc \
+ -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
+ /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \
  127.0.0.1:3,sasl -vga cirrus
 diff -ru libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args libvirt-0.8.8-sasl/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
 --- libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2011-02-03 15:05:31.000000000 +0100
@@ -184,8 +184,8 @@ diff -ru libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
  LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test \
 -SASL_CONF_DIR=/root/.sasl2 QEMU_AUDIO_DRV=none /usr/bin/qemu -S -M pc -m 214 \
 +SASL_CONF_DIR=/root/.sasl QEMU_AUDIO_DRV=none /usr/bin/qemu -S -M pc -m 214 \
- -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -hda \
- /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -usb -vnc \
+ -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
+ /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \
  127.0.0.1:3,tls,x509verify=/etc/pki/tls/qemu,sasl
 --- libvirt-0.10.1/tests/qemuxml2argvtest.c.orig	2012-08-22 05:19:44.000000000 +0200
 +++ libvirt-0.10.1/tests/qemuxml2argvtest.c	2012-09-02 14:17:43.448454451 +0200
@@ -195,6 +195,6 @@ diff -ru libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
      driver.vncSASL = 1;
 -    driver.vncSASLdir = strdup("/root/.sasl2");
 +    driver.vncSASLdir = strdup("/root/.sasl");
-     DO_TEST("graphics-vnc-sasl", QEMU_CAPS_VGA);
+     DO_TEST("graphics-vnc-sasl", QEMU_CAPS_VNC, QEMU_CAPS_VGA);
      driver.vncTLS = 1;
      driver.vncTLSx509verify = 1;

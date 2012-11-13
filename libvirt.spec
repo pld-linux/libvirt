@@ -1,12 +1,13 @@
 #
-# TODO: seems that lxc patch is not needed anymore, verify that before removing
+# TODO: - seems that lxc patch is not needed anymore, verify that before removing
+#	- reenable libxl support as soon as libvirt supports XEN 4.2!
 #
 #
 # Conditional build:
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	esx		# VMware ESX support
 %bcond_without	hyperv		# Hyper-V support
-%bcond_without	libxl		# libxenlight support
+%bcond_with	libxl		# libxenlight support
 %bcond_without	lxc		# LXC support
 %bcond_without	netcf		# host interfaces support
 %bcond_without	openvz		# OpenVZ support
@@ -31,12 +32,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	0.10.2
-Release:	2
+Version:	1.0.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	a5e50860d9da238ba270b528411c4a0d
+# Source0-md5:	7c8b006de7338e30866bb56738803b21
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -57,6 +58,7 @@ BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext-devel >= 0.17
 BuildRequires:	gnutls-devel >= 1.0.25
+BuildRequires:	leveldb-devel
 BuildRequires:	libapparmor-devel
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
