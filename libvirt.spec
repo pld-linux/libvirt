@@ -600,6 +600,7 @@ NORESTART=1
 %files lock-sanlock
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/virt-sanlock-cleanup
+%attr(755,root,root) %{_libdir}/libvirt_sanlock_helper
 %dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
 %{_datadir}/augeas/lenses/libvirt_sanlock.aug
