@@ -33,7 +33,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	1.0.0
-Release:	1
+Release:	2
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -384,7 +384,7 @@ Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi (met
 Group:		Applications/System
 Requires:	%{name}-client = %{version}-%{release}
 Requires:	%{name}-daemon = %{version}-%{release}
-Requires:	%{name}-daemon-libxl = %{version}-%{release}
+%{?with_libxl:Requires:	%{name}-daemon-libxl = %{version}-%{release}}
 Requires:	%{name}-daemon-lxc = %{version}-%{release}
 Requires:	%{name}-daemon-qemu = %{version}-%{release}
 Requires:	%{name}-daemon-uml = %{version}-%{release}
