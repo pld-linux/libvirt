@@ -1,13 +1,11 @@
 #
 # TODO: - seems that lxc patch is not needed anymore, verify that before removing
-#	- reenable libxl support as soon as libvirt supports XEN 4.2!
-#
 #
 # Conditional build:
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	esx		# VMware ESX support
 %bcond_without	hyperv		# Hyper-V support
-%bcond_with	libxl		# libxenlight support
+%bcond_without	libxl		# libxenlight support
 %bcond_without	lxc		# LXC support
 %bcond_without	netcf		# host interfaces support
 %bcond_without	openvz		# OpenVZ support
@@ -33,7 +31,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	1.0.0
-Release:	2
+Release:	3
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -44,6 +42,7 @@ Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
 Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-xend.patch
+Patch4:		%{name}-xen-4.2.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -87,7 +86,7 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
 BuildRequires:	udev-devel >= 1:145
-%{?with_xen:BuildRequires:	xen-devel >= 4.1.2}
+%{?with_xen:BuildRequires:	xen-devel >= 4.2}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
 BuildRequires:	yajl-devel
@@ -409,6 +408,7 @@ biblioteki libvirt.
 #patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
