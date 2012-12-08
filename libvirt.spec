@@ -31,7 +31,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	1.0.0
-Release:	4
+Release:	5	
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -57,7 +57,9 @@ BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext-devel >= 0.17
 BuildRequires:	gnutls-devel >= 1.0.25
+BuildRequires:  leveldb-devel
 BuildRequires:	libapparmor-devel
+BuildRequires:  libatomic_ops
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
 BuildRequires:	libgcrypt-devel
@@ -646,6 +648,7 @@ NORESTART=1
 %dir /var/run/libvirt/network
 %{systemdtmpfilesdir}/%{name}.conf
 %dir %{_libdir}/libvirt/connection-driver
+%{_datadir}/libvirt/cpu_map.xml
 %{?with_netcf:%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so}
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nodedev.so
@@ -719,7 +722,6 @@ NORESTART=1
 %{_mandir}/man1/virt-host-validate.1*
 %{_mandir}/man1/virt-xml-validate.1*
 %{_mandir}/man1/virt-pki-validate.1*
-%{_datadir}/libvirt/cpu_map.xml
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
 %{_datadir}/libvirt/schemas/capability.rng
