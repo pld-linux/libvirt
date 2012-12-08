@@ -57,9 +57,7 @@ BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext-devel >= 0.17
 BuildRequires:	gnutls-devel >= 1.0.25
-BuildRequires:  leveldb-devel
 BuildRequires:	libapparmor-devel
-BuildRequires:  libatomic_ops
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
 BuildRequires:	libgcrypt-devel
@@ -73,7 +71,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.0
 BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel
-%{?with_netcf:BuildRequires:	netcf-devel >= 0.1.4}
+%{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
 BuildRequires:	numactl-devel
 BuildRequires:	openldap-devel
 BuildRequires:	openwsman-devel >= 2.2.3
@@ -231,7 +229,7 @@ Requires:	avahi-libs >= 0.6.0
 Requires:	iproute2
 Requires:	libblkid >= 2.17
 Provides:	libvirt(hypervisor)
-%{?with_netcf:Requires:	netcf >= 0.1.4}
+%{?with_netcf:Requires:	netcf >= 0.2.0}
 Requires:	parted-libs >= 1.8.0
 # Needed for probing the power management features of the host.
 Requires:	pm-utils
