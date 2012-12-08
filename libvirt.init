@@ -33,7 +33,7 @@ start() {
         if [ ! -f /var/lock/subsys/libvirtd ]; then
                 umask 077
                 msg_starting libvirtd
-                daemon libvirtd libvirtd --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
+                daemon libvirtd --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
                 RETVAL=$?
                 [ $RETVAL -eq 0 ] && touch /var/lock/subsys/libvirtd
         else
