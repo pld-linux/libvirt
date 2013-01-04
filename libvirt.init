@@ -13,9 +13,8 @@ LIBVIRTD_CONFIG=
 LIBVIRTD_ARGS=
 
 LIBVIRTD_CONFIG_ARGS=
-if [ -n "$LIBVIRTD_CONFIG" ]
-then
-    LIBVIRTD_CONFIG_ARGS="--config $LIBVIRTD_CONFIG"
+if [ -n "$LIBVIRTD_CONFIG" ]; then
+	LIBVIRTD_CONFIG_ARGS="--config $LIBVIRTD_CONFIG"
 fi
 
 # Source function library.
@@ -25,30 +24,30 @@ sconf="/etc/libvirt/libvirtd.conf"
 
 # Source config
 if [ -f /etc/sysconfig/libvirtd ] ; then
-        . /etc/sysconfig/libvirtd
+	. /etc/sysconfig/libvirtd
 fi
 
 
 start() {
-        if [ ! -f /var/lock/subsys/libvirtd ]; then
-                umask 077
-                msg_starting libvirtd
-                daemon libvirtd --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
-                RETVAL=$?
-                [ $RETVAL -eq 0 ] && touch /var/lock/subsys/libvirtd
-        else
-                msg_already_running libvirtd
-        fi
+	if [ ! -f /var/lock/subsys/libvirtd ]; then
+		umask 077
+		msg_starting libvirtd
+		daemon libvirtd --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/libvirtd
+	else
+		msg_already_running libvirtd
+	fi
 }
 
 stop() {
-        if [ -f /var/lock/subsys/libvirtd ]; then
-                msg_stopping libvirtd
-                killproc libvirtd
-                rm -f /var/lock/subsys/libvirtd
-        else
-                msg_not_running libvirtd
-        fi
+	if [ -f /var/lock/subsys/libvirtd ]; then
+		msg_stopping libvirtd
+		killproc libvirtd
+		rm -f /var/lock/subsys/libvirtd
+	else
+		msg_not_running libvirtd
+	fi
 }
 
 reload() {
@@ -64,39 +63,39 @@ reload() {
 }
 
 condrestart() {
-        if [ -f /var/lock/subsys/libvirtd ]; then
-                stop
-                start
-        else
-                msg_not_running libvirtd
-                RETVAL=$1
-        fi
+	if [ -f /var/lock/subsys/libvirtd ]; then
+		stop
+		start
+	else
+		msg_not_running libvirtd
+		RETVAL=$1
+	fi
 }
 
 RETVAL=0
 case "$1" in
   start)
-        start
-        ;;
+	start
+	;;
   stop)
-        stop
-        ;;
+	stop
+	;;
   restart)
-        stop
-        start
-        ;;
+	stop
+	start
+	;;
   try-restart)
-        condrestart 0
-        ;;
+	condrestart 0
+	;;
   reload|force-reload)
 	reload
 	;;
   status)
-        status libvirtd
-        ;;
+	status libvirtd
+	;;
   *)
-        msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|status}"
-        exit 3
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|status}"
+	exit 3
 esac
 
 exit $RETVAL
