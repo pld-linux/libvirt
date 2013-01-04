@@ -31,7 +31,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	1.0.0
-Release:	5	
+Release:	5
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -228,7 +228,6 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	avahi-libs >= 0.6.0
 Requires:	iproute2
 Requires:	libblkid >= 2.17
-Provides:	libvirt(hypervisor)
 %{?with_netcf:Requires:	netcf >= 0.2.0}
 Requires:	parted-libs >= 1.8.0
 # Needed for probing the power management features of the host.
@@ -238,6 +237,7 @@ Requires:	udev-libs >= 1:145
 Requires:	util-linux
 Requires:	virtual(module-tools)
 Requires:	xorg-lib-libpciaccess >= 0.10.0
+Provides:	libvirt(hypervisor)
 Requires(post):	systemd-units
 Requires(preun):	systemd-units
 Requires(postun):	systemd-units
@@ -309,10 +309,10 @@ Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości 
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	/usr/bin/qemu-img
-Requires:	qemu
 Requires:	bzip2
 Requires:	gzip
 Requires:	lzop
+Requires:	qemu
 Requires:	xz
 Provides:	libvirt(hypervisor)
 
