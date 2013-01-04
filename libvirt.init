@@ -27,27 +27,28 @@ if [ -f /etc/sysconfig/libvirtd ] ; then
 	. /etc/sysconfig/libvirtd
 fi
 
-
 start() {
 	if [ ! -f /var/lock/subsys/libvirtd ]; then
-		umask 077
-		msg_starting libvirtd
-		daemon libvirtd --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
-		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/libvirtd
-	else
-		msg_already_running libvirtd
+		msg_already_running "libvirtd"
+		return
 	fi
+
+	umask 077
+	msg_starting libvirtd
+	daemon libvirtd --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/libvirtd
 }
 
 stop() {
-	if [ -f /var/lock/subsys/libvirtd ]; then
-		msg_stopping libvirtd
-		killproc libvirtd
-		rm -f /var/lock/subsys/libvirtd
-	else
-		msg_not_running libvirtd
+	if [ ! -f /var/lock/subsys/libvirtd ]; then
+		msg_not_running "libvirtd"
+		return
 	fi
+
+	msg_stopping "libvirtd"
+	killproc libvirtd
+	rm -f /var/lock/subsys/libvirtd
 }
 
 reload() {
@@ -63,13 +64,14 @@ reload() {
 }
 
 condrestart() {
-	if [ -f /var/lock/subsys/libvirtd ]; then
-		stop
-		start
-	else
+	if [ ! -f /var/lock/subsys/libvirtd ]; then
 		msg_not_running libvirtd
 		RETVAL=$1
+		return
 	fi
+
+	stop
+	start
 }
 
 RETVAL=0
