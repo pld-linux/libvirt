@@ -47,21 +47,16 @@ index 7dd8e03..0ffeaab 100644
          }
  
          virCommandAddArg(cmd, "-vnc");
-diff --git a/src/qemu/qemu_conf.c b/src/qemu/qemu_conf.c
-index e1502dc..806432d 100644
---- a/src/qemu/qemu_conf.c
-+++ b/src/qemu/qemu_conf.c
-@@ -204,6 +204,10 @@ int qemudLoadDriverConfig(struct qemud_driver *driver,
-         }
-     }
+--- libvirt-1.0.1/src/qemu/qemu_conf.c.orig	2013-01-08 20:41:45.877258478 +0100
++++ libvirt-1.0.1/src/qemu/qemu_conf.c	2013-01-08 21:27:27.817201325 +0100
+@@ -170,6 +170,7 @@
+     GET_VALUE_LONG("vnc_sasl", driver->vncSASL);
+     GET_VALUE_STR("vnc_sasl_dir", driver->vncSASLdir);
+     GET_VALUE_LONG("vnc_allow_host_audio", driver->vncAllowHostAudio);
++    GET_VALUE_LONG("vnc_acl", driver->vncACL);
  
-+    p = virConfGetValue (conf, "vnc_acl");
-+    CHECK_TYPE ("vnc_acl", VIR_CONF_LONG);
-+    if (p) driver->vncACL = p->l;
-+
-     p = virConfGetValue (conf, "spice_tls");
-     CHECK_TYPE ("spice_tls", VIR_CONF_LONG);
-     if (p) driver->spiceTLS = p->l;
+     p = virConfGetValue(conf, "security_driver");
+     if (p && p->type == VIR_CONF_LIST) {
 diff --git a/src/qemu/qemu_conf.h b/src/qemu/qemu_conf.h
 index 83ddedd..3e7506d 100644
 --- a/src/qemu/qemu_conf.h

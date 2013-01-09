@@ -30,19 +30,18 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.0.0
-Release:	5
+Version:	1.0.1
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	7c8b006de7338e30866bb56738803b21
+# Source0-md5:	86a8c0acabb01e11ac84fe00624dc54e
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
 Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-xend.patch
-Patch4:		%{name}-xen-4.2.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -60,6 +59,7 @@ BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libapparmor-devel
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
+BuildRequires:	libfuse-devel >= 2.8.6
 BuildRequires:	libgcrypt-devel
 BuildRequires:	libnl-devel >= 3.2
 BuildRequires:	libpcap-devel >= 1.0.0
@@ -153,7 +153,7 @@ Requires:	libselinux-devel >= 2.0.82
 Requires:	libxml2-devel >= 1:2.6.0
 Requires:	numactl-devel
 Requires:	openwsman-devel >= 2.2.3
-%{?with_xen:Requires: xen-devel}
+%{?with_xen:Requires: xen-devel >= 4.2}
 Requires:	yajl-devel
 
 %description devel
@@ -212,7 +212,7 @@ Ten pakiet zawiera wiązania Pythona do biblioteki libvirt.
 Summary:	Sanlock lock manager plugin for libvirt
 Summary(pl.UTF-8):	Zarządca blokad sanlock dla biblioteki libvirt
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-daemon = %{version}-%{release}
 
 %description lock-sanlock
 Sanlock lock manager plugin for libvirt.
@@ -293,6 +293,7 @@ Summary:	Server side driver required to run LXC guests
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości LXC
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
+Requires:	libfuse >= 2.8.6
 Provides:	libvirt(hypervisor)
 
 %description daemon-lxc
@@ -408,7 +409,6 @@ biblioteki libvirt.
 #patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
@@ -459,7 +459,9 @@ mv po/vi_VN.gmo po/vi.gmo
 	--disable-silent-rules \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
-	--with-init-script=redhat \
+	--with-init-script=systemd+redhat \
+	--with-packager="PLD-Linux" \
+	--with-packager-version="%{name}-%{version}-%{release}.%{_target_cpu}" \
 	--with-storage-disk \
 	--with-storage-fs \
 	--with-storage-iscsi \
@@ -502,8 +504,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	%{__with_without vmware} \
 	%{__with_without xen} \
 	%{__with_without xenapi} \
-	--x-libraries=%{_libdir} \
-	--with-init-script=systemd
+	--x-libraries=%{_libdir}
 
 %{__make} \
 	AWK=gawk
@@ -600,7 +601,6 @@ NORESTART=1
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/virt-sanlock-cleanup
 %attr(755,root,root) %{_libdir}/libvirt_sanlock_helper
-%dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
 %{_datadir}/augeas/lenses/libvirt_sanlock.aug
 %{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
@@ -617,21 +617,29 @@ NORESTART=1
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks/autostart
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirtd.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-lockd.conf
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/default.xml
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/autostart/default.xml
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/nwfilter/*.xml
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl/libvirt.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlockd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
+%attr(754,root,root) /etc/rc.d/init.d/virtlockd
 %{systemdunitdir}/libvirtd.service
+%{systemdunitdir}/virtlockd.service
+%{systemdunitdir}/virtlockd.socket
 %config(noreplace) %verify(not md5 mtime size) /etc/sysctl.d/libvirtd
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %attr(755,root,root) %{_libdir}/libvirt_iohelper
 %attr(755,root,root) %{_libdir}/libvirt_parthelper
 %attr(755,root,root) %{_libdir}/virt-aa-helper
 %attr(755,root,root) %{_sbindir}/libvirtd
+%attr(755,root,root) %{_sbindir}/virtlockd
 %{_datadir}/augeas/lenses/libvirtd.aug
+%{_datadir}/augeas/lenses/libvirt_lockd.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd.aug
+%{_datadir}/augeas/lenses/tests/test_libvirt_lockd.aug
 %{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
 %{_mandir}/man8/libvirtd.8*
 %dir /var/lib/libvirt
@@ -653,6 +661,8 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
+%dir %{_libdir}/libvirt/lock-driver
+%attr(755,root,root) %{_libdir}/libvirt/lock-driver/lockd.so
 
 %if %{with libxl}
 %files daemon-libxl
@@ -716,6 +726,7 @@ NORESTART=1
 %attr(755,root,root) %{_bindir}/virt-host-validate
 %attr(755,root,root) %{_bindir}/virt-xml-validate
 %attr(755,root,root) %{_bindir}/virt-pki-validate
+%attr(754,root,root) %{_libexecdir}/libvirt-guests.sh
 %{_mandir}/man1/virsh.1*
 %{_mandir}/man1/virt-host-validate.1*
 %{_mandir}/man1/virt-xml-validate.1*
