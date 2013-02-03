@@ -30,12 +30,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.0.1
+Version:	1.0.2
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	86a8c0acabb01e11ac84fe00624dc54e
+# Source0-md5:	7e268ed702c4331d393e5b43449cae13
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -567,17 +567,23 @@ NORESTART=1
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt.so.0
+%if %{with lxc}
+%attr(755,root,root) %{_libdir}/libvirt-lxc.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvirt-lxc.so.0
+%endif
 %if %{with qemu}
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
 %endif
+
 %dir %{_libdir}/libvirt
 %dir %{_datadir}/libvirt
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt.so
-%attr(755,root,root) %{_libdir}/libvirt-qemu.so
+%{?with_lxc:%attr(755,root,root) %{_libdir}/libvirt-lxc.so}
+%{?with_qemu:%attr(755,root,root) %{_libdir}/libvirt-qemu.so}
 %{_datadir}/%{name}/api
 %{_gtkdocdir}/%{name}
 %{_includedir}/%{name}
@@ -586,15 +592,22 @@ NORESTART=1
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libvirt.a
-%{_libdir}/libvirt-qemu.a
+%{?with_lxc:%{_libdir}/libvirt-lxc.a}
+%{?with_qemu:%{_libdir}/libvirt-qemu.a}
 
 %files -n python-%{name}
 %defattr(644,root,root,755)
 %doc %{_docdir}/%{name}-python-%{version}
 %attr(755,root,root) %{py_sitedir}/libvirtmod.so
-%attr(755,root,root) %{py_sitedir}/libvirtmod_qemu.so
 %{py_sitedir}/libvirt.py[co]
+%if %{with lxc}
+%attr(755,root,root) %{py_sitedir}/libvirtmod_lxc.so
+%{py_sitedir}/libvirt_lxc.py[co]
+%endif
+%if %{with qemu}
+%attr(755,root,root) %{py_sitedir}/libvirtmod_qemu.so
 %{py_sitedir}/libvirt_qemu.py[co]
+%endif
 
 %if %{with sanlock}
 %files lock-sanlock
@@ -629,7 +642,7 @@ NORESTART=1
 %{systemdunitdir}/libvirtd.service
 %{systemdunitdir}/virtlockd.service
 %{systemdunitdir}/virtlockd.socket
-%config(noreplace) %verify(not md5 mtime size) /etc/sysctl.d/libvirtd
+%config(noreplace) %verify(not md5 mtime size) /usr/lib/sysctl.d/libvirtd.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %attr(755,root,root) %{_libdir}/libvirt_iohelper
 %attr(755,root,root) %{_libdir}/libvirt_parthelper
