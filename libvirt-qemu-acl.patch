@@ -41,32 +41,29 @@ index 7dd8e03..0ffeaab 100644
 -                /* TODO: Support ACLs later */
              }
 +
-+	    if (driver->vncACL) 
++	    if (cfg->vncACL) 
 +	        virBufferAddLit(&opt, ",acl");
 +	    
          }
  
          virCommandAddArg(cmd, "-vnc");
---- libvirt-1.0.1/src/qemu/qemu_conf.c.orig	2013-01-08 20:41:45.877258478 +0100
-+++ libvirt-1.0.1/src/qemu/qemu_conf.c	2013-01-08 21:27:27.817201325 +0100
-@@ -170,6 +170,7 @@
-     GET_VALUE_LONG("vnc_sasl", driver->vncSASL);
-     GET_VALUE_STR("vnc_sasl_dir", driver->vncSASLdir);
-     GET_VALUE_LONG("vnc_allow_host_audio", driver->vncAllowHostAudio);
-+    GET_VALUE_LONG("vnc_acl", driver->vncACL);
+--- libvirt-1.0.3/src/qemu/qemu_conf.c.orig	2013-03-09 13:10:30.059751685 +0100
++++ libvirt-1.0.3/src/qemu/qemu_conf.c	2013-03-09 13:53:45.779640951 +0100
+@@ -365,6 +365,7 @@
+     GET_VALUE_BOOL("vnc_sasl", cfg->vncSASL);
+     GET_VALUE_STR("vnc_sasl_dir", cfg->vncSASLdir);
+     GET_VALUE_BOOL("vnc_allow_host_audio", cfg->vncAllowHostAudio);
++    GET_VALUE_LONG("vnc_acl", cfg->vncACL);
  
      p = virConfGetValue(conf, "security_driver");
      if (p && p->type == VIR_CONF_LIST) {
-diff --git a/src/qemu/qemu_conf.h b/src/qemu/qemu_conf.h
-index 83ddedd..3e7506d 100644
---- a/src/qemu/qemu_conf.h
-+++ b/src/qemu/qemu_conf.h
-@@ -85,6 +85,7 @@ struct qemud_driver {
-     unsigned int vncTLS : 1;
-     unsigned int vncTLSx509verify : 1;
-     unsigned int vncSASL : 1;
-+    unsigned int vncACL : 1;
+--- libvirt-1.0.3/src/qemu/qemu_conf.h.orig	2013-03-09 13:10:30.059751685 +0100
++++ libvirt-1.0.3/src/qemu/qemu_conf.h	2013-03-09 13:54:17.296308093 +0100
+@@ -102,6 +102,7 @@
+     bool vncTLS;
+     bool vncTLSx509verify;
+     bool vncSASL;
++    bool vncACL;
      char *vncTLSx509certdir;
      char *vncListen;
      char *vncPassword;
-

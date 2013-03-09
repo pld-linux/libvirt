@@ -155,18 +155,6 @@ diff -ru libvirt-0.8.8/tests/confdata/libvirtd.out libvirt-0.8.8-sasl/tests/conf
  auth_tcp = "sasl"
  # Change the authentication scheme for TLS sockets.
  #
-diff -ru libvirt-0.8.8/tests/qemuargv2xmltest.c libvirt-0.8.8-sasl/tests/qemuargv2xmltest.c
---- libvirt-0.8.8/tests/qemuargv2xmltest.c	2011-01-24 03:59:21.000000000 +0100
-+++ libvirt-0.8.8-sasl/tests/qemuargv2xmltest.c	2011-04-28 11:45:46.964741165 +0200
-@@ -181,7 +181,7 @@
-     DO_TEST("graphics-vnc-socket");
- 
-     driver.vncSASL = 1;
--    driver.vncSASLdir = strdup("/root/.sasl2");
-+    driver.vncSASLdir = strdup("/root/.sasl");
-     DO_TEST("graphics-vnc-sasl");
-     driver.vncTLS = 1;
-     driver.vncTLSx509verify = 1;
 diff -ru libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args libvirt-0.8.8-sasl/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args
 --- libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2011-02-03 15:05:31.000000000 +0100
 +++ libvirt-0.8.8-sasl/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2011-04-28 11:45:46.860741165 +0200
@@ -187,14 +175,14 @@ diff -ru libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
  -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
  /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \
  127.0.0.1:3,tls,x509verify=/etc/pki/tls/qemu,sasl
---- libvirt-0.10.1/tests/qemuxml2argvtest.c.orig	2012-08-22 05:19:44.000000000 +0200
-+++ libvirt-0.10.1/tests/qemuxml2argvtest.c	2012-09-02 14:17:43.448454451 +0200
-@@ -507,7 +507,7 @@
-     DO_TEST("graphics-vnc-socket", NONE);
+--- libvirt-1.0.3/tests/qemuxml2argvtest.c.orig	2013-03-09 13:09:01.983088716 +0100
++++ libvirt-1.0.3/tests/qemuxml2argvtest.c	2013-03-09 13:09:34.166420510 +0100
+@@ -563,7 +563,7 @@
  
-     driver.vncSASL = 1;
--    driver.vncSASLdir = strdup("/root/.sasl2");
-+    driver.vncSASLdir = strdup("/root/.sasl");
+     driver.config->vncSASL = 1;
+     VIR_FREE(driver.config->vncSASLdir);
+-    driver.config->vncSASLdir = strdup("/root/.sasl2");
++    driver.config->vncSASLdir = strdup("/root/.sasl");
      DO_TEST("graphics-vnc-sasl", QEMU_CAPS_VNC, QEMU_CAPS_VGA);
-     driver.vncTLS = 1;
-     driver.vncTLSx509verify = 1;
+     driver.config->vncTLS = 1;
+     driver.config->vncTLSx509verify = 1;
