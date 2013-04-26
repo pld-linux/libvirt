@@ -1,5 +1,6 @@
 #
 # TODO: - seems that lxc patch is not needed anymore, verify that before removing
+# - pldize virtlockd.init
 #
 # Conditional build:
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
@@ -42,6 +43,7 @@ Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
 Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-xend.patch
+Patch4:		virtlockd.init.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -409,6 +411,7 @@ biblioteki libvirt.
 #patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}
