@@ -28,7 +28,7 @@ if [ -f /etc/sysconfig/libvirtd ] ; then
 fi
 
 start() {
-	if [ ! -f /var/lock/subsys/libvirtd ]; then
+	if [ -f /var/lock/subsys/libvirtd ]; then
 		msg_already_running "libvirtd"
 		return
 	fi
