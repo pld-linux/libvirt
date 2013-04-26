@@ -20,8 +20,6 @@ fi
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-sconf="/etc/libvirt/libvirtd.conf"
-
 # Source config
 if [ -f /etc/sysconfig/libvirtd ] ; then
 	. /etc/sysconfig/libvirtd
@@ -34,7 +32,7 @@ start() {
 	fi
 
 	umask 077
-	msg_starting libvirtd
+	msg_starting "libvirtd"
 	daemon libvirtd --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/libvirtd
@@ -53,7 +51,7 @@ stop() {
 
 reload() {
 	if [ ! -f /var/lock/subsys/libvirtd ]; then
-		msg_not_running libvirtd
+		msg_not_running "libvirtd"
 		RETVAL=7
 		return
 	fi
@@ -65,7 +63,7 @@ reload() {
 
 condrestart() {
 	if [ ! -f /var/lock/subsys/libvirtd ]; then
-		msg_not_running libvirtd
+		msg_not_running "libvirtd"
 		RETVAL=$1
 		return
 	fi
