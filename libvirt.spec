@@ -19,6 +19,7 @@
 %bcond_without	vmware		# VMware Workstation/Player support
 %bcond_without	xenapi		# Xen API (Citrix XenServer) support
 %bcond_without	xen		# Xen support
+%bcond_without	static_libs	# static libraries build
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -31,12 +32,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.0.4
+Version:	1.0.6
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	97166bc42d7cacb037923907abe656ab
+# Source0-md5:	a4a09a981f902c4d6aa5138c753d64fd
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -460,6 +461,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	NUMAD=/usr/bin/numad \
 	COLLIE=/usr/sbin/collie \
 	--disable-silent-rules \
+	%{?with_static_libs:--enable-static} \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
 	--with-init-script=systemd+redhat \
@@ -530,10 +532,12 @@ install %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %{__rm} $RPM_BUILD_ROOT%{py_sitedir}/*.la
 
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.{a,la}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.la \
+	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.a}
 
 %if %{with sanlock}
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.{a,la}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.la \
+	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.a}
 %endif
 
 %find_lang %{name}
@@ -581,6 +585,7 @@ NORESTART=1
 
 %dir %{_libdir}/libvirt
 %dir %{_datadir}/libvirt
+%{_datadir}/libvirt/libvirtLogo.png
 
 %files devel
 %defattr(644,root,root,755)
@@ -677,6 +682,7 @@ NORESTART=1
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/lockd.so
 

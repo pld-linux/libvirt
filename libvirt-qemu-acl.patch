@@ -30,23 +30,19 @@ index ba41f80..7ab5eee 100644
  # The default SASL configuration file is located in /etc/sasl/
  # When running libvirtd unprivileged, it may be desirable to
  # override the configs in this location. Set this parameter to
-diff --git a/src/qemu/qemu_command.c b/src/qemu/qemu_command.c
-index 7dd8e03..0ffeaab 100644
---- a/src/qemu/qemu_command.c
-+++ b/src/qemu/qemu_command.c
-@@ -3542,8 +3542,11 @@ qemuBuildCommandLine(virConnectPtr conn,
-                     virCommandAddEnvPair(cmd, "SASL_CONF_DIR",
-                                          driver->vncSASLdir);
+--- libvirt-1.0.6/src/qemu/qemu_command.c.orig	2013-06-16 15:45:37.115181922 +0200
++++ libvirt-1.0.6/src/qemu/qemu_command.c	2013-06-16 15:47:49.335179175 +0200
+@@ -6178,6 +6178,10 @@
  
--                /* TODO: Support ACLs later */
-             }
-+
-+	    if (cfg->vncACL) 
-+	        virBufferAddLit(&opt, ",acl");
-+	    
+             /* TODO: Support ACLs later */
          }
++
++        if (cfg->vncACL) 
++           virBufferAddLit(&opt, ",acl");
++
+     }
  
-         virCommandAddArg(cmd, "-vnc");
+     virCommandAddArg(cmd, "-vnc");
 --- libvirt-1.0.3/src/qemu/qemu_conf.c.orig	2013-03-09 13:10:30.059751685 +0100
 +++ libvirt-1.0.3/src/qemu/qemu_conf.c	2013-03-09 13:53:45.779640951 +0100
 @@ -365,6 +365,7 @@

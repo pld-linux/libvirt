@@ -175,14 +175,14 @@ diff -ru libvirt-0.8.8/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
  -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
  /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \
  127.0.0.1:3,tls,x509verify=/etc/pki/tls/qemu,sasl
---- libvirt-1.0.3/tests/qemuxml2argvtest.c.orig	2013-03-09 13:09:01.983088716 +0100
-+++ libvirt-1.0.3/tests/qemuxml2argvtest.c	2013-03-09 13:09:34.166420510 +0100
-@@ -563,7 +563,7 @@
+--- libvirt-1.0.6/tests/qemuxml2argvtest.c.orig	2013-06-16 15:44:25.855183409 +0200
++++ libvirt-1.0.6/tests/qemuxml2argvtest.c	2013-06-16 15:45:12.908515760 +0200
+@@ -614,7 +614,7 @@
  
      driver.config->vncSASL = 1;
      VIR_FREE(driver.config->vncSASLdir);
--    driver.config->vncSASLdir = strdup("/root/.sasl2");
-+    driver.config->vncSASLdir = strdup("/root/.sasl");
+-    ignore_value(VIR_STRDUP(driver.config->vncSASLdir, "/root/.sasl2"));
++    ignore_value(VIR_STRDUP(driver.config->vncSASLdir, "/root/.sasl"));
      DO_TEST("graphics-vnc-sasl", QEMU_CAPS_VNC, QEMU_CAPS_VGA);
      driver.config->vncTLS = 1;
      driver.config->vncTLSx509verify = 1;
