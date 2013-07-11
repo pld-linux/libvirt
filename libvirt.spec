@@ -14,6 +14,7 @@
 %bcond_without	polkit		# PolicyKit support
 %bcond_without	qemu		# Qemu support
 %bcond_without	sanlock		# sanlock storage lock manager
+%bcond_without	systemtap	# systemtap/dtrace probes
 %bcond_without	uml		# UML support
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
@@ -32,12 +33,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.0.6
-Release:	2
+Version:	1.1.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	a4a09a981f902c4d6aa5138c753d64fd
+# Source0-md5:	f980a84719033e9efca01048da505dfb
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -88,6 +89,7 @@ BuildRequires:	readline-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
+%{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 BuildRequires:	udev-devel >= 1:145
 %{?with_xen:BuildRequires:	xen-devel >= 4.2}
 # For disk driver
@@ -405,6 +407,19 @@ obecnych wersji Linuksa.
 To jest metapakiet zbierający wszystkie narzędzia przeznaczone dla
 biblioteki libvirt.
 
+%package -n systemtap-libvirt
+Summary:	systemtap/dtrace probes for libvirt
+Summary(pl.UTF-8):	Sondy systemtap/dtrace dla libvirt
+Group:		Development/Tools
+Requires:	%{name} = %{version}-%{release}
+Requires:	systemtap-client
+
+%description -n systemtap-libvirt
+systemtap/dtrace probes for libvirt.
+
+%description -n systemtap-libvirt -l pl.UTF-8
+Sondy systemtap/dtrace dla libvirt.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -467,6 +482,8 @@ mv po/vi_VN.gmo po/vi.gmo
 	--with-init-script=systemd+redhat \
 	--with-packager="PLD-Linux" \
 	--with-packager-version="%{name}-%{version}-%{release}.%{_target_cpu}" \
+	--with-qemu-user=qemu \
+	--with-qemu-group=qemu \
 	--with-storage-disk \
 	--with-storage-fs \
 	--with-storage-iscsi \
@@ -475,40 +492,37 @@ mv po/vi_VN.gmo po/vi.gmo
 	--with-storage-rbd%{!?with_ceph:=no} \
 	--with-storage-scsi \
 	--with-storage-sheepdog \
-	--with-macvtap \
-	--with-virtualport \
-	--with-udev \
-	--with-libssh2 \
-	--with-avahi \
-	--with-audit \
-	--with-libblkid \
-	--with-macvtap \
-	--with-virtualport \
-	--with-numad \
-	--with-numactl \
-	--with-sasl \
-	--with-yajl \
-	--with-selinux \
 	--with-apparmor \
-	--with-qemu-user=qemu \
-	--with-qemu-group=qemu \
-	--without-hal \
-	--with-driver-modules \
-	%{__with_without polkit} \
+	--with-audit \
+	--with-avahi \
+	%{__with_without systemtap dtrace} \
 	%{__with_without esx} \
+	--with-driver-modules \
+	--without-hal \
 	%{__with_without hyperv} \
+	--with-libblkid \
+	--with-libssh2 \
 	%{__with_without libxl} \
 	%{__with_without lxc} \
+	--with-macvtap \
 	%{__with_without netcf} \
+	--with-numactl \
+	--with-numad \
 	%{__with_without openvz} \
 	%{__with_without phyp} \
+	%{__with_without polkit} \
 	%{__with_without qemu} \
 	%{__with_without sanlock} \
+	--with-sasl \
+	--with-selinux \
+	--with-udev \
 	%{__with_without uml} \
 	%{__with_without vbox vbox %{_libdir}/VirtualBox} \
+	--with-virtualport \
 	%{__with_without vmware} \
 	%{__with_without xen} \
 	%{__with_without xenapi} \
+	--with-yajl \
 	--x-libraries=%{_libdir}
 
 %{__make} \
@@ -661,7 +675,10 @@ NORESTART=1
 %{_datadir}/augeas/lenses/libvirt_lockd.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd.aug
 %{_datadir}/augeas/lenses/tests/test_libvirt_lockd.aug
-%{?with_polkit:%{_datadir}/polkit-1/actions/org.libvirt.unix.policy}
+%if %{with polkit}
+%{_datadir}/polkit-1/actions/org.libvirt.api.policy
+%{_datadir}/polkit-1/actions/org.libvirt.unix.policy
+%endif
 %{_mandir}/man8/libvirtd.8*
 %dir /var/lib/libvirt
 %dir /var/lib/libvirt/dnsmasq
@@ -766,8 +783,17 @@ NORESTART=1
 %{_datadir}/libvirt/schemas/nwfilter.rng
 %{_datadir}/libvirt/schemas/secret.rng
 %{_datadir}/libvirt/schemas/storageencryption.rng
+%{_datadir}/libvirt/schemas/storagefilefeatures.rng
 %{_datadir}/libvirt/schemas/storagepool.rng
 %{_datadir}/libvirt/schemas/storagevol.rng
 
 %files utils
 %defattr(644,root,root,755)
+
+%if %{with systemtap}
+%files -n systemtap-libvirt
+%defattr(644,root,root,755)
+%{_datadir}/systemtap/tapset/libvirt_functions.stp
+%{_datadir}/systemtap/tapset/libvirt_probes.stp
+%{_datadir}/systemtap/tapset/libvirt_qemu_probes.stp
+%endif
