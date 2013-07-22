@@ -34,7 +34,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	1.1.0
-Release:	1
+Release:	2
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -46,6 +46,7 @@ Patch1:		%{name}-lxc.patch
 Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-xend.patch
 Patch4:		virtlockd.init.patch
+Patch5:		%{name}-udevadm-settle.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -428,6 +429,7 @@ Sondy systemtap/dtrace dla libvirt.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}

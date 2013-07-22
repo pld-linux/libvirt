@@ -1,0 +1,12 @@
+diff -urP libvirt-1.1.0.orig/src/util/virutil.c libvirt-1.1.0/src/util/virutil.c
+--- libvirt-1.1.0.orig/src/util/virutil.c	2013-07-01 03:08:36.000000000 +0000
++++ libvirt-1.1.0/src/util/virutil.c	2013-07-22 12:58:14.053179206 +0000
+@@ -1419,7 +1419,7 @@
+ void virFileWaitForDevices(void)
+ {
+ # ifdef UDEVADM
+-    const char *const settleprog[] = { UDEVADM, "settle", NULL };
++    const char *const settleprog[] = { UDEVADM, "settle", "--timeout=10" , NULL };
+ # else
+     const char *const settleprog[] = { UDEVSETTLE, NULL };
+ # endif
