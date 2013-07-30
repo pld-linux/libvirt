@@ -19,17 +19,18 @@ diff -ru libvirt-0.8.8/daemon/libvirtd.conf libvirt-0.8.8-sasl/daemon/libvirtd.c
  #auth_tcp = "sasl"
  
  # Change the authentication scheme for TLS sockets.
-diff -ru libvirt-0.8.8/daemon/Makefile.am libvirt-0.8.8-sasl/daemon/Makefile.am
---- libvirt-0.8.8/daemon/Makefile.am	2011-01-31 02:30:59.000000000 +0100
-+++ libvirt-0.8.8-sasl/daemon/Makefile.am	2011-04-28 11:45:47.703741165 +0200
-@@ -326,12 +326,12 @@
+diff -ru libvirt-1.1.1/daemon/Makefile.am libvirt-1.1.1-sasl/daemon/Makefile.am
+--- libvirt-1.1.1/daemon/Makefile.am.orig	2013-07-30 10:17:30.238116337 +0000
++++ libvirt-1.1.1/daemon/Makefile.am	2013-07-30 10:20:08.281117006 +0000
+@@ -428,13 +428,13 @@
  # the WITH_LIBVIRTD conditional
- if HAVE_SASL
+ if WITH_SASL
  install-data-sasl:
 -	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sasl2/
--	$(INSTALL_DATA) $(srcdir)/libvirtd.sasl $(DESTDIR)$(sysconfdir)/sasl2/libvirt.conf
 +	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sasl/
-+	$(INSTALL_DATA) $(srcdir)/libvirtd.sasl $(DESTDIR)$(sysconfdir)/sasl/libvirt.conf
+ 	$(INSTALL_DATA) $(srcdir)/libvirtd.sasl \
+-		$(DESTDIR)$(sysconfdir)/sasl2/libvirt.conf
++		$(DESTDIR)$(sysconfdir)/sasl/libvirt.conf
  
  uninstall-data-sasl:
 -	rm -f $(DESTDIR)$(sysconfdir)/sasl2/libvirt.conf
