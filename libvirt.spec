@@ -18,6 +18,7 @@
 %bcond_without	uml		# UML support
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
+%bcond_with	vserver		# Support for Linux-VServer guests
 %bcond_without	xenapi		# Xen API (Citrix XenServer) support
 %bcond_without	xen		# Xen support
 %bcond_without	static_libs	# static libraries build
@@ -47,6 +48,7 @@ Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-xend.patch
 Patch4:		virtlockd.init.patch
 Patch5:		%{name}-udevadm-settle.patch
+Patch6:		vserver.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -430,6 +432,7 @@ Sondy systemtap/dtrace dla libvirt.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%{?with_vserver:%patch6 -p1}
 
 # weird translations
 %{__rm} po/{my,eu_ES}.{po,gmo}

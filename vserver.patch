@@ -42,22 +42,21 @@ This is an XML dump from one of my guests:
 
 -- 
 Daniel Hokka Zakrisson
-diff -Nurp libvirt-0.4.0.orig/configure.in libvirt-0.4.0.vserver/configure.in
---- libvirt-0.4.0.orig/configure.in	2007-12-18 00:07:47.000000000 +0100
-+++ libvirt-0.4.0.vserver/configure.in	2007-12-29 17:59:05.000000000 +0100
-@@ -127,6 +127,8 @@ AC_ARG_WITH(qemu,
- [  --with-qemu             add QEMU/KVM support (on)],[],[with_qemu=yes])
- AC_ARG_WITH(openvz,
- [  --with-openvz           add OpenVZ support (off)],[],[with_openvz=no])
-+AC_ARG_WITH(vserver,
-+[  --with-vserver          add Linux-VServer support (on, if available)],[],[with_vserver=yes])
- AC_ARG_WITH(test,
- [  --with-test             add test driver support (on)],[],[with_test=yes])
- AC_ARG_WITH(remote,
-@@ -234,6 +236,38 @@ fi
- if test "$with_qemu" = "yes" ; then
-     LIBVIRT_FEATURES="$LIBVIRT_FEATURES -DWITH_QEMU"
+--- libvirt-1.1.1/configure.ac~	2013-08-31 23:44:52.000000000 +0300
++++ libvirt-1.1.1/configure.ac	2013-08-31 23:46:02.245725043 +0300
+@@ -449,6 +449,8 @@
+   AC_HELP_STRING([--with-hyperv], [add Hyper-V support @<:@default=check@:>@]),[],[with_hyperv=check])
+ AC_ARG_WITH([parallels],
+   AC_HELP_STRING([--with-parallels], [add Parallels Cloud Server support @<:@default=check@:>@]),[],[with_parallels=check])
++AC_ARG_WITH([vserver],
++  AC_HELP_STRING([--with-vserver], [add VServer support @<:@default=check@:>@]),[],[with_vserver=check])
+ AC_ARG_WITH([test],
+   AC_HELP_STRING([--with-test], [add test driver support @<:@default=yes@:>@]),[],[with_test=yes])
+ AC_ARG_WITH([remote],
+@@ -991,6 +991,39 @@
+   fi
  fi
+ 
 +if test "$with_vserver" = "yes" ; then
 +    AC_CHECK_LIB(vserver, [vc_rlimit_stat],, [with_vserver=no])
 +    AC_CHECK_TYPES([xid_t, nid_t, tag_t])
@@ -90,88 +89,97 @@ diff -Nurp libvirt-0.4.0.orig/configure.in libvirt-0.4.0.vserver/configure.in
 +        LIBVIRT_FEATURES="$LIBVIRT_FEATURES -DWITH_VSERVER"
 +    fi
 +fi
++
  
- if test "$with_test" = "yes" ; then
-     LIBVIRT_FEATURES="$LIBVIRT_FEATURES -DWITH_TEST"
-@@ -694,6 +728,7 @@ AC_MSG_NOTICE([     Xen: $with_xen])
- AC_MSG_NOTICE([   Proxy: $with_xen_proxy])
- AC_MSG_NOTICE([    QEMU: $with_qemu])
- AC_MSG_NOTICE([  OpenVZ: $with_openvz])
-+AC_MSG_NOTICE([ VServer: $with_vserver])
- AC_MSG_NOTICE([    Test: $with_test])
- AC_MSG_NOTICE([  Remote: $with_remote])
- AC_MSG_NOTICE([Libvirtd: $with_libvirtd])
-diff -Nurp libvirt-0.4.0.orig/include/libvirt/virterror.h libvirt-0.4.0.vserver/include/libvirt/virterror.h
---- libvirt-0.4.0.orig/include/libvirt/virterror.h	2007-12-05 21:33:00.000000000 +0100
-+++ libvirt-0.4.0.vserver/include/libvirt/virterror.h	2007-12-29 17:59:40.000000000 +0100
-@@ -54,6 +54,7 @@ typedef enum {
-     VIR_FROM_OPENVZ,    /* Error from OpenVZ driver */
-     VIR_FROM_XENXM,	/* Error at Xen XM layer */
-     VIR_FROM_STATS_LINUX, /* Error in the Linux Stats code */
-+    VIR_FROM_VSERVER,	/* Error from Linux-VServer driver */
- } virErrorDomain;
+ dnl
+ dnl check for kernel headers required by src/bridge.c
+@@ -2506,6 +2506,7 @@
+ AC_MSG_NOTICE([      ESX: $with_esx])
+ AC_MSG_NOTICE([  Hyper-V: $with_hyperv])
+ AC_MSG_NOTICE([Parallels: $with_parallels])
++AC_MSG_NOTICE([  VServer: $with_vserver])
+ AC_MSG_NOTICE([     Test: $with_test])
+ AC_MSG_NOTICE([   Remote: $with_remote])
+ AC_MSG_NOTICE([  Network: $with_network])
+--- libvirt-1.1.1/include/libvirt/virterror.h~	2013-07-24 03:23:07.000000000 +0300
++++ libvirt-1.1.1/include/libvirt/virterror.h	2013-09-01 00:07:44.097192613 +0300
+@@ -121,6 +121,8 @@
+     VIR_FROM_ACCESS = 55,       /* Error from access control manager */
+     VIR_FROM_SYSTEMD = 56,      /* Error from systemd code */
  
- 
-diff -Nurp libvirt-0.4.0.orig/src/driver.h libvirt-0.4.0.vserver/src/driver.h
---- libvirt-0.4.0.orig/src/driver.h	2007-12-05 21:33:01.000000000 +0100
-+++ libvirt-0.4.0.vserver/src/driver.h	2007-12-29 17:59:05.000000000 +0100
-@@ -24,6 +24,7 @@ typedef enum {
-     VIR_DRV_QEMU = 3,
-     VIR_DRV_REMOTE = 4,
-     VIR_DRV_OPENVZ = 5,
-+    VIR_DRV_VSERVER = 6,
++    VIR_FROM_VSERVER = 57,      /* Error from Linux-VServer driver */
++
+ # ifdef VIR_ENUM_SENTINELS
+     VIR_ERR_DOMAIN_LAST
+ # endif
+--- libvirt-1.1.1/src/driver.h~	2013-07-29 03:25:51.000000000 +0300
++++ libvirt-1.1.1/src/driver.h	2013-09-01 00:08:21.575533465 +0300
+@@ -46,6 +46,7 @@
+     VIR_DRV_LIBXL = 14,
+     VIR_DRV_HYPERV = 15,
+     VIR_DRV_PARALLELS = 16,
++    VIR_DRV_VSERVER = 17,
  } virDrvNo;
  
  
-diff -Nurp libvirt-0.4.0.orig/src/libvirt.c libvirt-0.4.0.vserver/src/libvirt.c
---- libvirt-0.4.0.orig/src/libvirt.c	2007-12-17 22:51:09.000000000 +0100
-+++ libvirt-0.4.0.vserver/src/libvirt.c	2007-12-29 17:59:05.000000000 +0100
-@@ -40,6 +40,7 @@
- #ifdef WITH_OPENVZ
- #include "openvz_driver.h"
- #endif
-+#include "vserver_driver.h"
- 
- /*
-  * TODO:
-@@ -207,6 +208,9 @@ virInitialize(void)
- #ifdef WITH_OPENVZ
-     if (openvzRegister() == -1) return -1;
+--- libvirt-1.1.1/src/./libvirt.c~	2013-09-01 00:20:50.000000000 +0300
++++ libvirt-1.1.1/src/./libvirt.c	2013-09-01 00:21:02.812830784 +0300
+@@ -94,6 +94,9 @@
+ #ifdef WITH_PARALLELS
+ # include "parallels/parallels_driver.h"
  #endif
 +#ifdef WITH_VSERVER
-+    if (vserverRegister() == -1) return -1;
++# include "server/vserver_driver.h"
++#endif
+ 
+ #define VIR_FROM_THIS VIR_FROM_NONE
+ 
+@@ -479,6 +482,10 @@
+     if (parallelsRegister() == -1)
+         goto error;
+ #endif
++#ifdef WITH_VSERVER
++    if (verversRegister() == -1)
++        goto error;
 +#endif
  #ifdef WITH_REMOTE
-     if (remoteRegister () == -1) return -1;
- #endif
-diff -Nurp libvirt-0.4.0.orig/src/Makefile.am libvirt-0.4.0.vserver/src/Makefile.am
---- libvirt-0.4.0.orig/src/Makefile.am	2007-12-17 22:51:09.000000000 +0100
-+++ libvirt-0.4.0.vserver/src/Makefile.am	2008-01-04 19:38:49.000000000 +0100
-@@ -56,6 +56,8 @@ CLIENT_SOURCES =						\
- 		qemu_conf.c qemu_conf.h				\
- 		openvz_conf.c openvz_conf.h			\
- 		openvz_driver.c openvz_driver.h 		\
-+		vserver_driver.c vserver_driver.h		\
-+		vserver_conf.c vserver_conf.h			\
-                 nodeinfo.h nodeinfo.c                           \
- 		util.c util.h
+     if (remoteRegister() == -1)
+         goto error;
+--- libvirt-1.1.1/src/Makefile.am~	2013-07-30 10:21:31.000000000 +0300
++++ libvirt-1.1.1/src/Makefile.am	2013-09-01 00:11:19.080124997 +0300
+@@ -467,6 +467,7 @@
+ 	$(NWFILTER_DRIVER_SOURCES) \
+ 	$(OPENVZ_DRIVER_SOURCES) \
+ 	$(PARALLELS_DRIVER_SOURCES) \
++	$(VSERVER_DRIVER_SOURCES) \
+ 	$(PHYP_DRIVER_SOURCES) \
+ 	$(QEMU_DRIVER_SOURCES) \
+ 	$(REMOTE_DRIVER_SOURCES) \
+@@ -727,6 +728,12 @@
+ 		parallels/parallels_storage.c		\
+ 		parallels/parallels_network.c
  
-diff -Nurp libvirt-0.4.0.orig/src/virterror.c libvirt-0.4.0.vserver/src/virterror.c
---- libvirt-0.4.0.orig/src/virterror.c	2007-12-05 23:01:07.000000000 +0100
-+++ libvirt-0.4.0.vserver/src/virterror.c	2007-12-30 00:47:20.000000000 +0100
-@@ -300,6 +300,9 @@ virDefaultErrorFunc(virErrorPtr err)
-         case VIR_FROM_STATS_LINUX:
-             dom = "Linux Stats ";
-             break;
-+        case VIR_FROM_VSERVER:
-+            dom = "VServer ";
-+            break;
++VSERVER_DRIVER_SOURCES =					\
++		vserver/vserver_driver.h			\
++		vserver/vserver_driver.c			\
++	       	vserver/vserver_conf.h				\
++		vserver/vserver_conf.c
++
+ NETWORK_DRIVER_SOURCES =					\
+ 		network/bridge_driver.h network/bridge_driver.c
  
-     }
-     if ((err->dom != NULL) && (err->code != VIR_ERR_INVALID_DOMAIN)) {
-diff -Nurp libvirt-0.4.0.orig/src/vserver_conf.c libvirt-0.4.0.vserver/src/vserver_conf.c
---- libvirt-0.4.0.orig/src/vserver_conf.c	1970-01-01 01:00:00.000000000 +0100
-+++ libvirt-0.4.0.vserver/src/vserver_conf.c	2008-01-09 08:52:11.000000000 +0100
+--- libvirt-1.1.1/./src/util/virerror.c~	2013-07-25 09:17:45.000000000 +0300
++++ libvirt-1.1.1/./src/util/virerror.c	2013-09-01 00:14:15.371324604 +0300
+@@ -124,6 +124,7 @@
+ 
+               "Access Manager", /* 55 */
+               "Systemd",
++              "Vserver",
+     )
+ 
+ 
+--- libvirt-0.4.0.orig/src/vserver/vserver_conf.c	1970-01-01 01:00:00.000000000 +0100
++++ libvirt-0.4.0.vserver/src/vserver/vserver_conf.c	2008-01-09 08:52:11.000000000 +0100
 @@ -0,0 +1,751 @@
 +/*
 + * Configuration handling for Linux-VServer guests
@@ -924,9 +932,8 @@ diff -Nurp libvirt-0.4.0.orig/src/vserver_conf.c libvirt-0.4.0.vserver/src/vserv
 +}
 +
 +#endif
-diff -Nurp libvirt-0.4.0.orig/src/vserver_conf.h libvirt-0.4.0.vserver/src/vserver_conf.h
---- libvirt-0.4.0.orig/src/vserver_conf.h	1970-01-01 01:00:00.000000000 +0100
-+++ libvirt-0.4.0.vserver/src/vserver_conf.h	2008-01-05 02:10:20.000000000 +0100
+--- libvirt-0.4.0.orig/src/vserver/vserver_conf.h	1970-01-01 01:00:00.000000000 +0100
++++ libvirt-0.4.0.vserver/src/vserver/vserver_conf.h	2008-01-05 02:10:20.000000000 +0100
 @@ -0,0 +1,36 @@
 +/*
 + * Configuration handling for Linux-VServer guests
@@ -2593,9 +2600,8 @@ diff -Nurp libvirt-0.4.0.orig/src/vserver_driver.c libvirt-0.4.0.vserver/src/vse
 +}
 +
 +#endif
-diff -Nurp libvirt-0.4.0.orig/src/vserver_driver.h libvirt-0.4.0.vserver/src/vserver_driver.h
---- libvirt-0.4.0.orig/src/vserver_driver.h	1970-01-01 01:00:00.000000000 +0100
-+++ libvirt-0.4.0.vserver/src/vserver_driver.h	2008-01-09 19:14:08.000000000 +0100
+--- libvirt-0.4.0.orig/src/vserver/vserver_driver.h	1970-01-01 01:00:00.000000000 +0100
++++ libvirt-0.4.0.vserver/src/vserver/vserver_driver.h	2008-01-09 19:14:08.000000000 +0100
 @@ -0,0 +1,137 @@
 +/*
 + * Core driver for managing Linux-VServer guests
