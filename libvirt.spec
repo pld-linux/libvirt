@@ -5,6 +5,7 @@
 # Conditional build:
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	esx		# VMware ESX support
+%bcond_without	glusterfs	# GlusterFS storage support
 %bcond_without	hyperv		# Hyper-V support
 %bcond_without	libxl		# libxenlight support
 %bcond_without	lxc		# LXC support
@@ -62,6 +63,7 @@ BuildRequires:	dbus-devel >= 1.0.0
 BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext-devel >= 0.17
+%{?with_glusterfs:BuildRequires:	glusterfs-devel >= 3.4.1}
 BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libapparmor-devel
 BuildRequires:	libblkid-devel >= 2.17
@@ -492,6 +494,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	--with-qemu-group=qemu \
 	--with-storage-disk \
 	--with-storage-fs \
+	--with-storage-gluster%{!?with_glusterfs:=no} \
 	--with-storage-iscsi \
 	--with-storage-lvm \
 	--with-storage-mpath \
