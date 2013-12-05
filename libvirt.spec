@@ -84,7 +84,7 @@ BuildRequires:	openldap-devel
 BuildRequires:	openwsman-devel >= 2.2.3
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	perl-tools-pod
-%{?with_polkit:BuildRequires:	polkit >= 0.90}
+%{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	pkgconfig
 BuildRequires:	python
 BuildRequires:	python-devel
