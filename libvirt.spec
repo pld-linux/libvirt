@@ -417,7 +417,7 @@ Sondy systemtap/dtrace dla libvirt.
 %{?with_vserver:%patch6 -p1}
 
 # weird translations
-%{__rm} po/{my,eu_ES}.{po,gmo}
+%{__rm} po/{bo,my,eu_ES}.{po,gmo}
 
 mv po/vi_VN.po po/vi.po
 mv po/vi_VN.gmo po/vi.gmo
