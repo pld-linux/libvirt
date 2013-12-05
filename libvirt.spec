@@ -88,10 +88,7 @@ BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	perl-tools-pod
 %{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	pkgconfig
-BuildRequires:	python
-BuildRequires:	python-devel
 BuildRequires:	readline-devel
-BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
@@ -199,24 +196,6 @@ obecnych wersji Linuksa.
 
 Ten pakiet zawiera biblioteki statyczne do tworzenia programów
 wykorzystujących bibliotekę libvirt.
-
-%package -n python-%{name}
-Summary:	Python bindings to interact with virtualization capabilities
-Summary(pl.UTF-8):	Wiązania Pythona do współpracy z funkcjami wirtualizacji
-Group:		Development/Languages/Python
-Requires:	%{name} = %{version}-%{release}
-
-%description -n	python-%{name}
-Libvirt is a C toolkit to interact with the virtualization
-capabilities of recent versions of Linux.
-
-This package contains the Python bindings for the libvirt library.
-
-%description -n	python-%{name} -l pl.UTF-8
-Libvirt to zestaw narzędzi w C do współpracy z funkcjami wirtualizacji
-obecnych wersji Linuksa.
-
-Ten pakiet zawiera wiązania Pythona do biblioteki libvirt.
 
 %package lock-sanlock
 Summary:	Sanlock lock manager plugin for libvirt
@@ -549,11 +528,6 @@ install -d $RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d} \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 install %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 
-%py_comp $RPM_BUILD_ROOT%{py_sitedir}
-%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
-%py_postclean
-%{__rm} $RPM_BUILD_ROOT%{py_sitedir}/*.la
-
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.la \
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.a}
@@ -625,19 +599,6 @@ NORESTART=1
 %{_libdir}/libvirt.a
 %{?with_lxc:%{_libdir}/libvirt-lxc.a}
 %{?with_qemu:%{_libdir}/libvirt-qemu.a}
-
-%files -n python-%{name}
-%defattr(644,root,root,755)
-%attr(755,root,root) %{py_sitedir}/libvirtmod.so
-%{py_sitedir}/libvirt.py[co]
-%if %{with lxc}
-%attr(755,root,root) %{py_sitedir}/libvirtmod_lxc.so
-%{py_sitedir}/libvirt_lxc.py[co]
-%endif
-%if %{with qemu}
-%attr(755,root,root) %{py_sitedir}/libvirtmod_qemu.so
-%{py_sitedir}/libvirt_qemu.py[co]
-%endif
 
 %if %{with sanlock}
 %files lock-sanlock
