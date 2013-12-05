@@ -506,7 +506,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	--with-driver-modules \
 	--without-hal \
 	%{__with_without hyperv} \
-	--with-libblkid \
+	--with-blkid \
 	--with-ssh2 \
 	%{__with_without libxl} \
 	%{__with_without lxc} \
