@@ -507,7 +507,7 @@ mv po/vi_VN.gmo po/vi.gmo
 	--without-hal \
 	%{__with_without hyperv} \
 	--with-libblkid \
-	--with-libssh2 \
+	--with-ssh2 \
 	%{__with_without libxl} \
 	%{__with_without lxc} \
 	--with-macvtap \
