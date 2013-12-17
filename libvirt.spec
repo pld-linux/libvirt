@@ -416,12 +416,6 @@ Sondy systemtap/dtrace dla libvirt.
 %patch5 -p1
 %{?with_vserver:%patch6 -p1}
 
-# weird translations
-%{__rm} po/{bo,my,eu_ES}.{po,gmo}
-
-mv po/vi_VN.po po/vi.po
-mv po/vi_VN.gmo po/vi.gmo
-
 %build
 %{__libtoolize}
 %{__aclocal} -I gnulib/m4 -I m4
@@ -536,6 +530,9 @@ install %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.la \
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.a}
 %endif
+
+%{__mv} $RPM_BUILD_ROOT%{_localedir}/{eu_ES,eu}
+%{__mv} $RPM_BUILD_ROOT%{_localedir}/{vi_VN,vi}
 
 %find_lang %{name}
 
