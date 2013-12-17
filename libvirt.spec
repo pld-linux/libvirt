@@ -532,7 +532,8 @@ install %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %endif
 
 %{__mv} $RPM_BUILD_ROOT%{_localedir}/{eu_ES,eu}
-%{__mv} $RPM_BUILD_ROOT%{_localedir}/{vi_VN,vi}
+# duplicate of vi, just one less message translated
+%{__rm} -r $RPM_BUILD_ROOT%{_localedir}/vi_VN
 
 %find_lang %{name}
 
