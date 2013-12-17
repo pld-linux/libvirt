@@ -1,5 +1,7 @@
 #
-# TODO: - seems that lxc patch is not needed anymore, verify that before removing
+# TODO:
+# - kill CFLAGS from libvirt.pc:Libs
+# - seems that lxc patch is not needed anymore, verify that before removing
 # - pldize virtlockd.init
 #
 # Conditional build:
