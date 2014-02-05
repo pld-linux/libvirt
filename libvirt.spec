@@ -38,7 +38,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	1.2.1
-Release:	1
+Release:	2
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -88,8 +88,8 @@ BuildRequires:	openldap-devel
 BuildRequires:	openwsman-devel >= 2.2.3
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	perl-tools-pod
-%{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	pkgconfig
+%{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
@@ -162,7 +162,7 @@ Requires:	libselinux-devel >= 2.0.82
 Requires:	libxml2-devel >= 1:2.6.0
 Requires:	numactl-devel
 Requires:	openwsman-devel >= 2.2.3
-%{?with_xen:Requires: xen-devel >= 4.2}
+%{?with_xen:Requires:	xen-devel >= 4.2}
 Requires:	yajl-devel
 
 %description devel
@@ -221,6 +221,7 @@ Requires:	iproute2
 Requires:	libblkid >= 2.17
 %{?with_netcf:Requires:	netcf >= 0.2.0}
 Requires:	parted-libs >= 1.8.0
+Requires:	rc-scripts
 # Needed for probing the power management features of the host.
 Requires:	pm-utils
 Requires:	systemd-units >= 37-0.10
@@ -228,10 +229,10 @@ Requires:	udev-libs >= 1:145
 Requires:	util-linux
 Requires:	virtual(module-tools)
 Requires:	xorg-lib-libpciaccess >= 0.10.0
-Provides:	libvirt(hypervisor)
 Requires(post):	systemd-units
-Requires(preun):	systemd-units
+Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	systemd-units
+Requires(preun):	systemd-units
 Suggests:	bridge-utils
 Suggests:	cyrus-sasl
 Suggests:	cyrus-sasl-digest-md5
@@ -251,6 +252,7 @@ Suggests:	polkit >= 0.93
 #Suggests:	radvd
 Suggests:	scrub
 #Suggests:	sheepdog
+Provides:	libvirt(hypervisor)
 
 %description daemon
 Server side daemon required to manage the virtualization capabilities
@@ -357,9 +359,11 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	gettext >= 0.18.1.1-6
 Requires:	gnutls >= 1.0.25
 Requires:	netcat-openbsd
+Requires:	rc-scripts
 Requires(post):	systemd-units
-Requires(preun):	systemd-units
+Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	systemd-units
+Requires(preun):	systemd-units
 
 %description client
 Client binaries needed to access to the virtualization capabilities of
@@ -546,20 +550,32 @@ rm -rf $RPM_BUILD_ROOT
 %postun	-p /sbin/ldconfig
 
 %post daemon
+/sbin/chkconfig --add libvirtd
+%service libvirtd restart
 %systemd_post libvirtd.service
 
 %preun daemon
+if [ "$1" = "0" ]; then
+	%service -q libvirtd stop
+	/sbin/chkconfig --del libvirtd
+fi
 %systemd_preun libvirtd.service
 
 %postun daemon
 %systemd_reload
 
 %post client
+/sbin/chkconfig --add libvirt-guests
+%service -n libvirt-guests restart
 NORESTART=1
 %systemd_post libvirt-guests.service
 
 %preun client
 %systemd_preun libvirt-guests.service
+if [ "$1" = "0" ]; then
+	%service -q libvirt-guests stop
+	/sbin/chkconfig --del libvirt-guests
+fi
 
 %postun client
 %systemd_reload
