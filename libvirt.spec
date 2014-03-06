@@ -37,12 +37,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.1
-Release:	2
+Version:	1.2.2
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	cce374220f67895afb6331bd2ddedbfd
+# Source0-md5:	592958ad1ddce7574d8cb0a31e635acd
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -523,6 +523,7 @@ install -d $RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d} \
 
 %{__make} install \
 	DEVHELP_DIR=%{_gtkdocdir}/%{name}/devhelp \
+	SYSTEMD_UNIT_DIR=%{systemdunitdir} \
 	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
