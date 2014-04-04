@@ -1,0 +1,8 @@
+--- libvirt-1.2.3/tools/libvirt-guests.sh.in~	2014-02-26 05:09:50.000000000 +0200
++++ libvirt-1.2.3/tools/libvirt-guests.sh.in	2014-04-05 02:52:16.187741175 +0300
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # Copyright (C) 2011-2013 Red Hat, Inc.
+ #
