@@ -1,13 +1,13 @@
---- libvirt-0.9.10/src/xen/xen_driver.c~	2012-02-13 08:06:23.000000000 +0100
-+++ libvirt-0.9.10/src/xen/xen_driver.c	2012-03-06 14:03:45.273637374 +0100
-@@ -240,7 +240,7 @@
-     int status;
-     int ret = 0;
+--- libvirt-1.2.3/src/xen/xen_driver.c.orig	2014-04-04 15:57:05.069436605 +0200
++++ libvirt-1.2.3/src/xen/xen_driver.c	2014-04-04 15:58:59.119434226 +0200
+@@ -318,7 +318,7 @@
+     virCommandPtr cmd;
+     bool ret = false;
  
 -    cmd = virCommandNewArgList("/usr/sbin/xend", "status", NULL);
 +    cmd = virCommandNewArgList("/sbin/service", "xend", "status", NULL);
-     if (virCommandRun(cmd, &status) == 0 && status == 0)
-         ret = 1;
+     if (virCommandRun(cmd, NULL) == 0)
+         ret = true;
      virCommandFree(cmd);
 --- libvirt-1.1.3/src/libxl/libxl_driver.c.orig	2013-10-22 20:46:08.195357964 +0200
 +++ libvirt-1.1.3/src/libxl/libxl_driver.c	2013-10-22 21:17:55.935277904 +0200
@@ -20,25 +20,25 @@
      if (virCommandRun(cmd, &status) == 0 && status == 0) {
          VIR_INFO("Legacy xen tool stack seems to be in use, disabling "
                    "libxenlight driver.");
---- libvirt-0.9.10/tests/statstest.c~	2011-11-22 02:52:24.000000000 +0100
-+++ libvirt-0.9.10/tests/statstest.c	2012-03-06 14:36:59.970394039 +0100
-@@ -56,7 +56,7 @@
+--- libvirt-1.2.3/tests/statstest.c.orig	2014-04-04 15:57:05.109436604 +0200
++++ libvirt-1.2.3/tests/statstest.c	2014-04-04 16:00:09.836099420 +0200
+@@ -49,7 +49,7 @@
      uname(&ut);
      if (strstr(ut.release, "xen") == NULL)
          return EXIT_AM_SKIP;
 -    cmd = virCommandNewArgList("/usr/sbin/xend", "status", NULL);
 +    cmd = virCommandNewArgList("/sbin/service", "xend", "status", NULL);
-     if (virCommandRun(cmd, &status) != 0 || status != 0) {
+     if (virCommandRun(cmd, NULL) < 0) {
          virCommandFree(cmd);
          return EXIT_AM_SKIP;
---- libvirt-0.9.10/tests/reconnect.c~	2011-11-22 02:52:24.000000000 +0100
-+++ libvirt-0.9.10/tests/reconnect.c	2012-03-06 14:37:27.777061955 +0100
-@@ -29,7 +29,7 @@
+--- libvirt-1.2.3/tests/reconnect.c.orig	2014-04-04 15:57:05.109436604 +0200
++++ libvirt-1.2.3/tests/reconnect.c	2014-04-04 16:03:28.892761936 +0200
+@@ -24,7 +24,7 @@
      uname(&ut);
      if (strstr(ut.release, "xen") == NULL)
          return EXIT_AM_SKIP;
 -    cmd = virCommandNewArgList("/usr/sbin/xend", "status", NULL);
 +    cmd = virCommandNewArgList("/sbin/service", "xend", "status", NULL);
-     if (virCommandRun(cmd, &status) != 0 || status != 0) {
+     if (virCommandRun(cmd, NULL) < 0) {
          virCommandFree(cmd);
          return EXIT_AM_SKIP;
