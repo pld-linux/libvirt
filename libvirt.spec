@@ -79,7 +79,6 @@ BuildRequires:	libnl-devel >= 3.2
 BuildRequires:	libpcap-devel >= 1.0.0
 BuildRequires:	libselinux-devel >= 2.0.82
 BuildRequires:	libssh2-devel >= 1.3
-BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 %{?with_xenapi:BuildRequires:	libxenserver-devel}
 BuildRequires:	libxml2-devel >= 1:2.6.0
@@ -90,12 +89,13 @@ BuildRequires:	numactl-devel
 BuildRequires:	openldap-devel
 BuildRequires:	openwsman-devel >= 2.2.3
 BuildRequires:	parted-devel >= 1.8.0
-BuildRequires:	perl-tools-pod
 BuildRequires:	pkgconfig
+BuildRequires:	polkit
 %{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
+BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 BuildRequires:	udev-devel >= 1:145
 %{?with_xen:BuildRequires:	xen-devel >= 4.2}
