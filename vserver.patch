@@ -42,17 +42,19 @@ This is an XML dump from one of my guests:
 
 -- 
 Daniel Hokka Zakrisson
---- libvirt-1.1.1/configure.ac~	2013-08-31 23:44:52.000000000 +0300
-+++ libvirt-1.1.1/configure.ac	2013-08-31 23:46:02.245725043 +0300
-@@ -449,6 +449,8 @@
-   AC_HELP_STRING([--with-hyperv], [add Hyper-V support @<:@default=check@:>@]),[],[with_hyperv=check])
- AC_ARG_WITH([parallels],
-   AC_HELP_STRING([--with-parallels], [add Parallels Cloud Server support @<:@default=check@:>@]),[],[with_parallels=check])
+--- libvirt-1.2.3/configure.ac~	2014-04-06 12:21:22.000000000 +0300
++++ libvirt-1.2.3/configure.ac	2014-04-06 12:22:55.249258975 +0300
+@@ -546,6 +546,10 @@
+   [AS_HELP_STRING([--with-parallels],
+     [add Parallels Cloud Server support @<:@default=check@:>@])])
+ m4_divert_text([DEFAULTS], [with_parallels=check])
 +AC_ARG_WITH([vserver],
-+  AC_HELP_STRING([--with-vserver], [add VServer support @<:@default=check@:>@]),[],[with_vserver=check])
++  [AS_HELP_STRING([--with-vserver],
++    [add Linux-VServer support @<:@default=check@:>@])])
++m4_divert_text([DEFAULTS], [with_vserver=check])
  AC_ARG_WITH([test],
-   AC_HELP_STRING([--with-test], [add test driver support @<:@default=yes@:>@]),[],[with_test=yes])
- AC_ARG_WITH([remote],
+   [AS_HELP_STRING([--with-test],
+     [add test driver support @<:@default=yes@:>@])])
 @@ -991,6 +991,39 @@
    fi
  fi
@@ -93,14 +95,14 @@ Daniel Hokka Zakrisson
  
  dnl
  dnl check for kernel headers required by src/bridge.c
-@@ -2506,6 +2506,7 @@
+@@ -2759,6 +2759,7 @@
  AC_MSG_NOTICE([      ESX: $with_esx])
  AC_MSG_NOTICE([  Hyper-V: $with_hyperv])
  AC_MSG_NOTICE([Parallels: $with_parallels])
 +AC_MSG_NOTICE([  VServer: $with_vserver])
+ LIBVIRT_DRIVER_RESULT_BHYVE
  AC_MSG_NOTICE([     Test: $with_test])
  AC_MSG_NOTICE([   Remote: $with_remote])
- AC_MSG_NOTICE([  Network: $with_network])
 --- libvirt-1.1.1/include/libvirt/virterror.h~	2013-07-24 03:23:07.000000000 +0300
 +++ libvirt-1.1.1/include/libvirt/virterror.h	2013-09-01 00:07:44.097192613 +0300
 @@ -121,6 +121,8 @@
@@ -112,18 +114,18 @@ Daniel Hokka Zakrisson
  # ifdef VIR_ENUM_SENTINELS
      VIR_ERR_DOMAIN_LAST
  # endif
---- libvirt-1.1.1/src/driver.h~	2013-07-29 03:25:51.000000000 +0300
-+++ libvirt-1.1.1/src/driver.h	2013-09-01 00:08:21.575533465 +0300
-@@ -46,6 +46,7 @@
-     VIR_DRV_LIBXL = 14,
+--- libvirt-1.2.3/src/driver.h~	2014-03-27 12:35:00.000000000 +0200
++++ libvirt-1.2.3/src/driver.h	2014-04-06 12:25:03.124800629 +0300
+@@ -48,6 +48,7 @@
      VIR_DRV_HYPERV = 15,
      VIR_DRV_PARALLELS = 16,
-+    VIR_DRV_VSERVER = 17,
+     VIR_DRV_BHYVE = 17,
++    VIR_DRV_VSERVER = 18,
  } virDrvNo;
  
  
---- libvirt-1.1.1/src/./libvirt.c~	2013-09-01 00:20:50.000000000 +0300
-+++ libvirt-1.1.1/src/./libvirt.c	2013-09-01 00:21:02.812830784 +0300
+--- libvirt-1.1.1/src/libvirt.c~	2013-09-01 00:20:50.000000000 +0300
++++ libvirt-1.1.1/src/libvirt.c	2013-09-01 00:21:02.812830784 +0300
 @@ -94,6 +94,9 @@
  #ifdef WITH_PARALLELS
  # include "parallels/parallels_driver.h"
@@ -168,16 +170,16 @@ Daniel Hokka Zakrisson
  NETWORK_DRIVER_SOURCES =					\
  		network/bridge_driver.h network/bridge_driver.c
  
---- libvirt-1.1.1/./src/util/virerror.c~	2013-07-25 09:17:45.000000000 +0300
-+++ libvirt-1.1.1/./src/util/virerror.c	2013-09-01 00:14:15.371324604 +0300
-@@ -124,6 +124,7 @@
+--- libvirt-1.2.3/src/util/virerror.c~	2014-03-27 12:35:01.000000000 +0200
++++ libvirt-1.2.3/src/util/virerror.c	2014-04-06 12:25:58.523869047 +0300
+@@ -127,6 +127,7 @@
  
                "Access Manager", /* 55 */
                "Systemd",
 +              "Vserver",
+               "Bhyve",
+               "Crypto",
      )
- 
- 
 --- libvirt-0.4.0.orig/src/vserver/vserver_conf.c	1970-01-01 01:00:00.000000000 +0100
 +++ libvirt-0.4.0.vserver/src/vserver/vserver_conf.c	2008-01-09 08:52:11.000000000 +0100
 @@ -0,0 +1,751 @@
