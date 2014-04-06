@@ -429,7 +429,7 @@ Sondy systemtap/dtrace dla libvirt.
 
 %build
 %{__libtoolize}
-%{__aclocal} -I gnulib/m4 -I m4
+%{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
