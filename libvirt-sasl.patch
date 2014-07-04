@@ -155,21 +155,21 @@ diff -ru libvirt-0.8.8/tests/confdata/libvirtd.out libvirt-0.8.8-sasl/tests/conf
  auth_tcp = "sasl"
  # Change the authentication scheme for TLS sockets.
  #
---- libvirt-1.1.3/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args.orig	2013-10-22 20:09:59.655448969 +0200
-+++ libvirt-1.1.3/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2013-10-22 20:37:43.605379136 +0200
+--- libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args.orig	2014-07-03 20:04:05.132591762 +0200
++++ libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2014-07-03 20:42:03.205829499 +0200
 @@ -1,5 +1,5 @@
  LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test \
--SASL_CONF_DIR=/root/.sasl2 QEMU_AUDIO_DRV=none \
-+SASL_CONF_DIR=/root/.sasl QEMU_AUDIO_DRV=none \
+-SASL_CONF_PATH=/root/.sasl2 QEMU_AUDIO_DRV=none \
++SASL_CONF_PATH=/root/.sasl QEMU_AUDIO_DRV=none \
  /usr/bin/qemu -S -M pc -m 214 \
  -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
  /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \
---- libvirt-1.1.3/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args.orig	2013-10-22 20:09:59.658782302 +0200
-+++ libvirt-1.1.3/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2013-10-22 20:38:03.778711628 +0200
+--- libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args.orig	2014-07-03 20:04:05.132591762 +0200
++++ libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2014-07-03 20:42:29.659161721 +0200
 @@ -1,5 +1,5 @@
  LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test \
--SASL_CONF_DIR=/root/.sasl2 QEMU_AUDIO_DRV=none \
-+SASL_CONF_DIR=/root/.sasl QEMU_AUDIO_DRV=none \
+-SASL_CONF_PATH=/root/.sasl2 QEMU_AUDIO_DRV=none \
++SASL_CONF_PATH=/root/.sasl QEMU_AUDIO_DRV=none \
  /usr/bin/qemu -S -M pc -m 214 \
  -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
  /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \

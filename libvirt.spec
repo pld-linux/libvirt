@@ -1,6 +1,5 @@
 #
 # TODO:
-# - kill CFLAGS from libvirt.pc:Libs
 # - seems that lxc patch is not needed anymore, verify that before removing
 # - pldize virtlockd.init
 #
@@ -38,12 +37,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.5
+Version:	1.2.6
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	787960669a40181fd381a87a318c0660
+# Source0-md5:	ac1c3edbafb38f7978debe9507e5515c
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -614,7 +613,9 @@ fi
 %{_datadir}/%{name}/api
 %{_gtkdocdir}/%{name}
 %{_includedir}/%{name}
-%{_pkgconfigdir}/%{name}.pc
+%{_pkgconfigdir}/libvirt.pc
+%{?with_lxc:%{_pkgconfigdir}/libvirt-lxc.pc}
+%{?with_qemu:%{_pkgconfigdir}/libvirt-qemu.pc}
 
 %files static
 %defattr(644,root,root,755)
@@ -686,6 +687,7 @@ fi
 %dir /var/run/libvirt
 %dir /var/run/libvirt/network
 %{systemdtmpfilesdir}/%{name}.conf
+%attr(755,root,root) %{_libexecdir}/libvirt_leaseshelper
 %dir %{_libdir}/libvirt/connection-driver
 %{_datadir}/libvirt/cpu_map.xml
 %{?with_netcf:%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so}
