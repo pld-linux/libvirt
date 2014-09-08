@@ -37,12 +37,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.7
+Version:	1.2.8
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	d556b3d815a222fd9680f9f3948595cb
+# Source0-md5:	75114991290f7c8f01dd5223431b9c00
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -655,6 +655,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
 %attr(754,root,root) /etc/rc.d/init.d/virtlockd
 %{systemdunitdir}/libvirtd.service
+%{systemdunitdir}/libvirtd.socket
 %{systemdunitdir}/virtlockd.service
 %{systemdunitdir}/virtlockd.socket
 %config(noreplace) %verify(not md5 mtime size) /usr/lib/sysctl.d/libvirtd.conf
@@ -697,6 +698,8 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_network.so
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_storage.so
 %dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/lockd.so
 
