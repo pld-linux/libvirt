@@ -66,7 +66,7 @@ BuildRequires:	cyrus-sasl-devel
 BuildRequires:	dbus-devel >= 1.0.0
 BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
-BuildRequires:	gettext-devel >= 0.17
+BuildRequires:	gettext-tools >= 0.17
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 3.4.1}
 BuildRequires:	gnutls-devel >= 1.0.25
 BuildRequires:	libapparmor-devel
