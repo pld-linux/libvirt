@@ -86,7 +86,7 @@ BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
 BuildRequires:	numactl-devel
 BuildRequires:	openldap-devel
-BuildRequires:	openwsman-devel >= 2.2.3
+%{?with_hyperv:BuildRequires:	openwsman-devel >= 2.2.3}
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	pkgconfig
 BuildRequires:	polkit
@@ -109,7 +109,7 @@ Requires:	libpcap >= 1.0.0
 Requires:	libselinux >= 2.0.82
 Requires:	libssh2 >= 1.3
 Requires:	libxml2 >= 1:2.6.0
-Requires:	openwsman-libs >= 2.2.3
+%{?with_hyperv:Requires:	openwsman-libs >= 2.2.3}
 Obsoletes:	libvirt-daemon-esx
 Obsoletes:	libvirt-daemon-hyperv
 Obsoletes:	libvirt-daemon-openvz
@@ -163,7 +163,7 @@ Requires:	libpcap-devel >= 1.0.0
 Requires:	libselinux-devel >= 2.0.82
 Requires:	libxml2-devel >= 1:2.6.0
 Requires:	numactl-devel
-Requires:	openwsman-devel >= 2.2.3
+%{?with_hyperv:Requires:	openwsman-devel >= 2.2.3}
 %{?with_xen:Requires:	xen-devel >= 4.2}
 Requires:	yajl-devel
 
@@ -596,10 +596,8 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt-lxc.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt-lxc.so.0
 %endif
-%if %{with qemu}
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
-%endif
 
 %dir %{_libdir}/libvirt
 %dir %{_datadir}/libvirt
@@ -609,19 +607,19 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt.so
 %{?with_lxc:%attr(755,root,root) %{_libdir}/libvirt-lxc.so}
-%{?with_qemu:%attr(755,root,root) %{_libdir}/libvirt-qemu.so}
+%attr(755,root,root) %{_libdir}/libvirt-qemu.so
 %{_datadir}/%{name}/api
 %{_gtkdocdir}/%{name}
 %{_includedir}/%{name}
 %{_pkgconfigdir}/libvirt.pc
 %{?with_lxc:%{_pkgconfigdir}/libvirt-lxc.pc}
-%{?with_qemu:%{_pkgconfigdir}/libvirt-qemu.pc}
+%{_pkgconfigdir}/libvirt-qemu.pc
 
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libvirt.a
 %{?with_lxc:%{_libdir}/libvirt-lxc.a}
-%{?with_qemu:%{_libdir}/libvirt-qemu.a}
+%{_libdir}/libvirt-qemu.a
 
 %if %{with sanlock}
 %files lock-sanlock
@@ -633,7 +631,7 @@ fi
 %{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
 %dir /var/lib/libvirt/sanlock
 %{_mandir}/man8/virt-sanlock-cleanup.8*
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf
+%{?with_qemu:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf}
 %endif
 
 %files daemon
@@ -644,7 +642,7 @@ fi
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks/autostart
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirtd.conf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-lockd.conf
+%{?with_qemu:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-lockd.conf}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtlockd.conf
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/default.xml
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/autostart/default.xml
@@ -669,7 +667,7 @@ fi
 %{_datadir}/augeas/lenses/libvirt_lockd.aug
 %{_datadir}/augeas/lenses/virtlockd.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd.aug
-%{_datadir}/augeas/lenses/tests/test_libvirt_lockd.aug
+%{?with_qemu:%{_datadir}/augeas/lenses/tests/test_libvirt_lockd.aug}
 %{_datadir}/augeas/lenses/tests/test_virtlockd.aug
 %if %{with polkit}
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
