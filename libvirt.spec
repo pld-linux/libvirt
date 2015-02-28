@@ -1,5 +1,6 @@
 #
 # TODO:
+# - wireshark-dissector
 # - seems that lxc patch is not needed anymore, verify that before removing
 # - pldize virtlockd.init
 #
@@ -37,12 +38,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.9
-Release:	2
+Version:	1.2.12
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	f017075995062ff1d15577b0b093d02e
+# Source0-md5:	2ae99535265ce4687d8718d744024c27
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
