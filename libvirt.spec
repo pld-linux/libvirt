@@ -33,6 +33,8 @@
 # Xen is available only on x86 and ia64
 %ifnarch %{ix86} %{x8664} ia64
 %undefine	with_xen
+%undefine	with_xenapi
+%undefine	with_libxl
 %endif
 
 Summary:	Toolkit to interact with virtualization capabilities
