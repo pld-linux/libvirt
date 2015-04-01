@@ -40,12 +40,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.12
+Version:	1.2.13
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	2ae99535265ce4687d8718d744024c27
+# Source0-md5:	237e0d9c7f8a31ec3cf0df9a41da2137
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -699,8 +699,6 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_network.so
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox_storage.so
 %dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/lockd.so
 
