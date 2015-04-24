@@ -40,12 +40,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.13
+Version:	1.2.14
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	237e0d9c7f8a31ec3cf0df9a41da2137
+# Source0-md5:	983345c4ee6535437a6ba408dd59289a
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -544,10 +544,6 @@ install %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.la \
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.a}
 %endif
-
-%{__mv} $RPM_BUILD_ROOT%{_localedir}/{eu_ES,eu}
-# duplicate of vi, just one less message translated
-%{__rm} -r $RPM_BUILD_ROOT%{_localedir}/vi_VN
 
 %find_lang %{name}
 
