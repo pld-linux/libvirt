@@ -1,4 +1,3 @@
-#
 # TODO:
 # - wireshark-dissector
 # - seems that lxc patch is not needed anymore, verify that before removing
@@ -30,6 +29,7 @@
 %ifnarch %{ix86} %{x8664} ppc
 %undefine	with_qemu
 %endif
+
 # Xen is available only on x86 and ia64
 %ifnarch %{ix86} %{x8664} ia64
 %undefine	with_xen
@@ -41,7 +41,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	1.2.14
-Release:	1
+Release:	2
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
@@ -56,7 +56,7 @@ Patch4:		virtlockd.init.patch
 Patch5:		%{name}-udevadm-settle.patch
 Patch6:		vserver.patch
 Patch7:		bashisms.patch
-Patch8:		libvirt-guests.init.patch
+Patch8:		%{name}-guests.init.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -311,7 +311,7 @@ Requires:	/usr/bin/qemu-img
 Requires:	bzip2
 Requires:	gzip
 Requires:	lzop
-Requires:	qemu
+Requires:	qemu-system-x86
 Requires:	xz
 Provides:	libvirt(hypervisor)
 
@@ -533,8 +533,8 @@ install -d $RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d} \
 	SYSTEMD_UNIT_DIR=%{systemdunitdir} \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
-install %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
+install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
+cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.la \
