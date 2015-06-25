@@ -40,12 +40,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.14
-Release:	2
+Version:	1.2.16
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	983345c4ee6535437a6ba408dd59289a
+# Source0-md5:	015b0aa29c7868916f7b32c9ee70ef60
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -630,7 +630,6 @@ fi
 %{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
 %dir /var/lib/libvirt/sanlock
 %{_mandir}/man8/virt-sanlock-cleanup.8*
-%{?with_qemu:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf}
 %endif
 
 %files daemon
@@ -641,7 +640,6 @@ fi
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks/autostart
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirtd.conf
-%{?with_qemu:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-lockd.conf}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtlockd.conf
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/default.xml
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/autostart/default.xml
@@ -655,7 +653,7 @@ fi
 %{systemdunitdir}/libvirtd.socket
 %{systemdunitdir}/virtlockd.service
 %{systemdunitdir}/virtlockd.socket
-%config(noreplace) %verify(not md5 mtime size) /usr/lib/sysctl.d/libvirtd.conf
+%config(noreplace) %verify(not md5 mtime size) /usr/lib/sysctl.d/60-libvirtd.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %attr(755,root,root) %{_libdir}/libvirt_iohelper
 %attr(755,root,root) %{_libdir}/libvirt_parthelper
@@ -671,6 +669,7 @@ fi
 %if %{with polkit}
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
+%{_datadir}/polkit-1/rules.d/50-libvirt.rules
 %endif
 %{_mandir}/man8/libvirtd.8*
 %{_mandir}/man8/virtlockd.8*
@@ -701,7 +700,13 @@ fi
 %if %{with libxl}
 %files daemon-libxl
 %defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libxl.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libxl-lockd.conf
+%{?with_sanlock:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libxl-sanlock.conf}
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.libxl
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_libxl.so
+%{_datadir}/augeas/lenses/libvirtd_libxl.aug
+%{_datadir}/augeas/lenses/tests/test_libvirtd_libxl.aug
 %attr(700,root,root) %dir /var/lib/libvirt/libxl
 %attr(700,root,root) %dir /var/run/libvirt/libxl
 %attr(700,root,root) %dir /var/log/libvirt/libxl
@@ -725,6 +730,8 @@ fi
 %files daemon-qemu
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-lockd.conf
+%{?with_sanlock:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf}
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
 %attr(750,qemu,qemu) %dir /var/cache/libvirt/qemu
 %attr(750,qemu,qemu) %dir /var/lib/libvirt/qemu
