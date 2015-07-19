@@ -40,12 +40,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.16
+Version:	1.2.17
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	015b0aa29c7868916f7b32c9ee70ef60
+# Source0-md5:	a1f49050223be3cbd7678c32b1ee2756
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -468,7 +468,7 @@ Sondy systemtap/dtrace dla libvirt.
 	SCRUB=/usr/bin/scrub \
 	OVSVSCTL=/usr/bin/ovs-vsctl \
 	NUMAD=/usr/bin/numad \
-	COLLIE=/usr/sbin/collie \
+	SHEEPDOGCLI=/usr/sbin/collie \
 	--disable-silent-rules \
 	%{?with_static_libs:--enable-static} \
 	--with-html-dir=%{_gtkdocdir} \
@@ -591,6 +591,8 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt.so.0
+%attr(755,root,root) %{_libdir}/libvirt-admin.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvirt-admin.so.0
 %if %{with lxc}
 %attr(755,root,root) %{_libdir}/libvirt-lxc.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt-lxc.so.0
@@ -605,6 +607,7 @@ fi
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt.so
+%attr(755,root,root) %{_libdir}/libvirt-admin.so
 %{?with_lxc:%attr(755,root,root) %{_libdir}/libvirt-lxc.so}
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so
 %{_datadir}/%{name}/api
@@ -617,6 +620,7 @@ fi
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libvirt.a
+%{_libdir}/libvirt-admin.a
 %{?with_lxc:%{_libdir}/libvirt-lxc.a}
 %{_libdir}/libvirt-qemu.a
 
