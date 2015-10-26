@@ -40,12 +40,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.17
+Version:	1.2.20
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	a1f49050223be3cbd7678c32b1ee2756
+# Source0-md5:	b1058b8062a9b76f55928ce87eb0f5fe
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -92,7 +92,6 @@ BuildRequires:	openldap-devel
 %{?with_hyperv:BuildRequires:	openwsman-devel >= 2.2.3}
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	pkgconfig
-BuildRequires:	polkit
 %{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.627
