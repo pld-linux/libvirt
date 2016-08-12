@@ -24,6 +24,7 @@
 %bcond_without	xenapi		# Xen API (Citrix XenServer) support
 %bcond_without	xen		# Xen support
 %bcond_without	static_libs	# static libraries build
+%bcond_without  ldap        # don't require openldap-devel
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -88,7 +89,7 @@ BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
 BuildRequires:	numactl-devel
-BuildRequires:	openldap-devel
+%{?with_ldap:   BuildRequires:	openldap-devel}
 %{?with_hyperv:BuildRequires:	openwsman-devel >= 2.2.3}
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	pkgconfig
