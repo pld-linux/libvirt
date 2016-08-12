@@ -696,7 +696,7 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_secret.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_storage.so
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
+%{?with_vbox:%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so}
 %dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/lockd.so
 
