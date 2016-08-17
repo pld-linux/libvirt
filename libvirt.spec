@@ -2,6 +2,7 @@
 # - wireshark-dissector
 # - seems that lxc patch is not needed anymore, verify that before removing
 # - pldize virtlockd.init
+# - updated vserver patch, if anybody needs it
 #
 # Conditional build:
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
@@ -42,7 +43,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	2.1.0
-Release:	0.1
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
@@ -52,12 +53,11 @@ Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch1:		%{name}-lxc.patch
 Patch2:		%{name}-qemu-acl.patch
-Patch3:		%{name}-xend.patch
-Patch4:		virtlockd.init.patch
-Patch5:		%{name}-udevadm-settle.patch
-Patch6:		vserver.patch
-Patch7:		bashisms.patch
-Patch8:		%{name}-guests.init.patch
+Patch3:		virtlockd.init.patch
+Patch4:		%{name}-udevadm-settle.patch
+Patch5:		vserver.patch
+Patch6:		bashisms.patch
+Patch7:		%{name}-guests.init.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
@@ -417,16 +417,14 @@ Sondy systemtap/dtrace dla libvirt.
 
 %prep
 %setup -q
-#patch0 -p1
-# TODO
-#patch1 -p1
-#patch2 -p1
-#%patch3 -p1
+%patch0 -p1
+#%%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%{?with_vserver:%patch6 -p1}
+%{?with_vserver:%patch5 -p1}
+%patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 %build
 %{__libtoolize}

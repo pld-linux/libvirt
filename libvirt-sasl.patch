@@ -1,16 +1,16 @@
-diff -ru libvirt-0.8.8/daemon/libvirtd.conf libvirt-0.8.8-sasl/daemon/libvirtd.conf
---- libvirt-0.8.8/daemon/libvirtd.conf	2010-12-20 14:35:22.000000000 +0100
-+++ libvirt-0.8.8-sasl/daemon/libvirtd.conf	2011-04-28 11:45:47.727741165 +0200
-@@ -111,7 +111,7 @@
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/daemon/libvirtd.conf libvirt-2.1.0/daemon/libvirtd.conf
+--- libvirt-2.1.0.orig/daemon/libvirtd.conf	2016-06-27 16:12:20.000000000 +0200
++++ libvirt-2.1.0/daemon/libvirtd.conf	2016-08-17 12:25:28.000000000 +0200
+@@ -123,7 +123,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
  #  - sasl: use SASL infrastructure. The actual auth scheme is then
 -#          controlled from /etc/sasl2/libvirt.conf. For the TCP
 +#          controlled from /etc/sasl/libvirt.conf. For the TCP
  #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
- #          For non-TCP or TLS sockets,  any scheme is allowed.
+ #          For non-TCP or TLS sockets, any scheme is allowed.
  #
-@@ -142,7 +142,7 @@
+@@ -154,7 +154,7 @@
  # If you don't enable SASL, then all TCP traffic is cleartext.
  # Don't do this outside of a dev/test scenario. For real world
  # use, always enable SASL and use the GSSAPI or DIGEST-MD5
@@ -19,9 +19,10 @@ diff -ru libvirt-0.8.8/daemon/libvirtd.conf libvirt-0.8.8-sasl/daemon/libvirtd.c
  #auth_tcp = "sasl"
  
  # Change the authentication scheme for TLS sockets.
---- libvirt-1.1.3/daemon/Makefile.am.orig	2013-10-22 16:46:45.409294047 +0200
-+++ libvirt-1.1.3/daemon/Makefile.am	2013-10-22 20:09:12.185450964 +0200
-@@ -453,13 +453,13 @@
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/daemon/Makefile.am libvirt-2.1.0/daemon/Makefile.am
+--- libvirt-2.1.0.orig/daemon/Makefile.am	2016-04-26 04:20:09.000000000 +0200
++++ libvirt-2.1.0/daemon/Makefile.am	2016-08-17 12:25:28.000000000 +0200
+@@ -528,13 +528,13 @@
  # the WITH_LIBVIRTD conditional
  if WITH_SASL
  install-data-sasl:
@@ -39,57 +40,34 @@ diff -ru libvirt-0.8.8/daemon/libvirtd.conf libvirt-0.8.8-sasl/daemon/libvirtd.c
  else ! WITH_SASL
  install-data-sasl:
  uninstall-data-sasl:
-diff -ru libvirt-0.8.8/daemon/test_libvirtd.aug libvirt-0.8.8-sasl/daemon/test_libvirtd.aug
-diff -ru libvirt-0.8.8/docs/auth.html libvirt-0.8.8-sasl/docs/auth.html
---- libvirt-0.8.8/docs/auth.html	2011-02-17 05:13:12.000000000 +0100
-+++ libvirt-0.8.8-sasl/docs/auth.html	2011-04-28 11:45:43.429741167 +0200
-@@ -273,7 +273,7 @@
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/docs/auth.html libvirt-2.1.0/docs/auth.html
+--- libvirt-2.1.0.orig/docs/auth.html	2016-06-26 10:04:47.000000000 +0200
++++ libvirt-2.1.0/docs/auth.html	2016-08-17 12:25:28.000000000 +0200
+@@ -415,7 +415,7 @@
  The plain TCP socket of the libvirt daemon defaults to using SASL for authentication.
  The SASL mechanism configured by default is DIGEST-MD5, which provides a basic
  username+password style authentication. To enable Kerberos single-sign-on instead,
 -the libvirt SASL configuration file must be changed. This is <code>/etc/sasl2/libvirt.conf</code>.
 +the libvirt SASL configuration file must be changed. This is <code>/etc/sasl/libvirt.conf</code>.
  The <code>mech_list</code> parameter must first be changed to <code>gssapi</code>
- instead of the default <code>digest-md5</code>. If SASL is enabled on the UNIX
- and/or TLS sockets, Kerberos will also be used for them. Like DIGEST-MD5, the Kerberos
-diff -ru libvirt-0.8.8/docs/auth.html.in libvirt-0.8.8-sasl/docs/auth.html.in
---- libvirt-0.8.8/docs/auth.html.in	2010-12-20 14:35:22.000000000 +0100
-+++ libvirt-0.8.8-sasl/docs/auth.html.in	2011-04-28 11:45:43.586741167 +0200
-@@ -115,7 +115,7 @@
+ instead of the default <code>digest-md5</code>, and keytab should be set to
+ <code>/etc/libvirt/krb5.tab</code> . If SASL is enabled on the UNIX
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/docs/auth.html.in libvirt-2.1.0/docs/auth.html.in
+--- libvirt-2.1.0.orig/docs/auth.html.in	2016-06-26 10:01:24.000000000 +0200
++++ libvirt-2.1.0/docs/auth.html.in	2016-08-17 12:25:28.000000000 +0200
+@@ -246,7 +246,7 @@
  The plain TCP socket of the libvirt daemon defaults to using SASL for authentication.
  The SASL mechanism configured by default is DIGEST-MD5, which provides a basic
  username+password style authentication. To enable Kerberos single-sign-on instead,
 -the libvirt SASL configuration file must be changed. This is <code>/etc/sasl2/libvirt.conf</code>.
 +the libvirt SASL configuration file must be changed. This is <code>/etc/sasl/libvirt.conf</code>.
  The <code>mech_list</code> parameter must first be changed to <code>gssapi</code>
- instead of the default <code>digest-md5</code>. If SASL is enabled on the UNIX
- and/or TLS sockets, Kerberos will also be used for them. Like DIGEST-MD5, the Kerberos
-diff -ru libvirt-0.8.8/libvirt.spec libvirt-0.8.8-sasl/libvirt.spec
---- libvirt-0.8.8/libvirt.spec	2011-02-17 05:13:09.000000000 +0100
-+++ libvirt-0.8.8-sasl/libvirt.spec	2011-04-28 11:45:43.675741167 +0200
-@@ -933,7 +933,7 @@
- %dir %attr(0755, root, root) %{_localstatedir}/lib/libvirt/
- 
- %if %{with_sasl}
--%config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
-+%config(noreplace) %{_sysconfdir}/sasl/libvirt.conf
- %endif
- 
- %files devel
-diff -ru libvirt-0.8.8/libvirt.spec.in libvirt-0.8.8-sasl/libvirt.spec.in
---- libvirt-0.8.8/libvirt.spec.in	2011-02-17 05:10:58.000000000 +0100
-+++ libvirt-0.8.8-sasl/libvirt.spec.in	2011-04-28 11:45:43.672741167 +0200
-@@ -933,7 +933,7 @@
- %dir %attr(0755, root, root) %{_localstatedir}/lib/libvirt/
- 
- %if %{with_sasl}
--%config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
-+%config(noreplace) %{_sysconfdir}/sasl/libvirt.conf
- %endif
- 
- %files devel
---- libvirt-0.9.13/src/qemu/qemu.conf.orig	2012-05-31 16:23:22.000000000 +0200
-+++ libvirt-0.9.13/src/qemu/qemu.conf	2012-07-08 11:37:16.366378718 +0200
+ instead of the default <code>digest-md5</code>, and keytab should be set to
+ <code>/etc/libvirt/krb5.tab</code> . If SASL is enabled on the UNIX
+Only in libvirt-2.1.0.orig: libvirt.spec
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu.conf libvirt-2.1.0/src/qemu/qemu.conf
+--- libvirt-2.1.0.orig/src/qemu/qemu.conf	2016-06-22 09:38:15.000000000 +0200
++++ libvirt-2.1.0/src/qemu/qemu.conf	2016-08-17 12:25:28.000000000 +0200
 @@ -74,18 +74,18 @@
  # Examples include vinagre, virt-viewer and virt-manager
  # itself. UltraVNC, RealVNC, TightVNC do not support this
@@ -112,75 +90,90 @@ diff -ru libvirt-0.8.8/libvirt.spec.in libvirt-0.8.8-sasl/libvirt.spec.in
  
  
  # QEMU implements an extension for providing audio over a VNC connection,
-diff -ru libvirt-0.8.8/src/qemu/test_libvirtd_qemu.aug libvirt-0.8.8-sasl/src/qemu/test_libvirtd_qemu.aug
-diff -ru libvirt-0.8.8/tests/confdata/libvirtd.conf libvirt-0.8.8-sasl/tests/confdata/libvirtd.conf
---- libvirt-0.8.8/tests/confdata/libvirtd.conf	2010-05-27 14:03:22.000000000 +0200
-+++ libvirt-0.8.8-sasl/tests/confdata/libvirtd.conf	2011-04-28 11:45:46.878741165 +0200
-@@ -102,7 +102,7 @@
- #          the network providing auth (eg, TLS/x509 certificates)
- #
- #  - sasl: use SASL infrastructure. The actual auth scheme is then
--#          controlled from /etc/sasl2/libvirt.conf. For the TCP
-+#          controlled from /etc/sasl/libvirt.conf. For the TCP
- #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
- #          For non-TCP or TLS sockets,  any scheme is allowed.
- #
-@@ -133,7 +133,7 @@
- # If you don't enable SASL, then all TCP traffic is cleartext.
- # Don't do this outside of a dev/test scenario. For real world
- # use, always enable SASL and use the GSSAPI or DIGEST-MD5
--# mechanism in /etc/sasl2/libvirt.conf
-+# mechanism in /etc/sasl/libvirt.conf
- auth_tcp = "sasl"
- 
- # Change the authentication scheme for TLS sockets.
-diff -ru libvirt-0.8.8/tests/confdata/libvirtd.out libvirt-0.8.8-sasl/tests/confdata/libvirtd.out
---- libvirt-0.8.8/tests/confdata/libvirtd.out	2010-05-27 14:03:22.000000000 +0200
-+++ libvirt-0.8.8-sasl/tests/confdata/libvirtd.out	2011-04-28 11:45:46.875741165 +0200
-@@ -82,7 +82,7 @@
- #          the network providing auth (eg, TLS/x509 certificates)
- #
- #  - sasl: use SASL infrastructure. The actual auth scheme is then
--#          controlled from /etc/sasl2/libvirt.conf. For the TCP
-+#          controlled from /etc/sasl/libvirt.conf. For the TCP
- #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
- #          For non-TCP or TLS sockets,  any scheme is allowed.
- #
-@@ -111,7 +111,7 @@
- # If you don't enable SASL, then all TCP traffic is cleartext.
- # Don't do this outside of a dev/test scenario. For real world
- # use, always enable SASL and use the GSSAPI or DIGEST-MD5
--# mechanism in /etc/sasl2/libvirt.conf
-+# mechanism in /etc/sasl/libvirt.conf
- auth_tcp = "sasl"
- # Change the authentication scheme for TLS sockets.
- #
---- libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args.orig	2014-07-03 20:04:05.132591762 +0200
-+++ libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2014-07-03 20:42:03.205829499 +0200
-@@ -1,5 +1,5 @@
- LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test \
--SASL_CONF_PATH=/root/.sasl2 QEMU_AUDIO_DRV=none \
-+SASL_CONF_PATH=/root/.sasl QEMU_AUDIO_DRV=none \
- /usr/bin/qemu -S -M pc -m 214 \
- -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
- /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \
---- libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args.orig	2014-07-03 20:04:05.132591762 +0200
-+++ libvirt-1.2.6/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2014-07-03 20:42:29.659161721 +0200
-@@ -1,5 +1,5 @@
- LC_ALL=C PATH=/bin HOME=/home/test USER=test LOGNAME=test \
--SASL_CONF_PATH=/root/.sasl2 QEMU_AUDIO_DRV=none \
-+SASL_CONF_PATH=/root/.sasl QEMU_AUDIO_DRV=none \
- /usr/bin/qemu -S -M pc -m 214 \
- -smp 1 -monitor unix:/tmp/test-monitor,server,nowait -no-acpi -boot c -usb -hda \
- /dev/HostVG/QEMUGuest1 -net none -serial none -parallel none -vnc \
---- libvirt-1.0.6/tests/qemuxml2argvtest.c.orig	2013-06-16 15:44:25.855183409 +0200
-+++ libvirt-1.0.6/tests/qemuxml2argvtest.c	2013-06-16 15:45:12.908515760 +0200
-@@ -614,7 +614,7 @@
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args
+--- libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-08-17 12:27:03.000000000 +0200
+@@ -3,7 +3,7 @@
+ HOME=/home/test \
+ USER=test \
+ LOGNAME=test \
+-SASL_CONF_PATH=/root/.sasl2 \
++SASL_CONF_PATH=/root/.sasl \
+ QEMU_AUDIO_DRV=none \
+ /usr/bin/qemu \
+ -name QEMUGuest1 \
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
+--- libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-08-17 12:27:24.000000000 +0200
+@@ -3,7 +3,7 @@
+ HOME=/home/test \
+ USER=test \
+ LOGNAME=test \
+-SASL_CONF_PATH=/root/.sasl2 \
++SASL_CONF_PATH=/root/.sasl \
+ QEMU_AUDIO_DRV=none \
+ /usr/bin/qemu \
+ -name QEMUGuest1 \
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvtest.c libvirt-2.1.0/tests/qemuxml2argvtest.c
+--- libvirt-2.1.0.orig/tests/qemuxml2argvtest.c	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.1.0/tests/qemuxml2argvtest.c	2016-08-17 12:27:51.000000000 +0200
+@@ -929,7 +929,7 @@
  
      driver.config->vncSASL = 1;
      VIR_FREE(driver.config->vncSASLdir);
 -    ignore_value(VIR_STRDUP(driver.config->vncSASLdir, "/root/.sasl2"));
 +    ignore_value(VIR_STRDUP(driver.config->vncSASLdir, "/root/.sasl"));
-     DO_TEST("graphics-vnc-sasl", QEMU_CAPS_VNC, QEMU_CAPS_VGA);
+     DO_TEST("graphics-vnc-sasl", QEMU_CAPS_VNC);
      driver.config->vncTLS = 1;
      driver.config->vncTLSx509verify = 1;
+@@ -953,7 +953,7 @@
+     DO_TEST("graphics-spice-no-args",
+             QEMU_CAPS_SPICE);
+     driver.config->spiceSASL = 1;
+-    ignore_value(VIR_STRDUP(driver.config->spiceSASLdir, "/root/.sasl2"));
++    ignore_value(VIR_STRDUP(driver.config->spiceSASLdir, "/root/.sasl"));
+     DO_TEST("graphics-spice-sasl",
+             QEMU_CAPS_VGA_QXL,
+             QEMU_CAPS_SPICE,
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/virconfdata/libvirtd.conf libvirt-2.1.0/tests/virconfdata/libvirtd.conf
+--- libvirt-2.1.0.orig/tests/virconfdata/libvirtd.conf	2016-04-26 04:20:09.000000000 +0200
++++ libvirt-2.1.0/tests/virconfdata/libvirtd.conf	2016-08-17 12:29:16.000000000 +0200
+@@ -108,7 +108,7 @@
+ #          the network providing auth (eg, TLS/x509 certificates)
+ #
+ #  - sasl: use SASL infrastructure. The actual auth scheme is then
+-#          controlled from /etc/sasl2/libvirt.conf. For the TCP
++#          controlled from /etc/sasl/libvirt.conf. For the TCP
+ #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
+ #          For non-TCP or TLS sockets,  any scheme is allowed.
+ #
+@@ -139,7 +139,7 @@
+ # If you don't enable SASL, then all TCP traffic is cleartext.
+ # Don't do this outside of a dev/test scenario. For real world
+ # use, always enable SASL and use the GSSAPI or DIGEST-MD5
+-# mechanism in /etc/sasl2/libvirt.conf
++# mechanism in /etc/sasl/libvirt.conf
+ auth_tcp = "sasl"
+ 
+ # Change the authentication scheme for TLS sockets.
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/virconfdata/libvirtd.out libvirt-2.1.0/tests/virconfdata/libvirtd.out
+--- libvirt-2.1.0.orig/tests/virconfdata/libvirtd.out	2016-04-26 04:20:09.000000000 +0200
++++ libvirt-2.1.0/tests/virconfdata/libvirtd.out	2016-08-17 12:29:01.000000000 +0200
+@@ -87,7 +87,7 @@
+ #          the network providing auth (eg, TLS/x509 certificates)
+ #
+ #  - sasl: use SASL infrastructure. The actual auth scheme is then
+-#          controlled from /etc/sasl2/libvirt.conf. For the TCP
++#          controlled from /etc/sasl/libvirt.conf. For the TCP
+ #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
+ #          For non-TCP or TLS sockets,  any scheme is allowed.
+ #
+@@ -116,7 +116,7 @@
+ # If you don't enable SASL, then all TCP traffic is cleartext.
+ # Don't do this outside of a dev/test scenario. For real world
+ # use, always enable SASL and use the GSSAPI or DIGEST-MD5
+-# mechanism in /etc/sasl2/libvirt.conf
++# mechanism in /etc/sasl/libvirt.conf
+ auth_tcp = "sasl"
+ # Change the authentication scheme for TLS sockets.
+ #

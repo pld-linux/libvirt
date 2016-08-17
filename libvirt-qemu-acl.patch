@@ -1,21 +1,21 @@
-From: Neil Wilson <neil@brightbox.co.uk>
-To: libvir-list@redhat.com
-Date: Mon, 10 Jan 2011 09:52:56 +0000
-Message-ID: <1294653176.3013.16.camel@lenovo-3000-n100>
-
-Hi,
-
-Here's the patch to add basic ACL support to QEMU within libvirt. Like
-SASL it's ignored by RHEL5's default qemu. Newer qemu picks it up as
-expected and you can manipulate the acls using 'virsh'. 
-
-
-diff --git a/src/qemu/qemu.conf b/src/qemu/qemu.conf
-index ba41f80..7ab5eee 100644
---- a/src/qemu/qemu.conf
-+++ b/src/qemu/qemu.conf
-@@ -71,6 +71,15 @@
- # vnc_sasl = 1
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu_command.c libvirt-2.1.0/src/qemu/qemu_command.c
+--- libvirt-2.1.0.orig/src/qemu/qemu_command.c	2016-08-02 09:10:56.000000000 +0200
++++ libvirt-2.1.0/src/qemu/qemu_command.c	2016-08-17 12:43:29.000000000 +0200
+@@ -7521,6 +7521,9 @@
+         /* TODO: Support ACLs later */
+     }
+ 
++    if (cfg->vncACL) 
++        virBufferAddLit(&opt, ",acl");
++
+     virCommandAddArg(cmd, "-vnc");
+     virCommandAddArgBuffer(cmd, &opt);
+     if (graphics->data.vnc.keymap)
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu.conf libvirt-2.1.0/src/qemu/qemu.conf
+--- libvirt-2.1.0.orig/src/qemu/qemu.conf	2016-08-17 12:30:24.000000000 +0200
++++ libvirt-2.1.0/src/qemu/qemu.conf	2016-08-17 12:37:00.000000000 +0200
+@@ -80,6 +80,15 @@
+ #vnc_sasl = 1
  
  
 +# Enable the VNC access control lists. When switched on this will
@@ -30,32 +30,23 @@ index ba41f80..7ab5eee 100644
  # The default SASL configuration file is located in /etc/sasl/
  # When running libvirtd unprivileged, it may be desirable to
  # override the configs in this location. Set this parameter to
---- libvirt-1.0.6/src/qemu/qemu_command.c.orig	2013-06-16 15:45:37.115181922 +0200
-+++ libvirt-1.0.6/src/qemu/qemu_command.c	2013-06-16 15:47:49.335179175 +0200
-@@ -6178,6 +6178,10 @@
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu_conf.c libvirt-2.1.0/src/qemu/qemu_conf.c
+--- libvirt-2.1.0.orig/src/qemu/qemu_conf.c	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.1.0/src/qemu/qemu_conf.c	2016-08-17 12:40:28.000000000 +0200
+@@ -425,7 +425,8 @@
+         goto cleanup;
+     if (virConfGetValueBool(conf, "nographics_allow_host_audio", &cfg->nogfxAllowHostAudio) < 0)
+         goto cleanup;
+-
++    if (virConfGetValueBool(conf, "vnc_acl", &cfg->vncACL) < 0)
++        goto cleanup;
  
-             /* TODO: Support ACLs later */
-         }
-+
-+        if (cfg->vncACL) 
-+           virBufferAddLit(&opt, ",acl");
-+
-     }
- 
-     virCommandAddArg(cmd, "-vnc");
---- libvirt-1.1.3/src/qemu/qemu_conf.c.orig	2013-10-22 20:38:43.522043292 +0200
-+++ libvirt-1.1.3/src/qemu/qemu_conf.c	2013-10-22 20:45:19.515360007 +0200
-@@ -357,6 +357,7 @@
-     GET_VALUE_STR("vnc_sasl_dir", cfg->vncSASLdir);
-     GET_VALUE_BOOL("vnc_allow_host_audio", cfg->vncAllowHostAudio);
-     GET_VALUE_BOOL("nographics_allow_host_audio", cfg->nogfxAllowHostAudio);
-+    GET_VALUE_LONG("vnc_acl", cfg->vncACL);
- 
-     p = virConfGetValue(conf, "security_driver");
-     if (p && p->type == VIR_CONF_LIST) {
---- libvirt-1.0.3/src/qemu/qemu_conf.h.orig	2013-03-09 13:10:30.059751685 +0100
-+++ libvirt-1.0.3/src/qemu/qemu_conf.h	2013-03-09 13:54:17.296308093 +0100
-@@ -102,6 +102,7 @@
+     if (virConfGetValueStringList(conf, "security_driver", true, &cfg->securityDriverNames) < 0)
+         goto cleanup;
+diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu_conf.h libvirt-2.1.0/src/qemu/qemu_conf.h
+--- libvirt-2.1.0.orig/src/qemu/qemu_conf.h	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.1.0/src/qemu/qemu_conf.h	2016-08-17 12:37:00.000000000 +0200
+@@ -113,6 +113,7 @@
      bool vncTLS;
      bool vncTLSx509verify;
      bool vncSASL;
