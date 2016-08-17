@@ -93,6 +93,7 @@ BuildRequires:	numactl-devel
 %{?with_hyperv:BuildRequires:	openwsman-devel >= 2.2.3}
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	pkgconfig
+%{?with_polkit:BuildRequires:	polkit}
 %{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.627
