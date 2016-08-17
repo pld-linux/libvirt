@@ -387,7 +387,7 @@ Requires:	%{name}-daemon = %{version}-%{release}
 %{?with_libxl:Requires:	%{name}-daemon-libxl = %{version}-%{release}}
 Requires:	%{name}-daemon-lxc = %{version}-%{release}
 Requires:	%{name}-daemon-qemu = %{version}-%{release}
-Requires:	%{name}-daemon-uml = %{version}-%{release}
+%{?with_uml:Requires:	%{name}-daemon-uml = %{version}-%{release}}
 Requires:	%{name}-daemon-xen = %{version}-%{release}
 
 %description utils
