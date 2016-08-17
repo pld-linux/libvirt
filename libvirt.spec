@@ -41,12 +41,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	1.2.20
-Release:	3
+Version:	2.1.0
+Release:	0.1
 License:	LGPL v2.1+
 Group:		Libraries
-Source0:	ftp://ftp.libvirt.org/libvirt/%{name}-%{version}.tar.gz
-# Source0-md5:	b1058b8062a9b76f55928ce87eb0f5fe
+Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
+# Source0-md5:	fd1c054a8b59235e877efb728de79386
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -417,11 +417,11 @@ Sondy systemtap/dtrace dla libvirt.
 
 %prep
 %setup -q
-%patch0 -p1
+#patch0 -p1
 # TODO
 #patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#patch2 -p1
+#%patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %{?with_vserver:%patch6 -p1}
@@ -598,6 +598,7 @@ fi
 %endif
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
+%attr(755,root,root) %{_libdir}/libnss_libvirt.so.?
 
 %dir %{_libdir}/libvirt
 %dir %{_datadir}/libvirt
@@ -613,6 +614,7 @@ fi
 %{_gtkdocdir}/%{name}
 %{_includedir}/%{name}
 %{_pkgconfigdir}/libvirt.pc
+%{_pkgconfigdir}/libvirt-admin.pc
 %{?with_lxc:%{_pkgconfigdir}/libvirt-lxc.pc}
 %{_pkgconfigdir}/libvirt-qemu.pc
 
@@ -644,18 +646,23 @@ fi
 %dir %attr(700,root,root) %{_sysconfdir}/libvirt/qemu/networks/autostart
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirtd.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtlockd.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt-admin.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtlogd.conf
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/default.xml
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu/networks/autostart/default.xml
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/nwfilter/*.xml
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl/libvirt.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlockd
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlogd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
 %attr(754,root,root) /etc/rc.d/init.d/virtlockd
+%attr(754,root,root) /etc/rc.d/init.d/virtlogd
 %{systemdunitdir}/libvirtd.service
-%{systemdunitdir}/libvirtd.socket
 %{systemdunitdir}/virtlockd.service
 %{systemdunitdir}/virtlockd.socket
+%{systemdunitdir}/virtlogd.service
+%{systemdunitdir}/virtlogd.socket
 %config(noreplace) %verify(not md5 mtime size) /usr/lib/sysctl.d/60-libvirtd.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %attr(755,root,root) %{_libdir}/libvirt_iohelper
@@ -663,12 +670,15 @@ fi
 %attr(755,root,root) %{_libdir}/virt-aa-helper
 %attr(755,root,root) %{_sbindir}/libvirtd
 %attr(755,root,root) %{_sbindir}/virtlockd
+%attr(755,root,root) %{_sbindir}/virtlogd
 %{_datadir}/augeas/lenses/libvirtd.aug
 %{_datadir}/augeas/lenses/libvirt_lockd.aug
 %{_datadir}/augeas/lenses/virtlockd.aug
+%{_datadir}/augeas/lenses/virtlogd.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd.aug
 %{?with_qemu:%{_datadir}/augeas/lenses/tests/test_libvirt_lockd.aug}
 %{_datadir}/augeas/lenses/tests/test_virtlockd.aug
+%{_datadir}/augeas/lenses/tests/test_virtlogd.aug
 %if %{with polkit}
 %{_datadir}/polkit-1/actions/org.libvirt.api.policy
 %{_datadir}/polkit-1/actions/org.libvirt.unix.policy
@@ -676,6 +686,7 @@ fi
 %endif
 %{_mandir}/man8/libvirtd.8*
 %{_mandir}/man8/virtlockd.8*
+%{_mandir}/man8/virtlogd.8*
 %dir /var/lib/libvirt
 %dir /var/lib/libvirt/dnsmasq
 %attr(711,root,root) %dir /var/lib/libvirt/boot
@@ -768,12 +779,14 @@ fi
 %{systemdunitdir}/libvirt-guests.service
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virt-login-shell.conf
 %attr(755,root,root) %{_bindir}/virsh
+%attr(755,root,root) %{_bindir}/virt-admin
 %attr(755,root,root) %{_bindir}/virt-host-validate
 %attr(4755,root,root) %{_bindir}/virt-login-shell
 %attr(755,root,root) %{_bindir}/virt-xml-validate
 %attr(755,root,root) %{_bindir}/virt-pki-validate
 %attr(754,root,root) %{_libexecdir}/libvirt-guests.sh
 %{_mandir}/man1/virsh.1*
+%{_mandir}/man1/virt-admin.1*
 %{_mandir}/man1/virt-host-validate.1*
 %{_mandir}/man1/virt-login-shell.1*
 %{_mandir}/man1/virt-xml-validate.1*
