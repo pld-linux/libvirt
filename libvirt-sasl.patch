@@ -1,6 +1,6 @@
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/daemon/libvirtd.conf libvirt-2.1.0/daemon/libvirtd.conf
---- libvirt-2.1.0.orig/daemon/libvirtd.conf	2016-06-27 16:12:20.000000000 +0200
-+++ libvirt-2.1.0/daemon/libvirtd.conf	2016-08-17 12:25:28.000000000 +0200
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/libvirtd.conf libvirt-2.5.0/daemon/libvirtd.conf
+--- libvirt-2.5.0.orig/daemon/libvirtd.conf	2016-06-27 16:12:20.000000000 +0200
++++ libvirt-2.5.0/daemon/libvirtd.conf	2016-12-20 12:56:04.000000000 +0100
 @@ -123,7 +123,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
@@ -19,10 +19,10 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/daemon/libvirtd.conf
  #auth_tcp = "sasl"
  
  # Change the authentication scheme for TLS sockets.
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/daemon/Makefile.am libvirt-2.1.0/daemon/Makefile.am
---- libvirt-2.1.0.orig/daemon/Makefile.am	2016-04-26 04:20:09.000000000 +0200
-+++ libvirt-2.1.0/daemon/Makefile.am	2016-08-17 12:25:28.000000000 +0200
-@@ -528,13 +528,13 @@
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/Makefile.am libvirt-2.5.0/daemon/Makefile.am
+--- libvirt-2.5.0.orig/daemon/Makefile.am	2016-11-30 13:57:30.000000000 +0100
++++ libvirt-2.5.0/daemon/Makefile.am	2016-12-20 12:56:04.000000000 +0100
+@@ -532,13 +532,13 @@
  # the WITH_LIBVIRTD conditional
  if WITH_SASL
  install-data-sasl:
@@ -40,10 +40,10 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/daemon/Makefile.am l
  else ! WITH_SASL
  install-data-sasl:
  uninstall-data-sasl:
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/docs/auth.html libvirt-2.1.0/docs/auth.html
---- libvirt-2.1.0.orig/docs/auth.html	2016-06-26 10:04:47.000000000 +0200
-+++ libvirt-2.1.0/docs/auth.html	2016-08-17 12:25:28.000000000 +0200
-@@ -415,7 +415,7 @@
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/docs/auth.html libvirt-2.5.0/docs/auth.html
+--- libvirt-2.5.0.orig/docs/auth.html	2016-11-29 10:50:11.000000000 +0100
++++ libvirt-2.5.0/docs/auth.html	2016-12-20 12:56:04.000000000 +0100
+@@ -257,7 +257,7 @@
  The plain TCP socket of the libvirt daemon defaults to using SASL for authentication.
  The SASL mechanism configured by default is DIGEST-MD5, which provides a basic
  username+password style authentication. To enable Kerberos single-sign-on instead,
@@ -52,9 +52,9 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/docs/auth.html libvi
  The <code>mech_list</code> parameter must first be changed to <code>gssapi</code>
  instead of the default <code>digest-md5</code>, and keytab should be set to
  <code>/etc/libvirt/krb5.tab</code> . If SASL is enabled on the UNIX
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/docs/auth.html.in libvirt-2.1.0/docs/auth.html.in
---- libvirt-2.1.0.orig/docs/auth.html.in	2016-06-26 10:01:24.000000000 +0200
-+++ libvirt-2.1.0/docs/auth.html.in	2016-08-17 12:25:28.000000000 +0200
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/docs/auth.html.in libvirt-2.5.0/docs/auth.html.in
+--- libvirt-2.5.0.orig/docs/auth.html.in	2016-06-26 10:01:24.000000000 +0200
++++ libvirt-2.5.0/docs/auth.html.in	2016-12-20 12:56:04.000000000 +0100
 @@ -246,7 +246,7 @@
  The plain TCP socket of the libvirt daemon defaults to using SASL for authentication.
  The SASL mechanism configured by default is DIGEST-MD5, which provides a basic
@@ -64,11 +64,10 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/docs/auth.html.in li
  The <code>mech_list</code> parameter must first be changed to <code>gssapi</code>
  instead of the default <code>digest-md5</code>, and keytab should be set to
  <code>/etc/libvirt/krb5.tab</code> . If SASL is enabled on the UNIX
-Only in libvirt-2.1.0.orig: libvirt.spec
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu.conf libvirt-2.1.0/src/qemu/qemu.conf
---- libvirt-2.1.0.orig/src/qemu/qemu.conf	2016-06-22 09:38:15.000000000 +0200
-+++ libvirt-2.1.0/src/qemu/qemu.conf	2016-08-17 12:25:28.000000000 +0200
-@@ -74,18 +74,18 @@
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/src/qemu/qemu.conf libvirt-2.5.0/src/qemu/qemu.conf
+--- libvirt-2.5.0.orig/src/qemu/qemu.conf	2016-11-29 10:47:58.000000000 +0100
++++ libvirt-2.5.0/src/qemu/qemu.conf	2016-12-20 12:56:04.000000000 +0100
+@@ -112,18 +112,18 @@
  # Examples include vinagre, virt-viewer and virt-manager
  # itself. UltraVNC, RealVNC, TightVNC do not support this
  #
@@ -90,9 +89,9 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu.conf l
  
  
  # QEMU implements an extension for providing audio over a VNC connection,
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args
---- libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-08-17 12:27:03.000000000 +0200
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args
+--- libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-12-20 12:56:04.000000000 +0100
 @@ -3,7 +3,7 @@
  HOME=/home/test \
  USER=test \
@@ -102,9 +101,9 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvda
  QEMU_AUDIO_DRV=none \
  /usr/bin/qemu \
  -name QEMUGuest1 \
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
---- libvirt-2.1.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.1.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-08-17 12:27:24.000000000 +0200
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
+--- libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-12-20 12:56:04.000000000 +0100
 @@ -3,7 +3,7 @@
  HOME=/home/test \
  USER=test \
@@ -114,30 +113,9 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvda
  QEMU_AUDIO_DRV=none \
  /usr/bin/qemu \
  -name QEMUGuest1 \
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/qemuxml2argvtest.c libvirt-2.1.0/tests/qemuxml2argvtest.c
---- libvirt-2.1.0.orig/tests/qemuxml2argvtest.c	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.1.0/tests/qemuxml2argvtest.c	2016-08-17 12:27:51.000000000 +0200
-@@ -929,7 +929,7 @@
- 
-     driver.config->vncSASL = 1;
-     VIR_FREE(driver.config->vncSASLdir);
--    ignore_value(VIR_STRDUP(driver.config->vncSASLdir, "/root/.sasl2"));
-+    ignore_value(VIR_STRDUP(driver.config->vncSASLdir, "/root/.sasl"));
-     DO_TEST("graphics-vnc-sasl", QEMU_CAPS_VNC);
-     driver.config->vncTLS = 1;
-     driver.config->vncTLSx509verify = 1;
-@@ -953,7 +953,7 @@
-     DO_TEST("graphics-spice-no-args",
-             QEMU_CAPS_SPICE);
-     driver.config->spiceSASL = 1;
--    ignore_value(VIR_STRDUP(driver.config->spiceSASLdir, "/root/.sasl2"));
-+    ignore_value(VIR_STRDUP(driver.config->spiceSASLdir, "/root/.sasl"));
-     DO_TEST("graphics-spice-sasl",
-             QEMU_CAPS_VGA_QXL,
-             QEMU_CAPS_SPICE,
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/virconfdata/libvirtd.conf libvirt-2.1.0/tests/virconfdata/libvirtd.conf
---- libvirt-2.1.0.orig/tests/virconfdata/libvirtd.conf	2016-04-26 04:20:09.000000000 +0200
-+++ libvirt-2.1.0/tests/virconfdata/libvirtd.conf	2016-08-17 12:29:16.000000000 +0200
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/libvirtd.conf libvirt-2.5.0/tests/virconfdata/libvirtd.conf
+--- libvirt-2.5.0.orig/tests/virconfdata/libvirtd.conf	2016-04-26 04:20:09.000000000 +0200
++++ libvirt-2.5.0/tests/virconfdata/libvirtd.conf	2016-12-20 12:56:04.000000000 +0100
 @@ -108,7 +108,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
@@ -156,9 +134,9 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/virconfdata/li
  auth_tcp = "sasl"
  
  # Change the authentication scheme for TLS sockets.
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/tests/virconfdata/libvirtd.out libvirt-2.1.0/tests/virconfdata/libvirtd.out
---- libvirt-2.1.0.orig/tests/virconfdata/libvirtd.out	2016-04-26 04:20:09.000000000 +0200
-+++ libvirt-2.1.0/tests/virconfdata/libvirtd.out	2016-08-17 12:29:01.000000000 +0200
+diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/libvirtd.out libvirt-2.5.0/tests/virconfdata/libvirtd.out
+--- libvirt-2.5.0.orig/tests/virconfdata/libvirtd.out	2016-04-26 04:20:09.000000000 +0200
++++ libvirt-2.5.0/tests/virconfdata/libvirtd.out	2016-12-20 12:56:04.000000000 +0100
 @@ -87,7 +87,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #

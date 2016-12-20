@@ -42,12 +42,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	2.1.0
-Release:	2
+Version:	2.5.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	fd1c054a8b59235e877efb728de79386
+# Source0-md5:	001af1ca2545971c6b46628678fd4afa
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -601,7 +601,6 @@ fi
 
 %dir %{_libdir}/libvirt
 %dir %{_datadir}/libvirt
-%{_datadir}/libvirt/libvirtLogo.png
 
 %files devel
 %defattr(644,root,root,755)
@@ -658,6 +657,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/virtlockd
 %attr(754,root,root) /etc/rc.d/init.d/virtlogd
 %{systemdunitdir}/libvirtd.service
+%{systemdunitdir}/virt-guest-shutdown.target
 %{systemdunitdir}/virtlockd.service
 %{systemdunitdir}/virtlockd.socket
 %{systemdunitdir}/virtlogd.service
@@ -793,6 +793,7 @@ fi
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
 %{_datadir}/libvirt/schemas/capability.rng
+%{_datadir}/libvirt/schemas/cputypes.rng
 %{_datadir}/libvirt/schemas/domain.rng
 %{_datadir}/libvirt/schemas/domaincaps.rng
 %{_datadir}/libvirt/schemas/domaincommon.rng
