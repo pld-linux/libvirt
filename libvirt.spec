@@ -5,7 +5,7 @@
 # - updated vserver patch, if anybody needs it
 #
 # Conditional build:
-%bcond_without	ceph		# RADOS BD (Ceph) storage support
+%bcond_with	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	esx		# VMware ESX support
 %bcond_without	glusterfs	# GlusterFS storage support
 %bcond_without	hyperv		# Hyper-V support
@@ -43,7 +43,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	2.5.0
-Release:	2
+Release:	3
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
