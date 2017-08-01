@@ -40,30 +40,28 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/Makefile.am l
  else ! WITH_SASL
  install-data-sasl:
  uninstall-data-sasl:
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/docs/auth.html libvirt-2.5.0/docs/auth.html
---- libvirt-2.5.0.orig/docs/auth.html	2016-11-29 10:50:11.000000000 +0100
-+++ libvirt-2.5.0/docs/auth.html	2016-12-20 12:56:04.000000000 +0100
-@@ -257,7 +257,7 @@
- The plain TCP socket of the libvirt daemon defaults to using SASL for authentication.
- The SASL mechanism configured by default is DIGEST-MD5, which provides a basic
- username+password style authentication. To enable Kerberos single-sign-on instead,
--the libvirt SASL configuration file must be changed. This is <code>/etc/sasl2/libvirt.conf</code>.
-+the libvirt SASL configuration file must be changed. This is <code>/etc/sasl/libvirt.conf</code>.
- The <code>mech_list</code> parameter must first be changed to <code>gssapi</code>
- instead of the default <code>digest-md5</code>, and keytab should be set to
- <code>/etc/libvirt/krb5.tab</code> . If SASL is enabled on the UNIX
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/docs/auth.html.in libvirt-2.5.0/docs/auth.html.in
---- libvirt-2.5.0.orig/docs/auth.html.in	2016-06-26 10:01:24.000000000 +0200
-+++ libvirt-2.5.0/docs/auth.html.in	2016-12-20 12:56:04.000000000 +0100
-@@ -246,7 +246,7 @@
- The plain TCP socket of the libvirt daemon defaults to using SASL for authentication.
- The SASL mechanism configured by default is DIGEST-MD5, which provides a basic
- username+password style authentication. To enable Kerberos single-sign-on instead,
--the libvirt SASL configuration file must be changed. This is <code>/etc/sasl2/libvirt.conf</code>.
-+the libvirt SASL configuration file must be changed. This is <code>/etc/sasl/libvirt.conf</code>.
- The <code>mech_list</code> parameter must first be changed to <code>gssapi</code>
- instead of the default <code>digest-md5</code>, and keytab should be set to
- <code>/etc/libvirt/krb5.tab</code> . If SASL is enabled on the UNIX
+--- libvirt-3.5.0/docs/auth.html.in.orig	2017-08-01 17:26:35.217739874 +0200
++++ libvirt-3.5.0/docs/auth.html.in	2017-08-01 17:29:07.364404805 +0200
+@@ -267,7 +267,7 @@
+     <p>
+ Since the libvirt SASL config file defaults to using GSSAPI (Kerberos), a
+ config change is rquired to enable plain password auth. This is done by
+-editting <code>/etc/sasl2/libvirt.conf</code> to set the <code>mech_list</code>
++editting <code>/etc/sasl/libvirt.conf</code> to set the <code>mech_list</code>
+ parameter to <code>scram-sha-1</code>.
+     </p>
+     <p>
+--- libvirt-3.5.0/docs/auth.html.orig	2017-08-01 17:26:35.217739874 +0200
++++ libvirt-3.5.0/docs/auth.html	2017-08-01 17:29:16.164404704 +0200
+@@ -265,7 +265,7 @@
+         <p>
+ Since the libvirt SASL config file defaults to using GSSAPI (Kerberos), a
+ config change is rquired to enable plain password auth. This is done by
+-editting <code>/etc/sasl2/libvirt.conf</code> to set the <code>mech_list</code>
++editting <code>/etc/sasl/libvirt.conf</code> to set the <code>mech_list</code>
+ parameter to <code>scram-sha-1</code>.
+     </p>
+         <p>
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/src/qemu/qemu.conf libvirt-2.5.0/src/qemu/qemu.conf
 --- libvirt-2.5.0.orig/src/qemu/qemu.conf	2016-11-29 10:47:58.000000000 +0100
 +++ libvirt-2.5.0/src/qemu/qemu.conf	2016-12-20 12:56:04.000000000 +0100

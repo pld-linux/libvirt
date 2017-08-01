@@ -1,5 +1,7 @@
 # TODO:
-# - wireshark-dissector
+# - wireshark-dissector (BR: pkgconfig(wireshark) >= 1.11.3)
+# - parallels-sdk >= 7.0.22?
+# - virtuozzo storage?
 # - seems that lxc patch is not needed anymore, verify that before removing
 # - pldize virtlockd.init
 # - updated vserver patch, if anybody needs it
@@ -42,12 +44,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	2.5.0
-Release:	4
+Version:	3.5.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	001af1ca2545971c6b46628678fd4afa
+# Source0-md5:	0b7b3ac01dc1ad8330e7ebd3727ffb4b
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -59,6 +61,8 @@ Patch5:		vserver.patch
 Patch6:		bashisms.patch
 Patch7:		%{name}-guests.init.patch
 URL:		http://www.libvirt.org/
+BuildRequires:	acl-devel
+BuildRequires:	attr-devel
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
 BuildRequires:	autoconf >= 2.50
@@ -72,7 +76,7 @@ BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
 BuildRequires:	gettext-tools >= 0.17
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 3.4.1}
-BuildRequires:	gnutls-devel >= 1.0.25
+BuildRequires:	gnutls-devel >= 2.2.0
 BuildRequires:	libapparmor-devel
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
@@ -80,7 +84,8 @@ BuildRequires:	libfuse-devel >= 2.8.6
 BuildRequires:	libgcrypt-devel
 BuildRequires:	libnl-devel >= 3.2
 BuildRequires:	libpcap-devel >= 1.0.0
-BuildRequires:	libselinux-devel >= 2.0.82
+BuildRequires:	libselinux-devel >= 2.5
+BuildRequires:	libssh-devel >= 0.7
 BuildRequires:	libssh2-devel >= 1.3
 BuildRequires:	libtool
 %{?with_xenapi:BuildRequires:	libxenserver-devel}
@@ -100,8 +105,9 @@ BuildRequires:	rpmbuild(macros) >= 1.627
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
 BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
-BuildRequires:	udev-devel >= 1:145
+BuildRequires:	udev-devel >= 1:218
 %{?with_xen:BuildRequires:	xen-devel >= 4.2}
+%{?with_libxl:BuildRequires:	xen-devel >= 4.4}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
 BuildRequires:	yajl-devel
@@ -110,7 +116,8 @@ Requires:	device-mapper >= 1.0.0
 Requires:	libcap-ng >= 0.4.0
 Requires:	libnl >= 3.2
 Requires:	libpcap >= 1.0.0
-Requires:	libselinux >= 2.0.82
+Requires:	libselinux >= 2.5
+Requires:	libssh >= 0.7
 Requires:	libssh2 >= 1.3
 Requires:	libxml2 >= 1:2.6.0
 %{?with_hyperv:Requires:	openwsman-libs >= 2.2.3}
@@ -158,13 +165,13 @@ Requires:	audit-libs-devel
 Requires:	curl-devel >= 7.18.0
 Requires:	dbus-devel >= 1.0.0
 Requires:	device-mapper-devel >= 1.0.0
-Requires:	gnutls-devel >= 1.0.25
+Requires:	gnutls-devel >= 2.2.0
 Requires:	libapparmor-devel
 Requires:	libcap-ng-devel >= 0.4.0
 Requires:	libgcrypt-devel
 Requires:	libnl-devel >= 3.2
 Requires:	libpcap-devel >= 1.0.0
-Requires:	libselinux-devel >= 2.0.82
+Requires:	libselinux-devel >= 2.5
 Requires:	libxml2-devel >= 1:2.6.0
 Requires:	numactl-devel
 %{?with_hyperv:Requires:	openwsman-devel >= 2.2.3}
@@ -231,7 +238,7 @@ Requires:	rc-scripts
 # Needed for probing the power management features of the host.
 Requires:	pm-utils
 Requires:	systemd-units >= 37-0.10
-Requires:	udev-libs >= 1:145
+Requires:	udev-libs >= 1:218
 Requires:	util-linux
 Requires:	virtual(module-tools)
 Requires:	xorg-lib-libpciaccess >= 0.10.0
@@ -270,13 +277,39 @@ Demon działający po stronie serwera wymagany do zarządzania funkcjami
 wirtualizacji nowych wersji Linuksa. Wymaga podpakietu specyficznego
 dla hipernadzorcy.
 
+%package daemon-storage-gluster
+Summary:	Storage driver plugin for GlusterFS
+Summary(pl.UTF-8):	Wtyczka składowania danych wykorzystująca GlusterFS
+Group:		Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Requires:	glusterfs-libs >= 3.4.1
+
+%description daemon-storage-gluster
+Storage driver plugin for GlusterFS.
+
+%description daemon-storage-gluster -l pl.UTF-8
+Wtyczka składowania danych wykorzystująca system plików GlusterFS.
+
+%package daemon-storage-rbd
+Summary:	Storage driver plugin for Ceph RADOS Block Device
+Summary(pl.UTF-8):	Wtyczka składowania danych wykorzystująca urządzenie blokowe RADOS (Ceph)
+Group:		Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+
+%description daemon-storage-rbd
+Storage driver plugin for Ceph RADOS Block Device.
+
+%description daemon-storage-rbd -l pl.UTF-8
+Wtyczka składowania danych wykorzystująca urządzenie blokowe RADOS
+(system plików Ceph).
+
 %package daemon-libxl
 Summary:	Server side driver required to run XEN guests (xenlight)
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN (xenlight)
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	/usr/sbin/qcow-create
-Requires:	xen
+Requires:	xen >= 4.4
 Provides:	libvirt(hypervisor)
 
 %description daemon-libxl
@@ -362,7 +395,7 @@ Summary(pl.UTF-8):	Narzędzia klienckie do biblioteki libvirt
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	gettext >= 0.18.1.1-6
-Requires:	gnutls >= 1.0.25
+Requires:	gnutls >= 2.2.0
 Requires:	netcat-openbsd
 Requires:	rc-scripts
 Requires(post):	systemd-units
@@ -467,6 +500,8 @@ Sondy systemtap/dtrace dla libvirt.
 	OVSVSCTL=/usr/bin/ovs-vsctl \
 	NUMAD=/usr/bin/numad \
 	SHEEPDOGCLI=/usr/sbin/collie \
+	ZFS=/usr/sbin/zfs \
+	ZPOOL=/usr/sbin/zpool \
 	--disable-silent-rules \
 	%{?with_static_libs:--enable-static} \
 	--with-html-dir=%{_gtkdocdir} \
@@ -537,6 +572,8 @@ cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.la \
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.a}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/storage-backend/*.la \
+	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/storage-backend/*.a}
 
 %if %{with sanlock}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.la \
@@ -584,7 +621,7 @@ fi
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc ChangeLog README TODO NEWS
+%doc AUTHORS ChangeLog NEWS README.md TODO
 %dir %{_sysconfdir}/libvirt
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
@@ -597,7 +634,10 @@ fi
 %endif
 %attr(755,root,root) %{_libdir}/libvirt-qemu.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvirt-qemu.so.0
-%attr(755,root,root) %{_libdir}/libnss_libvirt.so.?
+
+# NSS modules
+%attr(755,root,root) %{_libdir}/libnss_libvirt.so.2
+%attr(755,root,root) %{_libdir}/libnss_libvirt_guest.so.2
 
 %dir %{_libdir}/libvirt
 %dir %{_datadir}/libvirt
@@ -615,6 +655,8 @@ fi
 %{_pkgconfigdir}/libvirt-admin.pc
 %{?with_lxc:%{_pkgconfigdir}/libvirt-lxc.pc}
 %{_pkgconfigdir}/libvirt-qemu.pc
+%{_mandir}/man7/virkeycode-*.7*
+%{_mandir}/man7/virkeyname-*.7*
 
 %files static
 %defattr(644,root,root,755)
@@ -709,6 +751,28 @@ fi
 %{?with_vbox:%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so}
 %dir %{_libdir}/libvirt/lock-driver
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/lockd.so
+%dir %{_libdir}/libvirt/storage-backend
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_disk.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_fs.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_iscsi.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_logical.so
+# mpath requires libdevmapper, but libvirt itself requires it too
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_mpath.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_scsi.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_sheepdog.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_zfs.so
+
+%if %{with glusterfs}
+%files daemon-storage-gluster
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_gluster.so
+%endif
+
+%if %{with ceph}
+%files daemon-storage-rbd
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_rbd.so
+%endif
 
 %if %{with libxl}
 %files daemon-libxl
@@ -807,6 +871,8 @@ fi
 %{_datadir}/libvirt/schemas/storagecommon.rng
 %{_datadir}/libvirt/schemas/storagepool.rng
 %{_datadir}/libvirt/schemas/storagevol.rng
+# for test driver (built into libvirt)
+%{_datadir}/libvirt/test-screenshot.png
 
 %files utils
 %defattr(644,root,root,755)
