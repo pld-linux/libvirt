@@ -1,33 +1,35 @@
 # TODO:
-# - wireshark-dissector (BR: pkgconfig(wireshark) >= 1.11.3)
 # - parallels-sdk >= 7.0.22?
 # - virtuozzo storage?
-# - seems that lxc patch is not needed anymore, verify that before removing
 # - pldize virtlockd.init
-# - updated vserver patch, if anybody needs it
+# - update vserver patch, if anybody needs it
 #
 # Conditional build:
-%bcond_without	ceph		# RADOS BD (Ceph) storage support
+# - virtualization
 %bcond_without	esx		# VMware ESX support
-%bcond_without	glusterfs	# GlusterFS storage support
 %bcond_without	hyperv		# Hyper-V support
 %bcond_without	libxl		# libxenlight support
 %bcond_without	lxc		# LXC support
-%bcond_without	netcf		# host interfaces support
 %bcond_without	openvz		# OpenVZ support
 %bcond_without	phyp		# PHYP support
-%bcond_without	polkit		# PolicyKit support
 %bcond_without	qemu		# Qemu support
-%bcond_without	sanlock		# sanlock storage lock manager
-%bcond_without	systemtap	# systemtap/dtrace probes
 %bcond_without	uml		# UML support
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
 %bcond_with	vserver		# Support for Linux-VServer guests
 %bcond_without	xenapi		# Xen API (Citrix XenServer) support
 %bcond_without	xen		# Xen support
+# - storage
+%bcond_without	ceph		# RADOS BD (Ceph) storage support
+%bcond_without	glusterfs	# GlusterFS storage support
+# - storage locking
+%bcond_without	sanlock		# sanlock storage lock manager
+# - other
+%bcond_without	netcf		# host interfaces support
+%bcond_without	polkit		# PolicyKit support
+%bcond_without	systemtap	# systemtap/dtrace probes
+%bcond_without	wireshark	# wireshark dissector module
 %bcond_without	static_libs	# static libraries build
-%bcond_without	ldap		# don't require openldap-devel
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -53,7 +55,6 @@ Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
-Patch1:		%{name}-lxc.patch
 Patch2:		%{name}-qemu-acl.patch
 Patch3:		virtlockd.init.patch
 Patch4:		%{name}-udevadm-settle.patch
@@ -94,7 +95,6 @@ BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
 BuildRequires:	numactl-devel
-%{?with_ldap:BuildRequires:	openldap-devel}
 %{?with_hyperv:BuildRequires:	openwsman-devel >= 2.2.3}
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	pkgconfig
@@ -106,6 +106,7 @@ BuildRequires:	rpmbuild(macros) >= 1.627
 BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 BuildRequires:	udev-devel >= 1:218
+%{?with_wireshark:BuildRequires:	wireshark-devel >= 1.11.3}
 %{?with_xen:BuildRequires:	xen-devel >= 4.2}
 %{?with_libxl:BuildRequires:	xen-devel >= 4.4}
 # For disk driver
@@ -449,10 +450,21 @@ systemtap/dtrace probes for libvirt.
 %description -n systemtap-libvirt -l pl.UTF-8
 Sondy systemtap/dtrace dla libvirt.
 
+%package -n wireshark-libvirt
+Summary:	Wireshark dissector module for libvirt packets
+Summary(pl.UTF-8):	Moduł sekcji Wiresharka do pakietów libvirt
+Group:		Libraries
+Requires:	wireshark >= 1.11.3
+
+%description -n wireshark-libvirt
+Wireshark dissector module for libvirt packets.
+
+%description -n wireshark-libvirt -l pl.UTF-8
+Moduł sekcji Wiresharka do pakietów libvirt.
+
 %prep
 %setup -q
 %patch0 -p1
-#%%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -548,6 +560,7 @@ Sondy systemtap/dtrace dla libvirt.
 	%{__with_without vbox vbox %{_libdir}/VirtualBox} \
 	--with-virtualport \
 	%{__with_without vmware} \
+	%{!?with_wireshark:--without-wireshark-dissector} \
 	%{__with_without xen} \
 	%{__with_without xenapi} \
 	--with-yajl \
@@ -578,6 +591,10 @@ cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 %if %{with sanlock}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.la \
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.a}
+%endif
+%if %{with wireshark}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/libvirt.la \
+	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/libvirt.a} \
 %endif
 
 %find_lang %{name}
@@ -883,4 +900,10 @@ fi
 %{_datadir}/systemtap/tapset/libvirt_functions.stp
 %{_datadir}/systemtap/tapset/libvirt_probes.stp
 %{_datadir}/systemtap/tapset/libvirt_qemu_probes.stp
+%endif
+
+%if %{with wireshark}
+%files -n wireshark-libvirt
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/wireshark/plugins/*/libvirt.so
 %endif
