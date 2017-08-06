@@ -46,12 +46,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	3.5.0
+Version:	3.6.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	0b7b3ac01dc1ad8330e7ebd3727ffb4b
+# Source0-md5:	6a342e5c5a4d5229d971fe409ada2ae8
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -75,6 +75,7 @@ BuildRequires:	cyrus-sasl-devel
 BuildRequires:	dbus-devel >= 1.0.0
 BuildRequires:	device-mapper-devel >= 1.0.0
 BuildRequires:	gawk
+BuildRequires:	gcc >= 6:4.4
 BuildRequires:	gettext-tools >= 0.17
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 3.4.1}
 BuildRequires:	gnutls-devel >= 2.2.0
