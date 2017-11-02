@@ -46,12 +46,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	3.8.0
+Version:	3.9.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	cc6bfd0a1dd9557eb81bc971d6a3e02e
+# Source0-md5:	ba10eb6c54c6319cd58c015b678bdb7a
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -639,7 +639,7 @@ fi
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README.md TODO
+%doc AUTHORS ChangeLog NEWS README.md
 %dir %{_sysconfdir}/libvirt
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
