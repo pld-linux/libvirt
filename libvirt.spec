@@ -46,12 +46,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	3.9.0
+Version:	3.10.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	ba10eb6c54c6319cd58c015b678bdb7a
+# Source0-md5:	62a78e6c1e71cd9acef8854b37beea59
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -687,7 +687,7 @@ fi
 %files lock-sanlock
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/virt-sanlock-cleanup
-%attr(755,root,root) %{_libdir}/libvirt_sanlock_helper
+%attr(755,root,root) %{_libexecdir}/libvirt_sanlock_helper
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
 %{_datadir}/augeas/lenses/libvirt_sanlock.aug
 %{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
@@ -724,9 +724,9 @@ fi
 %{systemdunitdir}/virtlogd.socket
 %config(noreplace) %verify(not md5 mtime size) /usr/lib/sysctl.d/60-libvirtd.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
-%attr(755,root,root) %{_libdir}/libvirt_iohelper
-%attr(755,root,root) %{_libdir}/libvirt_parthelper
-%attr(755,root,root) %{_libdir}/virt-aa-helper
+%attr(755,root,root) %{_libexecdir}/libvirt_iohelper
+%attr(755,root,root) %{_libexecdir}/libvirt_parthelper
+%attr(755,root,root) %{_libexecdir}/virt-aa-helper
 %attr(755,root,root) %{_sbindir}/libvirtd
 %attr(755,root,root) %{_sbindir}/virtlockd
 %attr(755,root,root) %{_sbindir}/virtlogd
@@ -817,7 +817,7 @@ fi
 %attr(700,root,root) %dir /var/log/libvirt/lxc
 %{_datadir}/augeas/lenses/libvirtd_lxc.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd_lxc.aug
-%attr(755,root,root) %{_libdir}/libvirt_lxc
+%attr(755,root,root) %{_libexecdir}/libvirt_lxc
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_lxc.so
 %endif
 
