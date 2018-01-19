@@ -88,8 +88,8 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/src/qemu/qemu.conf l
  
  # QEMU implements an extension for providing audio over a VNC connection,
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args
---- libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args	2016-12-20 12:56:04.000000000 +0100
+--- libvirt-2.5.0.orig/tests/qemuxml2argvdata/-graphics-vnc-sasl.args	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.5.0/tests/qemuxml2argvdata/graphics-vnc-sasl.args	2016-12-20 12:56:04.000000000 +0100
 @@ -3,7 +3,7 @@
  HOME=/home/test \
  USER=test \
@@ -100,8 +100,8 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvda
  /usr/bin/qemu \
  -name QEMUGuest1 \
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
---- libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args	2016-12-20 12:56:04.000000000 +0100
+--- libvirt-2.5.0.orig/tests/qemuxml2argvdata/graphics-vnc-tls.args	2016-07-27 14:39:35.000000000 +0200
++++ libvirt-2.5.0/tests/qemuxml2argvdata/graphics-vnc-tls.args	2016-12-20 12:56:04.000000000 +0100
 @@ -3,7 +3,7 @@
  HOME=/home/test \
  USER=test \

@@ -46,12 +46,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	3.10.0
+Version:	4.0.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	62a78e6c1e71cd9acef8854b37beea59
+# Source0-md5:	ff0dbdd8ec4ac1277588dfe3b245d0e9
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -157,6 +157,17 @@ dającej się zintegrować w razie potrzeby z innymi mechanizmami
 wirtualizacji.
 
 Ten pakiet zawiera podstawowe biblioteki oraz plik konfiguracyjny.
+
+%package -n bash-completion-%{name}
+Summary:        bash-completion for libvirt
+Group:          Applications/Shells
+Requires:       bash-completion
+%if "%{_rpmversion}" >= "5"
+BuildArch:      noarch
+%endif
+
+%description -n bash-completion-%{name}
+This package provides bash-completion for libvirt.
 
 %package devel
 Summary:	Development files for programs using libvirt
@@ -517,6 +528,8 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	ZPOOL=/usr/sbin/zpool \
 	--disable-silent-rules \
 	%{?with_static_libs:--enable-static} \
+	--with-bash-completion \
+	--with-bash-completions-dir=/etc/bash_completion.d \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
 	--with-init-script=systemd+redhat \
@@ -659,6 +672,10 @@ fi
 
 %dir %{_libdir}/libvirt
 %dir %{_datadir}/libvirt
+
+%files -n bash-completion-%{name}
+%defattr(644,root,root,755)
+/etc/bash_completion.d/vsh
 
 %files devel
 %defattr(644,root,root,755)
