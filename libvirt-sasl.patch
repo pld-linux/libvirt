@@ -1,6 +1,6 @@
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/libvirtd.conf libvirt-2.5.0/daemon/libvirtd.conf
---- libvirt-2.5.0.orig/daemon/libvirtd.conf	2016-06-27 16:12:20.000000000 +0200
-+++ libvirt-2.5.0/daemon/libvirtd.conf	2016-12-20 12:56:04.000000000 +0100
+--- libvirt-2.5.0.orig/src/remote/libvirtd.conf	2016-06-27 16:12:20.000000000 +0200
++++ libvirt-2.5.0/src/remote/libvirtd.conf	2016-12-20 12:56:04.000000000 +0100
 @@ -123,7 +123,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
@@ -20,19 +20,19 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/libvirtd.conf
  
  # Change the authentication scheme for TLS sockets.
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/Makefile.am libvirt-2.5.0/daemon/Makefile.am
---- libvirt-2.5.0.orig/daemon/Makefile.am	2016-11-30 13:57:30.000000000 +0100
-+++ libvirt-2.5.0/daemon/Makefile.am	2016-12-20 12:56:04.000000000 +0100
+--- libvirt-2.5.0.orig/src/Makefile.am	2016-11-30 13:57:30.000000000 +0100
++++ libvirt-2.5.0/src/Makefile.am	2016-12-20 12:56:04.000000000 +0100
 @@ -532,13 +532,13 @@
  # the WITH_LIBVIRTD conditional
  if WITH_SASL
- install-data-sasl:
+ install-sasl:
 -	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sasl2/
 +	$(MKDIR_P) $(DESTDIR)$(sysconfdir)/sasl/
- 	$(INSTALL_DATA) $(srcdir)/libvirtd.sasl \
+ 	$(INSTALL_DATA) $(srcdir)/remote/libvirtd.sasl \
 -		$(DESTDIR)$(sysconfdir)/sasl2/libvirt.conf
 +		$(DESTDIR)$(sysconfdir)/sasl/libvirt.conf
  
- uninstall-data-sasl:
+ uninstall-sasl:
 -	rm -f $(DESTDIR)$(sysconfdir)/sasl2/libvirt.conf
 -	rmdir $(DESTDIR)$(sysconfdir)/sasl2/ || :
 +	rm -f $(DESTDIR)$(sysconfdir)/sasl/libvirt.conf

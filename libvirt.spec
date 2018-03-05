@@ -46,12 +46,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.0.0
-Release:	2
+Version:	4.1.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	ff0dbdd8ec4ac1277588dfe3b245d0e9
+# Source0-md5:	30b95c458da4f8c3d073a82755815997
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -61,6 +61,7 @@ Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
 Patch7:		%{name}-guests.init.patch
+Patch8:		%{name}-link.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -483,6 +484,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 %{__libtoolize}
@@ -675,6 +677,8 @@ fi
 
 %files -n bash-completion-%{name}
 %defattr(644,root,root,755)
+/etc/bash_completion.d/virsh
+/etc/bash_completion.d/virt-admin
 /etc/bash_completion.d/vsh
 
 %files devel
@@ -737,8 +741,10 @@ fi
 %{systemdunitdir}/virt-guest-shutdown.target
 %{systemdunitdir}/virtlockd.service
 %{systemdunitdir}/virtlockd.socket
+%{systemdunitdir}/virtlockd-admin.socket
 %{systemdunitdir}/virtlogd.service
 %{systemdunitdir}/virtlogd.socket
+%{systemdunitdir}/virtlogd-admin.socket
 %config(noreplace) %verify(not md5 mtime size) /usr/lib/sysctl.d/60-libvirtd.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
 %attr(755,root,root) %{_libexecdir}/libvirt_iohelper
