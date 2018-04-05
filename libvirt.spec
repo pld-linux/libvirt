@@ -46,12 +46,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.1.0
-Release:	2
+Version:	4.2.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	30b95c458da4f8c3d073a82755815997
+# Source0-md5:	7dfbaeb30fc0ee1184c27a4b6c1d7254
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -61,7 +61,6 @@ Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
 Patch7:		%{name}-guests.init.patch
-Patch8:		%{name}-link.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -484,7 +483,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 %build
 %{__libtoolize}
