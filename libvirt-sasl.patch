@@ -20,8 +20,8 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/libvirtd.conf
  
  # Change the authentication scheme for TLS sockets.
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/Makefile.am libvirt-2.5.0/daemon/Makefile.am
---- libvirt-2.5.0.orig/src/Makefile.am	2016-11-30 13:57:30.000000000 +0100
-+++ libvirt-2.5.0/src/Makefile.am	2016-12-20 12:56:04.000000000 +0100
+--- libvirt-2.5.0.orig/src/remote/Makefile.inc.am	2016-11-30 13:57:30.000000000 +0100
++++ libvirt-2.5.0/src/remote/Makefile.inc.am	2016-12-20 12:56:04.000000000 +0100
 @@ -532,13 +532,13 @@
  # the WITH_LIBVIRTD conditional
  if WITH_SASL
