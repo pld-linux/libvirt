@@ -18,7 +18,6 @@
 %bcond_without	vmware		# VMware Workstation/Player support
 %bcond_with	vserver		# Support for Linux-VServer guests
 %bcond_without	xenapi		# Xen API (Citrix XenServer) support
-%bcond_without	xen		# Xen support
 # - storage
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	glusterfs	# GlusterFS storage support
@@ -38,7 +37,6 @@
 
 # Xen is available only on x86 and ia64
 %ifnarch %{ix86} %{x8664} ia64
-%undefine	with_xen
 %undefine	with_xenapi
 %undefine	with_libxl
 %endif
@@ -46,12 +44,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.2.0
-Release:	2
+Version:	4.3.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	7dfbaeb30fc0ee1184c27a4b6c1d7254
+# Source0-md5:	946cfa2558401612c4fcbc934ef9077b
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -108,7 +106,6 @@ BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 BuildRequires:	udev-devel >= 1:218
 %{?with_wireshark:BuildRequires:	wireshark-devel >= 1.11.3}
-%{?with_xen:BuildRequires:	xen-devel >= 4.2}
 %{?with_libxl:BuildRequires:	xen-devel >= 4.4}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
@@ -129,6 +126,7 @@ Obsoletes:	libvirt-daemon-openvz
 Obsoletes:	libvirt-daemon-phyp
 Obsoletes:	libvirt-daemon-vbox
 Obsoletes:	libvirt-daemon-vmware
+Obsoletes:	libvirt-daemon-xen
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -188,7 +186,6 @@ Requires:	libselinux-devel >= 2.5
 Requires:	libxml2-devel >= 1:2.6.0
 Requires:	numactl-devel
 %{?with_hyperv:Requires:	openwsman-devel >= 2.2.3}
-%{?with_xen:Requires:	xen-devel >= 4.2}
 Requires:	yajl-devel
 
 %description devel
@@ -385,23 +382,6 @@ of UML.
 Sterownik wymagany po stronie serwera do zarządzania funkcjami
 wirtualizacji UML.
 
-%package daemon-xen
-Summary:	Server side driver required to run XEN guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Requires:	/usr/sbin/qcow-create
-Requires:	xen
-Provides:	libvirt(hypervisor)
-
-%description daemon-xen
-Server side driver required to manage the virtualization capabilities
-of XEN.
-
-%description daemon-xen -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji XEN.
-
 %package client
 Summary:	Client side utilities of the libvirt library
 Summary(pl.UTF-8):	Narzędzia klienckie do biblioteki libvirt
@@ -434,7 +414,6 @@ Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	%{name}-daemon-lxc = %{version}-%{release}
 Requires:	%{name}-daemon-qemu = %{version}-%{release}
 %{?with_uml:Requires:	%{name}-daemon-uml = %{version}-%{release}}
-Requires:	%{name}-daemon-xen = %{version}-%{release}
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
@@ -575,7 +554,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	--with-virtualport \
 	%{__with_without vmware} \
 	%{!?with_wireshark:--without-wireshark-dissector} \
-	%{__with_without xen} \
 	%{__with_without xenapi} \
 	--with-yajl \
 	--x-libraries=%{_libdir}
@@ -866,12 +844,6 @@ fi
 %attr(700,root,root) %dir /var/lib/libvirt/uml
 %attr(700,root,root) %dir /var/run/libvirt/uml
 %attr(700,root,root) %dir /var/log/libvirt/uml
-%endif
-
-%if %{with xen}
-%files daemon-xen
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_xen.so
 %endif
 
 %files client
