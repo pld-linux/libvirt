@@ -44,12 +44,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.3.0
+Version:	4.4.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	946cfa2558401612c4fcbc934ef9077b
+# Source0-md5:	07376bcb6ae1d598285137c95caff6d0
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
