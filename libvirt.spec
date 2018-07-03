@@ -44,12 +44,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.4.0
+Version:	4.5.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	07376bcb6ae1d598285137c95caff6d0
+# Source0-md5:	692b2d00907438ed08a68813d3177cd3
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -579,6 +579,8 @@ cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.a}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/storage-backend/*.la \
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/storage-backend/*.a}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/storage-file/*.la \
+	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/storage-file/*.a}
 
 %if %{with sanlock}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.la \
@@ -778,11 +780,14 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_scsi.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_sheepdog.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_zfs.so
+%dir %{_libdir}/libvirt/storage-file
+%attr(755,root,root) %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
 
 %if %{with glusterfs}
 %files daemon-storage-gluster
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_gluster.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-file/libvirt_storage_file_gluster.so
 %endif
 
 %if %{with ceph}
@@ -878,6 +883,8 @@ fi
 %{_datadir}/libvirt/schemas/networkcommon.rng
 %{_datadir}/libvirt/schemas/nodedev.rng
 %{_datadir}/libvirt/schemas/nwfilter.rng
+%{_datadir}/libvirt/schemas/nwfilter_params.rng
+%{_datadir}/libvirt/schemas/nwfilterbinding.rng
 %{_datadir}/libvirt/schemas/secret.rng
 %{_datadir}/libvirt/schemas/storagecommon.rng
 %{_datadir}/libvirt/schemas/storagepool.rng
