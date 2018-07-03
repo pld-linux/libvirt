@@ -45,7 +45,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	4.5.0
-Release:	1
+Release:	2
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
@@ -67,6 +67,7 @@ BuildRequires:	augeas-devel
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	avahi-devel >= 0.6.0
+BuildRequires:	bash-completion >= 2.0
 %{?with_ceph:BuildRequires:	ceph-devel}
 BuildRequires:	curl-devel >= 7.18.0
 BuildRequires:	cyrus-sasl-devel
