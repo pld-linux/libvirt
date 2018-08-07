@@ -45,7 +45,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	4.6.0
-Release:	1
+Release:	2
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
@@ -687,7 +687,9 @@ fi
 %attr(755,root,root) %{_libexecdir}/libvirt_sanlock_helper
 %attr(755,root,root) %{_libdir}/libvirt/lock-driver/sanlock.so
 %{_datadir}/augeas/lenses/libvirt_sanlock.aug
+%if %{with qemu}
 %{_datadir}/augeas/lenses/tests/test_libvirt_sanlock.aug
+%endif
 %dir /var/lib/libvirt/sanlock
 %{_mandir}/man8/virt-sanlock-cleanup.8*
 %endif
