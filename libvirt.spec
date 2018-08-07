@@ -44,12 +44,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.5.0
-Release:	2
+Version:	4.6.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	692b2d00907438ed08a68813d3177cd3
+# Source0-md5:	6ea17a8f004a4bcdfc4beaed91fcdddd
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -110,7 +110,6 @@ BuildRequires:	udev-devel >= 1:218
 %{?with_libxl:BuildRequires:	xen-devel >= 4.4}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
-BuildRequires:	yajl-devel
 Requires:	curl-libs >= 7.18.0
 Requires:	device-mapper >= 1.0.0
 Requires:	libcap-ng >= 0.4.0
@@ -187,7 +186,6 @@ Requires:	libselinux-devel >= 2.5
 Requires:	libxml2-devel >= 1:2.6.0
 Requires:	numactl-devel
 %{?with_hyperv:Requires:	openwsman-devel >= 2.2.3}
-Requires:	yajl-devel
 
 %description devel
 Libvirt is a C toolkit to interact with the virtualization
@@ -556,7 +554,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	%{__with_without vmware} \
 	%{!?with_wireshark:--without-wireshark-dissector} \
 	%{__with_without xenapi} \
-	--with-yajl \
 	--x-libraries=%{_libdir}
 
 %{__make} \
