@@ -44,12 +44,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.6.0
-Release:	3
+Version:	4.7.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	6ea17a8f004a4bcdfc4beaed91fcdddd
+# Source0-md5:	38da6c33250dcbc0a6d68de5c758262b
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -760,7 +760,7 @@ fi
 %{systemdtmpfilesdir}/%{name}.conf
 %attr(755,root,root) %{_libexecdir}/libvirt_leaseshelper
 %dir %{_libdir}/libvirt/connection-driver
-%{_datadir}/libvirt/cpu_map.xml
+%{_datadir}/libvirt/cpu_map
 %{?with_netcf:%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so}
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nodedev.so
