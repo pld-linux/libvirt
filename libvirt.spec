@@ -13,7 +13,6 @@
 %bcond_without	openvz		# OpenVZ support
 %bcond_without	phyp		# PHYP support
 %bcond_without	qemu		# Qemu support
-%bcond_without	uml		# UML support
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
 %bcond_with	vserver		# Support for Linux-VServer guests
@@ -44,12 +43,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	4.10.0
+Version:	5.0.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	f85067e830bd89db08b7b7ffa75db6ef
+# Source0-md5:	b67b226b8f22fbe86991daec5d71ef82
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -124,6 +123,7 @@ Obsoletes:	libvirt-daemon-esx
 Obsoletes:	libvirt-daemon-hyperv
 Obsoletes:	libvirt-daemon-openvz
 Obsoletes:	libvirt-daemon-phyp
+Obsoletes:	libvirt-daemon-uml
 Obsoletes:	libvirt-daemon-vbox
 Obsoletes:	libvirt-daemon-vmware
 Obsoletes:	libvirt-daemon-xen
@@ -366,21 +366,6 @@ of the QEMU emulators.
 Sterownik wymagany po stronie serwera do zarządzania funkcjami
 wirtualizacji emulatora QEMU.
 
-%package daemon-uml
-Summary:	Server side driver required to run UML guests
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości UML
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-uml
-Server side driver required to manage the virtualization capabilities
-of UML.
-
-%description daemon-uml -l pl.UTF-8
-Sterownik wymagany po stronie serwera do zarządzania funkcjami
-wirtualizacji UML.
-
 %package client
 Summary:	Client side utilities of the libvirt library
 Summary(pl.UTF-8):	Narzędzia klienckie do biblioteki libvirt
@@ -412,7 +397,6 @@ Requires:	%{name}-daemon = %{version}-%{release}
 %{?with_libxl:Requires:	%{name}-daemon-libxl = %{version}-%{release}}
 Requires:	%{name}-daemon-lxc = %{version}-%{release}
 Requires:	%{name}-daemon-qemu = %{version}-%{release}
-%{?with_uml:Requires:	%{name}-daemon-uml = %{version}-%{release}}
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
@@ -548,7 +532,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	--with-sasl \
 	--with-selinux \
 	--with-udev \
-	%{__with_without uml} \
 	%{__with_without vbox vbox %{_libdir}/VirtualBox} \
 	--with-virtualport \
 	%{__with_without vmware} \
@@ -839,16 +822,6 @@ fi
 %{_datadir}/augeas/lenses/libvirtd_qemu.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd_qemu.aug
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
-%endif
-
-%if %{with uml}
-%files daemon-uml
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_uml.so
-%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.uml
-%attr(700,root,root) %dir /var/lib/libvirt/uml
-%attr(700,root,root) %dir /var/run/libvirt/uml
-%attr(700,root,root) %dir /var/log/libvirt/uml
 %endif
 
 %files client
