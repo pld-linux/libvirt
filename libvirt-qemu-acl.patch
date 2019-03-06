@@ -30,19 +30,18 @@ diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu.conf l
  # The default SASL configuration file is located in /etc/sasl/
  # When running libvirtd unprivileged, it may be desirable to
  # override the configs in this location. Set this parameter to
-diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu_conf.c libvirt-2.1.0/src/qemu/qemu_conf.c
---- libvirt-2.1.0.orig/src/qemu/qemu_conf.c	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.1.0/src/qemu/qemu_conf.c	2016-08-17 12:40:28.000000000 +0200
-@@ -425,7 +425,8 @@
-         goto cleanup;
-     if (virConfGetValueBool(conf, "nographics_allow_host_audio", &cfg->nogfxAllowHostAudio) < 0)
-         goto cleanup;
--
+diff -ur libvirt-5.1.0.orig/src/qemu/qemu_conf.c libvirt-5.1.0/src/qemu/qemu_conf.c
+--- libvirt-5.1.0.orig/src/qemu/qemu_conf.c	2019-02-26 00:24:59.015183201 +0100
++++ libvirt-5.1.0/src/qemu/qemu_conf.c	2019-03-07 00:31:31.736955745 +0100
+@@ -471,6 +471,8 @@
+         return -1;
+     if (virConfGetValueBool(conf, "vnc_allow_host_audio", &cfg->vncAllowHostAudio) < 0)
+         return -1;
 +    if (virConfGetValueBool(conf, "vnc_acl", &cfg->vncACL) < 0)
-+        goto cleanup;
++        return -1;
  
-     if (virConfGetValueStringList(conf, "security_driver", true, &cfg->securityDriverNames) < 0)
-         goto cleanup;
+     return 0;
+ }
 diff -dur -x '*.orig' -x '*.rej' -x '*~' libvirt-2.1.0.orig/src/qemu/qemu_conf.h libvirt-2.1.0/src/qemu/qemu_conf.h
 --- libvirt-2.1.0.orig/src/qemu/qemu_conf.h	2016-07-27 14:39:35.000000000 +0200
 +++ libvirt-2.1.0/src/qemu/qemu_conf.h	2016-08-17 12:37:00.000000000 +0200

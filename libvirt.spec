@@ -43,12 +43,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	5.0.0
+Version:	5.1.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	b67b226b8f22fbe86991daec5d71ef82
+# Source0-md5:	74c6c2e90ca9c94d9255eec338615a0c
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -568,8 +568,8 @@ cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.a}
 %endif
 %if %{with wireshark}
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/libvirt.la \
-	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/libvirt.a} \
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/epan/libvirt.la \
+	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/epan/libvirt.a} \
 %endif
 
 %find_lang %{name}
@@ -879,5 +879,5 @@ fi
 %if %{with wireshark}
 %files -n wireshark-libvirt
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/wireshark/plugins/*/libvirt.so
+%attr(755,root,root) %{_libdir}/wireshark/plugins/*/epan/libvirt.so
 %endif
