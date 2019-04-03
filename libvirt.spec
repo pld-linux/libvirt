@@ -3,6 +3,7 @@
 # - virtuozzo storage?
 # - pldize virtlockd.init
 # - update vserver patch, if anybody needs it
+# - package firewalld zone definition
 #
 # Conditional build:
 # - virtualization
@@ -43,21 +44,19 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	5.1.0
-Release:	2
+Version:	5.2.0
+Release:	0.1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	74c6c2e90ca9c94d9255eec338615a0c
+# Source0-md5:	1e54f5b829482d977bc5353c861407d3
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch2:		%{name}-qemu-acl.patch
-Patch3:		virtlockd.init.patch
 Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
-Patch7:		%{name}-guests.init.patch
 URL:		http://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -440,11 +439,9 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %setup -q
 %patch0 -p1
 %patch2 -p1
-%patch3 -p1
 %patch4 -p1
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
-%patch7 -p1
 
 %build
 %{__libtoolize}
@@ -494,7 +491,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	--with-bash-completions-dir=/etc/bash_completion.d \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-html-subdir=%{name} \
-	--with-init-script=systemd+redhat \
+	--with-init-script=systemd \
 	--with-packager="PLD-Linux" \
 	--with-packager-version="%{name}-%{version}-%{release}.%{_target_cpu}" \
 	--with-qemu-user=qemu \
@@ -696,8 +693,6 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlockd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlogd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
-%attr(754,root,root) /etc/rc.d/init.d/virtlockd
-%attr(754,root,root) /etc/rc.d/init.d/virtlogd
 %{systemdunitdir}/libvirtd.service
 %{systemdunitdir}/virt-guest-shutdown.target
 %{systemdunitdir}/virtlockd.service
@@ -827,7 +822,6 @@ fi
 %files client
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
-%attr(754,root,root) /etc/rc.d/init.d/libvirt-guests
 %{systemdunitdir}/libvirt-guests.service
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virt-login-shell.conf
 %attr(755,root,root) %{_bindir}/virsh
@@ -861,6 +855,7 @@ fi
 %{_datadir}/libvirt/schemas/secret.rng
 %{_datadir}/libvirt/schemas/storagecommon.rng
 %{_datadir}/libvirt/schemas/storagepool.rng
+%{_datadir}/libvirt/schemas/storagepoolcaps.rng
 %{_datadir}/libvirt/schemas/storagevol.rng
 # for test driver (built into libvirt)
 %{_datadir}/libvirt/test-screenshot.png

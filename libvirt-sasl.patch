@@ -82,25 +82,25 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvda
 --- libvirt-2.5.0.orig/tests/qemuxml2argvdata/-graphics-vnc-sasl.args	2016-07-27 14:39:35.000000000 +0200
 +++ libvirt-2.5.0/tests/qemuxml2argvdata/graphics-vnc-sasl.args	2016-12-20 12:56:04.000000000 +0100
 @@ -3,7 +3,7 @@
- HOME=/home/test \
- USER=test \
- LOGNAME=test \
+ XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
+ XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
+ XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
 -SASL_CONF_PATH=/root/.sasl2 \
 +SASL_CONF_PATH=/root/.sasl \
  QEMU_AUDIO_DRV=none \
- /usr/bin/qemu \
+ /usr/bin/qemu-system-i686 \
  -name QEMUGuest1 \
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
 --- libvirt-2.5.0.orig/tests/qemuxml2argvdata/graphics-vnc-tls.args	2016-07-27 14:39:35.000000000 +0200
 +++ libvirt-2.5.0/tests/qemuxml2argvdata/graphics-vnc-tls.args	2016-12-20 12:56:04.000000000 +0100
 @@ -3,7 +3,7 @@
- HOME=/home/test \
- USER=test \
- LOGNAME=test \
+ XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
+ XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
+ XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
 -SASL_CONF_PATH=/root/.sasl2 \
 +SASL_CONF_PATH=/root/.sasl \
  QEMU_AUDIO_DRV=none \
- /usr/bin/qemu \
+ /usr/bin/qemu-system-i686 \
  -name QEMUGuest1 \
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/libvirtd.conf libvirt-2.5.0/tests/virconfdata/libvirtd.conf
 --- libvirt-2.5.0.orig/tests/virconfdata/libvirtd.conf	2016-04-26 04:20:09.000000000 +0200
