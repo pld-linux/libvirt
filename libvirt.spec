@@ -45,7 +45,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	5.6.0
-Release:	1
+Release:	2
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
@@ -694,6 +694,11 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlogd
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
 %{systemdunitdir}/libvirtd.service
+%{systemdunitdir}/libvirtd.socket
+%{systemdunitdir}/libvirtd-admin.socket
+%{systemdunitdir}/libvirtd-ro.socket
+%{systemdunitdir}/libvirtd-tcp.socket
+%{systemdunitdir}/libvirtd-tls.socket
 %{systemdunitdir}/virt-guest-shutdown.target
 %{systemdunitdir}/virtlockd.service
 %{systemdunitdir}/virtlockd.socket
