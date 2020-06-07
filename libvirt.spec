@@ -45,7 +45,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	5.6.0
-Release:	4
+Release:	5
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	http://libvirt.org/sources/libvirt-%{version}.tar.xz
@@ -316,7 +316,6 @@ Summary:	Server side driver required to run XEN guests (xenlight)
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN (xenlight)
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
-Requires:	/usr/sbin/qcow-create
 Requires:	xen >= 4.4
 Provides:	libvirt(hypervisor)
 
