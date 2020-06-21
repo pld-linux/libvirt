@@ -1,58 +1,34 @@
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/libvirtd.conf libvirt-2.5.0/daemon/libvirtd.conf
---- libvirt-2.5.0.orig/src/remote/libvirtd.conf	2016-06-27 16:12:20.000000000 +0200
-+++ libvirt-2.5.0/src/remote/libvirtd.conf	2016-12-20 12:56:04.000000000 +0100
-@@ -123,7 +123,7 @@
+--- libvirt-6.4.0/src/remote/libvirtd.conf.in.orig	2020-05-27 22:17:10.347644118 +0200
++++ libvirt-6.4.0/src/remote/libvirtd.conf.in	2020-06-21 10:22:08.342641796 +0200
+@@ -134,7 +134,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
  #  - sasl: use SASL infrastructure. The actual auth scheme is then
--#          controlled from /etc/sasl2/libvirt.conf. For the TCP
-+#          controlled from /etc/sasl/libvirt.conf. For the TCP
+-#          controlled from @sysconfdir@/sasl2/libvirt.conf. For the TCP
++#          controlled from @sysconfdir@/sasl/libvirt.conf. For the TCP
  #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
  #          For non-TCP or TLS sockets, any scheme is allowed.
  #
-@@ -154,7 +154,7 @@
+@@ -166,7 +166,7 @@
  # If you don't enable SASL, then all TCP traffic is cleartext.
  # Don't do this outside of a dev/test scenario. For real world
  # use, always enable SASL and use the GSSAPI or DIGEST-MD5
--# mechanism in /etc/sasl2/libvirt.conf
-+# mechanism in /etc/sasl/libvirt.conf
+-# mechanism in @sysconfdir@/sasl2/libvirt.conf
++# mechanism in @sysconfdir@/sasl/libvirt.conf
  #auth_tcp = "sasl"
  
  # Change the authentication scheme for TLS sockets.
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/daemon/Makefile.am libvirt-2.5.0/daemon/Makefile.am
---- libvirt-5.0.0.orig/src/remote/Makefile.inc.am	2019-01-16 21:04:18.767020575 +0100
-+++ libvirt-5.0.0/src/remote/Makefile.inc.am	2019-01-16 21:04:28.563492731 +0100
-@@ -242,7 +242,7 @@
- # This is needed for clients too, so can't wrap in
- # the WITH_LIBVIRTD conditional
- if WITH_SASL
--sasldir = $(sysconfdir)/sasl2
-+sasldir = $(sysconfdir)/sasl
- 
- install-sasl:
- 	$(MKDIR_P) $(DESTDIR)$(sasldir)
---- libvirt-3.5.0/docs/auth.html.in.orig	2017-08-01 17:26:35.217739874 +0200
-+++ libvirt-3.5.0/docs/auth.html.in	2017-08-01 17:29:07.364404805 +0200
-@@ -267,7 +267,7 @@
+--- libvirt-6.4.0/docs/auth.html.in.orig	2020-06-11 07:49:02.932714864 +0200
++++ libvirt-6.4.0/docs/auth.html.in	2020-06-21 10:23:05.598998279 +0200
+@@ -275,7 +275,7 @@
      <p>
  Since the libvirt SASL config file defaults to using GSSAPI (Kerberos), a
- config change is rquired to enable plain password auth. This is done by
+ config change is required to enable plain password auth. This is done by
 -editting <code>/etc/sasl2/libvirt.conf</code> to set the <code>mech_list</code>
 +editting <code>/etc/sasl/libvirt.conf</code> to set the <code>mech_list</code>
  parameter to <code>scram-sha-1</code>.
      </p>
      <p>
---- libvirt-3.5.0/docs/auth.html.orig	2017-08-01 17:26:35.217739874 +0200
-+++ libvirt-3.5.0/docs/auth.html	2017-08-01 17:29:16.164404704 +0200
-@@ -265,7 +265,7 @@
-         <p>
- Since the libvirt SASL config file defaults to using GSSAPI (Kerberos), a
- config change is rquired to enable plain password auth. This is done by
--editting <code>/etc/sasl2/libvirt.conf</code> to set the <code>mech_list</code>
-+editting <code>/etc/sasl/libvirt.conf</code> to set the <code>mech_list</code>
- parameter to <code>scram-sha-1</code>.
-     </p>
-         <p>
 diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/src/qemu/qemu.conf libvirt-2.5.0/src/qemu/qemu.conf
 --- libvirt-2.5.0.orig/src/qemu/qemu.conf	2016-11-29 10:47:58.000000000 +0100
 +++ libvirt-2.5.0/src/qemu/qemu.conf	2016-12-20 12:56:04.000000000 +0100
