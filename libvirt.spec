@@ -118,6 +118,7 @@ Requires:	curl-libs >= 7.18.0
 Requires:	cyrus-sasl-libs >= 2.1.26
 Requires:	device-mapper-libs >= 1.0.0
 Requires:	glib2 >= 1:2.48.0
+Requires:	gnutls-libs >= 3.2.0
 Requires:	libcap-ng >= 0.4.0
 Requires:	libnl >= 3.2
 Requires:	libpcap >= 1.5.0
@@ -130,8 +131,8 @@ Requires:	yajl >= 2.0.3
 Obsoletes:	libvirt-daemon-esx
 Obsoletes:	libvirt-daemon-hyperv
 Obsoletes:	libvirt-daemon-openvz
-Obsoletes:	libvirt-daemon-phyp
-Obsoletes:	libvirt-daemon-uml
+Obsoletes:	libvirt-daemon-phyp < 6.0.0
+Obsoletes:	libvirt-daemon-uml < 5.0.0
 Obsoletes:	libvirt-daemon-vmware
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -163,12 +164,12 @@ wirtualizacji.
 Ten pakiet zawiera podstawowe biblioteki oraz plik konfiguracyjny.
 
 %package -n bash-completion-%{name}
-Summary:        bash-completion for libvirt
+Summary:	bash-completion for libvirt
 Summary(pl.UTF-8):	Bashowe dopełnianie składni poleceń libvirt
-Group:          Applications/Shells
-Requires:       bash-completion >= 2.0
+Group:		Applications/Shells
+Requires:	bash-completion >= 2.0
 %if "%{_rpmversion}" >= "4.6"
-BuildArch:      noarch
+BuildArch:	noarch
 %endif
 
 %description -n bash-completion-%{name}
@@ -222,7 +223,7 @@ Summary:	Documentation for libvirt
 Summary(pl.UTF-8):	Dokumentacja do libvirt
 Group:		Documentation
 %if "%{_rpmversion}" >= "4.6"
-BuildArch:      noarch
+BuildArch:	noarch
 %endif
 
 %description doc
@@ -331,7 +332,7 @@ Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	xen >= 4.6
 Provides:	libvirt(hypervisor)
-Obsoletes:	libvirt-daemon-xen
+Obsoletes:	libvirt-daemon-xen < 4.3.0
 
 %description daemon-libxl
 Server side driver required to manage the virtualization capabilities
