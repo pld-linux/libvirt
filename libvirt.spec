@@ -44,12 +44,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	6.4.0
+Version:	6.5.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	a14cfce86474d4f039a27ce140b176e7
+# Source0-md5:	19ea5c0d18bed1515c23a9e9c7427dc0
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -104,7 +104,7 @@ BuildRequires:	pkgconfig
 %{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	python3 >= 1:3.0
 BuildRequires:	readline-devel
-BuildRequires:	rpmbuild(macros) >= 1.673
+BuildRequires:	rpmbuild(macros) >= 1.752
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
 BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
@@ -168,9 +168,7 @@ Summary:	bash-completion for libvirt
 Summary(pl.UTF-8):	Bashowe dopełnianie składni poleceń libvirt
 Group:		Applications/Shells
 Requires:	bash-completion >= 2.0
-%if "%{_rpmversion}" >= "4.6"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description -n bash-completion-%{name}
 This package provides bash-completion for libvirt.
@@ -222,9 +220,7 @@ wykorzystujących bibliotekę libvirt.
 Summary:	Documentation for libvirt
 Summary(pl.UTF-8):	Dokumentacja do libvirt
 Group:		Documentation
-%if "%{_rpmversion}" >= "4.6"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description doc
 Documentation for libvirt.
@@ -644,7 +640,7 @@ fi
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README.rst
+%doc AUTHORS ChangeLog NEWS.rst README.rst
 %dir %{_sysconfdir}/libvirt
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
