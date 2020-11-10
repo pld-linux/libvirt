@@ -682,12 +682,14 @@ fi
 %{_mandir}/man7/virkeycode-*.7*
 %{_mandir}/man7/virkeyname-*.7*
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libvirt.a
 %{_libdir}/libvirt-admin.a
 %{?with_lxc:%{_libdir}/libvirt-lxc.a}
 %{_libdir}/libvirt-qemu.a
+%endif
 
 %files doc
 %defattr(644,root,root,755)
