@@ -805,7 +805,7 @@ fi
 # TODO:
 #%{_libdir}/firewalld/zones/libvirt.xml
 %dir %{_libdir}/libvirt/connection-driver
-%{?with_netcf:%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so}
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nodedev.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_nwfilter.so
