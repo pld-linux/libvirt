@@ -168,7 +168,7 @@ Summary:	bash-completion for libvirt
 Summary(pl.UTF-8):	Bashowe dopełnianie składni poleceń libvirt
 Group:		Applications/Shells
 Requires:	bash-completion >= 2.0
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n bash-completion-%{name}
 This package provides bash-completion for libvirt.
@@ -220,7 +220,7 @@ wykorzystujących bibliotekę libvirt.
 Summary:	Documentation for libvirt
 Summary(pl.UTF-8):	Dokumentacja do libvirt
 Group:		Documentation
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description doc
 Documentation for libvirt.
