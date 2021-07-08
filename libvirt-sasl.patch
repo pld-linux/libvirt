@@ -1,5 +1,5 @@
---- libvirt-6.4.0/src/remote/libvirtd.conf.in.orig	2020-05-27 22:17:10.347644118 +0200
-+++ libvirt-6.4.0/src/remote/libvirtd.conf.in	2020-06-21 10:22:08.342641796 +0200
+--- libvirt-6.6.0/src/remote/libvirtd.conf.in~	2020-07-21 13:34:45.000000000 +0000
++++ libvirt-6.6.0/src/remote/libvirtd.conf.in	2021-07-08 18:11:11.683914079 +0000
 @@ -134,7 +134,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
@@ -18,21 +18,13 @@
  #auth_tcp = "sasl"
  
  # Change the authentication scheme for TLS sockets.
---- libvirt-6.4.0/docs/auth.html.in.orig	2020-06-11 07:49:02.932714864 +0200
-+++ libvirt-6.4.0/docs/auth.html.in	2020-06-21 10:23:05.598998279 +0200
-@@ -275,7 +275,7 @@
-     <p>
- Since the libvirt SASL config file defaults to using GSSAPI (Kerberos), a
- config change is required to enable plain password auth. This is done by
--editting <code>/etc/sasl2/libvirt.conf</code> to set the <code>mech_list</code>
-+editting <code>/etc/sasl/libvirt.conf</code> to set the <code>mech_list</code>
- parameter to <code>scram-sha-1</code>.
-     </p>
-     <p>
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/src/qemu/qemu.conf libvirt-2.5.0/src/qemu/qemu.conf
---- libvirt-2.5.0.orig/src/qemu/qemu.conf	2016-11-29 10:47:58.000000000 +0100
-+++ libvirt-2.5.0/src/qemu/qemu.conf	2016-12-20 12:56:04.000000000 +0100
-@@ -112,18 +112,18 @@
+278c278
+< editting <code>/etc/sasl2/libvirt.conf</code> to set the <code>mech_list</code>
+---
+> editting <code>/etc/sasl/libvirt.conf</code> to set the <code>mech_list</code>
+--- libvirt-6.6.0/src/qemu/qemu.conf~	2020-07-21 13:34:45.000000000 +0000
++++ libvirt-6.6.0/src/qemu/qemu.conf	2021-07-08 18:19:09.316683971 +0000
+@@ -135,18 +135,18 @@
  # Examples include vinagre, virt-viewer and virt-manager
  # itself. UltraVNC, RealVNC, TightVNC do not support this
  #
@@ -54,34 +46,52 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/src/qemu/qemu.conf l
  
  
  # QEMU implements an extension for providing audio over a VNC connection,
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-sasl.args
---- libvirt-2.5.0.orig/tests/qemuxml2argvdata/-graphics-vnc-sasl.args	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.5.0/tests/qemuxml2argvdata/graphics-vnc-sasl.args	2016-12-20 12:56:04.000000000 +0100
-@@ -3,7 +3,7 @@
+@@ -211,17 +211,17 @@
+ # Enable use of SASL encryption on the SPICE server. This requires
+ # a SPICE client which supports the SASL protocol extension.
+ #
+-# It is necessary to configure /etc/sasl2/qemu.conf to choose
++# It is necessary to configure /etc/sasl/qemu.conf to choose
+ # the desired SASL plugin (eg, GSSPI for Kerberos)
+ #
+ #spice_sasl = 1
+ 
+-# The default SASL configuration file is located in /etc/sasl2/
++# The default SASL configuration file is located in /etc/sasl/
+ # When running libvirtd unprivileged, it may be desirable to
+ # override the configs in this location. Set this parameter to
+ # point to the directory, and create a qemu.conf in that location
+ #
+-#spice_sasl_dir = "/some/directory/sasl2"
++#spice_sasl_dir = "/some/directory/sasl"
+ 
+ # Enable use of TLS encryption on the chardev TCP transports.
+ #
+--- libvirt-6.6.0//tests/qemuxml2argvdata/graphics-vnc-sasl.args~	2020-07-21 13:34:45.000000000 +0000
++++ libvirt-6.6.0//tests/qemuxml2argvdata/graphics-vnc-sasl.args	2021-07-08 18:21:11.219952616 +0000
+@@ -6,7 +6,7 @@
  XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
  XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
 -SASL_CONF_PATH=/root/.sasl2 \
 +SASL_CONF_PATH=/root/.sasl \
  QEMU_AUDIO_DRV=none \
- /usr/bin/qemu-system-i686 \
+ /usr/bin/qemu-system-i386 \
  -name QEMUGuest1 \
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args libvirt-2.5.0/tests/qemuxml2argvdata/qemuxml2argv-graphics-vnc-tls.args
---- libvirt-2.5.0.orig/tests/qemuxml2argvdata/graphics-vnc-tls.args	2016-07-27 14:39:35.000000000 +0200
-+++ libvirt-2.5.0/tests/qemuxml2argvdata/graphics-vnc-tls.args	2016-12-20 12:56:04.000000000 +0100
-@@ -3,7 +3,7 @@
+--- libvirt-6.6.0/tests/qemuxml2argvdata/graphics-vnc-tls.args~	2020-07-21 13:34:45.000000000 +0000
++++ libvirt-6.6.0/tests/qemuxml2argvdata/graphics-vnc-tls.args	2021-07-08 18:22:00.471277949 +0000
+@@ -6,7 +6,7 @@
  XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
  XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
 -SASL_CONF_PATH=/root/.sasl2 \
 +SASL_CONF_PATH=/root/.sasl \
  QEMU_AUDIO_DRV=none \
- /usr/bin/qemu-system-i686 \
+ /usr/bin/qemu-system-i386 \
  -name QEMUGuest1 \
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/libvirtd.conf libvirt-2.5.0/tests/virconfdata/libvirtd.conf
---- libvirt-2.5.0.orig/tests/virconfdata/libvirtd.conf	2016-04-26 04:20:09.000000000 +0200
-+++ libvirt-2.5.0/tests/virconfdata/libvirtd.conf	2016-12-20 12:56:04.000000000 +0100
-@@ -108,7 +108,7 @@
+--- libvirt-6.6.0/tests/virconfdata/libvirtd.conf~	2020-07-21 13:34:45.000000000 +0000
++++ libvirt-6.6.0/tests/virconfdata/libvirtd.conf	2021-07-08 18:27:52.110787287 +0000
+@@ -91,7 +91,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
  #  - sasl: use SASL infrastructure. The actual auth scheme is then
@@ -90,7 +100,7 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/li
  #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
  #          For non-TCP or TLS sockets,  any scheme is allowed.
  #
-@@ -139,7 +139,7 @@
+@@ -122,7 +122,7 @@
  # If you don't enable SASL, then all TCP traffic is cleartext.
  # Don't do this outside of a dev/test scenario. For real world
  # use, always enable SASL and use the GSSAPI or DIGEST-MD5
@@ -99,10 +109,9 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/li
  auth_tcp = "sasl"
  
  # Change the authentication scheme for TLS sockets.
-diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/libvirtd.out libvirt-2.5.0/tests/virconfdata/libvirtd.out
---- libvirt-2.5.0.orig/tests/virconfdata/libvirtd.out	2016-04-26 04:20:09.000000000 +0200
-+++ libvirt-2.5.0/tests/virconfdata/libvirtd.out	2016-12-20 12:56:04.000000000 +0100
-@@ -87,7 +87,7 @@
+--- libvirt-6.6.0/tests/virconfdata/libvirtd.out~	2020-07-21 13:34:45.000000000 +0000
++++ libvirt-6.6.0/tests/virconfdata/libvirtd.out	2021-07-08 18:28:48.448975223 +0000
+@@ -73,7 +73,7 @@
  #          the network providing auth (eg, TLS/x509 certificates)
  #
  #  - sasl: use SASL infrastructure. The actual auth scheme is then
@@ -111,7 +120,7 @@ diff -dur -x '*~' -x '*.orig' -x '*.rej' libvirt-2.5.0.orig/tests/virconfdata/li
  #          socket only GSSAPI & DIGEST-MD5 mechanisms will be used.
  #          For non-TCP or TLS sockets,  any scheme is allowed.
  #
-@@ -116,7 +116,7 @@
+@@ -102,7 +102,7 @@
  # If you don't enable SASL, then all TCP traffic is cleartext.
  # Don't do this outside of a dev/test scenario. For real world
  # use, always enable SASL and use the GSSAPI or DIGEST-MD5

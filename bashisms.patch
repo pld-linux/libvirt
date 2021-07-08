@@ -1,8 +1,8 @@
---- libvirt-1.2.3/tools/libvirt-guests.sh.in~	2014-02-26 05:09:50.000000000 +0200
-+++ libvirt-1.2.3/tools/libvirt-guests.sh.in	2014-04-05 02:52:16.187741175 +0300
+--- libvirt-6.6.0/tools/libvirt-guests.sh.in~	2020-07-21 13:34:45.204255044 +0000
++++ libvirt-6.6.0/tools/libvirt-guests.sh.in	2021-07-08 18:45:34.786103043 +0000
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/bin/bash
  
- # Copyright (C) 2011-2013 Red Hat, Inc.
+ # Copyright (C) 2011-2014 Red Hat, Inc.
  #
