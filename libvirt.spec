@@ -45,7 +45,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	6.6.0
-Release:	3
+Release:	4
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://libvirt.org/sources/libvirt-%{version}.tar.xz
@@ -58,6 +58,8 @@ Patch2:		%{name}-qemu-acl.patch
 Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
+Patch7:		fix-docs-templates.patch
+Patch8:		fix-docs-css.patch
 URL:		https://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -469,6 +471,8 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %patch4 -p1
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 %{__libtoolize}
