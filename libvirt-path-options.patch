@@ -1,0 +1,386 @@
+--- libvirt-6.10.0/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
++++ libvirt-6.10.0/meson.build	2022-06-15 21:02:52.949418900 +0200
+@@ -943,17 +943,20 @@ optional_programs = [
+ ]
+ 
+ foreach name : optional_programs
++ varname = name.underscorify()
++ prog_path = get_option('@0@_path'.format(varname))
++ if prog_path == ''
+   prog = find_program(name, required: false, dirs: libvirt_sbin_path)
+-  varname = name.underscorify()
+   if prog.found()
+     prog_path = prog.path()
+   else
+     prog_path = name
+   endif
++ endif
+ 
+   conf.set_quoted(varname.to_upper(), prog_path)
+   conf.set_quoted('@0@_PATH'.format(varname.to_upper()), prog_path)
+-  set_variable('@0@_prog'.format(varname), prog)
++  set_variable('@0@_path'.format(varname), prog_path)
+ endforeach
+ 
+ 
+@@ -1085,9 +1088,15 @@ endif
+ libparted_version = '1.8.0'
+ libparted_dep = dependency('libparted', version: '>=' + libparted_version, required: false)
+ if libparted_dep.found()
++ parted_path = get_option('parted_path')
++ if parted_path == ''
+   parted_prog = find_program('parted', required: false, dirs: libvirt_sbin_path)
+   if parted_prog.found()
+-    conf.set_quoted('PARTED', parted_prog.path())
++    parted_path = parted_prog.path()
++  endif
++ endif
++  if parted_path != ''
++    conf.set_quoted('PARTED', parted_path)
+   else
+     libparted_dep = dependency('', required: false)
+   endif
+@@ -1725,6 +1734,8 @@ if not get_option('driver_qemu').disable
+     conf.set_quoted('QEMU_USER', qemu_user)
+     conf.set_quoted('QEMU_GROUP', qemu_group)
+ 
++  qemu_bridge_path = get_option('qemu_bridge_path')
++  if qemu_bridge_path == ''
+     qemu_bridge_prog = find_program(
+       'qemu-bridge-helper',
+       dirs: [ '/usr/libexec', '/usr/lib/qemu', '/usr/lib' ],
+@@ -1735,8 +1746,11 @@ if not get_option('driver_qemu').disable
+     else
+       qemu_bridge_path = '/usr/libexec/qemu-bridge-helper'
+     endif
++  endif
+     conf.set_quoted('QEMU_BRIDGE_HELPER', qemu_bridge_path)
+ 
++  qemu_pr_path = get_option('qemu_pr_path')
++  if qemu_pr_path == ''
+     qemu_pr_prog = find_program(
+       'qemu-pr-helper',
+       dirs: [ '/usr/bin', '/usr/libexec' ],
+@@ -1747,8 +1761,11 @@ if not get_option('driver_qemu').disable
+     else
+       qemu_pr_path = '/usr/bin/qemu-pr-helper'
+     endif
++  endif
+     conf.set_quoted('QEMU_PR_HELPER', qemu_pr_path)
+ 
++  qemu_slirp_path = get_option('qemu_slirp_path')
++  if qemu_slirp_path == ''
+     qemu_slirp_prog = find_program(
+       'slirp-helper',
+       dirs: [ '/usr/bin', '/usr/libexec' ],
+@@ -1759,8 +1776,11 @@ if not get_option('driver_qemu').disable
+     else
+       qemu_slirp_path = '/usr/bin/slirp-helper'
+     endif
++  endif
+     conf.set_quoted('QEMU_SLIRP_HELPER', qemu_slirp_path)
+ 
++  qemu_dbus_daemon_path = get_option('qemu_dbus_daemon_path')
++  if qemu_dbus_daemon_path == ''
+     qemu_dbus_daemon_prog = find_program(
+       'dbus-daemon',
+       dirs: [ '/usr/bin', '/usr/libexec' ],
+@@ -1771,6 +1791,7 @@ if not get_option('driver_qemu').disable
+     else
+       qemu_dbus_daemon_path = '/usr/bin/dbus-daemon'
+     endif
++  endif
+     conf.set_quoted('QEMU_DBUS_DAEMON', qemu_dbus_daemon_path)
+   endif
+ endif
+@@ -1850,11 +1871,29 @@ if conf.has('WITH_LIBVIRTD')
+     endif
+ 
+     if fs_enable
++     mount_path = get_option('mount_path')
++     if mount_path == ''
+       mount_prog = find_program('mount', required: get_option('storage_fs'), dirs: libvirt_sbin_path)
++      if mount_prog.found()
++        mount_path = mount_prog.path()
++      endif
++     endif
++     umount_path = get_option('umount_path')
++     if umount_path == ''
+       umount_prog = find_program('umount', required: get_option('storage_fs'), dirs: libvirt_sbin_path)
++      if umount_prog.found()
++        umount_path = umount_prog.path()
++      endif
++     endif
++     mkfs_path = get_option('mkfs_path')
++     if mkfs_path == ''
+       mkfs_prog = find_program('mkfs', required: get_option('storage_fs'), dirs: libvirt_sbin_path)
++      if mkfs_prog.found()
++        mkfs_path = mkfs_prog.path()
++      endif
++     endif
+ 
+-      if not mount_prog.found() or not umount_prog.found() or not mkfs_prog.found()
++      if mount_path == '' or umount_path == '' or mkfs_path == ''
+         fs_enable = false
+       endif
+     endif
+@@ -1863,15 +1902,17 @@ if conf.has('WITH_LIBVIRTD')
+       use_storage = true
+ 
+       conf.set('WITH_STORAGE_FS', 1)
+-      conf.set_quoted('MOUNT', mount_prog.path())
+-      conf.set_quoted('UMOUNT', umount_prog.path())
+-      conf.set_quoted('MKFS', mkfs_prog.path())
++      conf.set_quoted('MOUNT', mount_path)
++      conf.set_quoted('UMOUNT', umount_path)
++      conf.set_quoted('MKFS', mkfs_path)
+ 
++    showmount_path = get_option('showmount_path')
++    if showmount_path == ''
+       showmount_prog = find_program('showmount', required: false, dirs: libvirt_sbin_path)
+-      showmount_path = ''
+       if showmount_prog.found()
+         showmount_path = showmount_prog.path()
+       endif
++    endif
+       conf.set_quoted('SHOWMOUNT', showmount_path)
+     endif
+   endif
+@@ -1883,7 +1924,7 @@ if conf.has('WITH_LIBVIRTD')
+     error('Need glusterfs (libgfapi) for gluster storage driver')
+   endif
+ 
+-  if not get_option('storage_iscsi').disabled() and iscsiadm_prog.found()
++  if not get_option('storage_iscsi').disabled() and iscsiadm_path != ''
+     use_storage = true
+     conf.set('WITH_STORAGE_ISCSI', 1)
+   elif get_option('storage_iscsi').enabled()
+@@ -1906,11 +1947,17 @@ if conf.has('WITH_LIBVIRTD')
+       'pvs', 'vgs', 'lvs',
+     ]
+     foreach name : lvm_progs
++      prog_path = get_option('@0@_path'.format(name))
++      if prog_path == ''
++        prog = find_program(name, required: get_option('storage_lvm'), dirs: libvirt_sbin_path)
++        if prog.found()
++          prog_path = prog.path()
++        endif
++      endif
+       set_variable(
+-        '@0@_prog'.format(name),
+-        find_program(name, required: get_option('storage_lvm'), dirs: libvirt_sbin_path)
++        '@0@_path'.format(name), prog_path
+       )
+-      if not get_variable('@0@_prog'.format(name)).found()
++      if prog_path == ''
+         lvm_enable = false
+       endif
+     endforeach
+@@ -1920,7 +1967,7 @@ if conf.has('WITH_LIBVIRTD')
+       conf.set('WITH_STORAGE_LVM', 1)
+ 
+       foreach name : lvm_progs
+-        conf.set_quoted(name.to_upper(), get_variable('@0@_prog'.format(name)).path())
++        conf.set_quoted(name.to_upper(), get_variable('@0@_path'.format(name)))
+       endforeach
+     endif
+   endif
+@@ -1945,12 +1992,17 @@ if conf.has('WITH_LIBVIRTD')
+   endif
+ 
+   if not get_option('storage_sheepdog').disabled()
++   sheepdogcli_path = get_option('sheepdogcli_path')
++   if sheepdogcli_path == ''
+     sheepdogcli_prog = find_program(['collie', 'dog'], required: get_option('storage_sheepdog'), dirs: libvirt_sbin_path)
+-
+     if sheepdogcli_prog.found()
++      sheepdogcli_path = sheepdogcli_prog.path()
++    endif
++   endif
++    if sheepdogcli_path != ''
+       use_storage = true
+       conf.set('WITH_STORAGE_SHEEPDOG', 1)
+-      conf.set_quoted('SHEEPDOGCLI', sheepdogcli_prog.path())
++      conf.set_quoted('SHEEPDOGCLI', sheepdogcli_path)
+     endif
+   endif
+ 
+@@ -1958,11 +2010,17 @@ if conf.has('WITH_LIBVIRTD')
+     vstorage_enable = true
+ 
+     foreach name : ['vstorage', 'vstorage-mount', 'umount']
++      prog_path = get_option('@0@_path'.format(name.underscorify()))
++      if prog_path == ''
++        prog = find_program(name, required: get_option('storage_vstorage'), dirs: libvirt_sbin_path)
++        if prog.found()
++          prog_path = prog.path()
++        endif
++      endif
+       set_variable(
+-        '@0@_prog'.format(name.underscorify()),
+-        find_program(name, required: get_option('storage_vstorage'), dirs: libvirt_sbin_path)
++        '@0@_path'.format(name.underscorify()), prog_path
+       )
+-      if not get_variable('@0@_prog'.format(name.underscorify())).found()
++      if prog_path == ''
+         vstorage_enable = false
+       endif
+     endforeach
+@@ -1971,7 +2029,7 @@ if conf.has('WITH_LIBVIRTD')
+       use_storage = true
+       conf.set('WITH_STORAGE_VSTORAGE', 1)
+       foreach name : ['vstorage', 'vstorage-mount', 'umount']
+-        path = get_variable('@0@_prog'.format(name.underscorify())).path()
++        path = get_variable('@0@_path'.format(name.underscorify()))
+         conf.set_quoted(name.to_upper(), path)
+       endforeach
+     endif
+@@ -1980,11 +2038,17 @@ if conf.has('WITH_LIBVIRTD')
+   if not get_option('storage_zfs').disabled()
+     zfs_enable = true
+     foreach name : ['zfs', 'zpool']
++      prog_path = get_option('@0@_path'.format(name))
++      if prog_path == ''
++        prog = find_program(name, required: get_option('storage_zfs'), dirs: libvirt_sbin_path)
++        if prog.found()
++          prog_path = prog.path()
++        endif
++      endif
+       set_variable(
+-        '@0@_prog'.format(name),
+-        find_program(name, required: get_option('storage_zfs'), dirs: libvirt_sbin_path)
++        '@0@_path'.format(name), prog_path
+       )
+-      if not get_variable('@0@_prog'.format(name)).found()
++      if prog_path == ''
+         zfs_enable = false
+       endif
+     endforeach
+@@ -1993,7 +2057,7 @@ if conf.has('WITH_LIBVIRTD')
+       use_storage = true
+       conf.set('WITH_STORAGE_ZFS', 1)
+       foreach name : ['zfs', 'zpool']
+-        conf.set_quoted(name.to_upper(), get_variable('@0@_prog'.format(name)).path())
++        conf.set_quoted(name.to_upper(), get_variable('@0@_path'.format(name)))
+       endforeach
+     endif
+   endif
+@@ -2104,10 +2168,16 @@ if not get_option('nss').disabled()
+ endif
+ 
+ if not get_option('numad').disabled() and numactl_dep.found()
++ numad_path = get_option('numad_path')
++ if numad_path == ''
+   numad_prog = find_program('numad', required: get_option('numad'), dirs: libvirt_sbin_path)
+   if numad_prog.found()
++    numad_path = numad_prog.path()
++  endif
++ endif
++  if numad_path != ''
+     conf.set('WITH_NUMAD', 1)
+-    conf.set_quoted('NUMAD', numad_prog.path())
++    conf.set_quoted('NUMAD', numad_path)
+   endif
+ elif get_option('numad').enabled()
+   error('You must have numactl enabled for numad support.')
+--- libvirt-6.10.0/build-aux/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
++++ libvirt-6.10.0/build-aux/meson.build	2022-06-15 21:13:56.995821452 +0200
+@@ -2,10 +2,6 @@ syntax_check_conf = configuration_data()
+ syntax_check_conf.set('top_srcdir', meson.source_root())
+ syntax_check_conf.set('top_builddir', meson.build_root())
+ 
+-flake8_path = ''
+-if flake8_prog.found()
+-  flake8_path = flake8_prog.path()
+-endif
+ syntax_check_conf.set('flake8_path', flake8_path)
+ syntax_check_conf.set('runutf8', ' '.join(runutf8))
+ syntax_check_conf.set('PYTHON3', python3_prog.path())
+--- libvirt-6.10.0/src/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
++++ libvirt-6.10.0/src/meson.build	2022-06-15 21:23:22.326092128 +0200
+@@ -982,11 +982,11 @@ test(
+   env: runutf8,
+ )
+ 
+-if augparse_prog.found()
++if find_program('augparse', required: false).found()
+   foreach data : augeas_test_data
+     test(
+       'check-augeas-@0@'.format(data['name']),
+-      augparse_prog,
++      find_program('augparse'),
+       args: [
+         '-I', data['srcdir'],
+         '-I', data['builddir'],
+@@ -996,7 +996,7 @@ if augparse_prog.found()
+   endforeach
+ endif
+ 
+-if pdwtags_prog.found() and cc.get_id() != 'clang'
++if pdwtags_path != '' and cc.get_id() != 'clang'
+   foreach proto : check_protocols
+     lib = proto['lib']
+     test(
+@@ -1007,7 +1007,7 @@ if pdwtags_prog.found() and cc.get_id()
+         proto['name'],
+         lib.name(),
+         lib.full_path(),
+-        pdwtags_prog.path(),
++        pdwtags_path,
+         files('@0@-structs'.format(proto['name'])),
+       ],
+       env: runutf8,
+--- libvirt-6.10.0/meson_options.txt.orig	2020-12-01 09:51:29.000000000 +0100
++++ libvirt-6.10.0/meson_options.txt	2022-06-15 21:47:27.468263121 +0200
+@@ -102,3 +102,51 @@ option('numad', type: 'feature', value:
+ option('pm_utils', type: 'feature', value: 'auto', description: 'use pm-utils for power management')
+ option('sysctl_config', type: 'feature', value: 'auto', description: 'Whether to install sysctl configs')
+ option('tls_priority', type: 'string', value: 'NORMAL', description: 'set the default TLS session priority string')
++
++option('addr2line_path', type: 'string', value: '', description: 'executable path')
++option('augparse_path', type: 'string', value: '', description: 'executable path')
++option('dmidecode_path', type: 'string', value: '', description: 'executable path')
++option('dnsmasq_path', type: 'string', value: '', description: 'executable path')
++option('ebtables_path', type: 'string', value: '', description: 'executable path')
++option('flake8_path', type: 'string', value: '', description: 'executable path')
++option('ip6tables_path', type: 'string', value: '', description: 'executable path')
++option('ip_path', type: 'string', value: '', description: 'executable path')
++option('iptables_path', type: 'string', value: '', description: 'executable path')
++option('iscsiadm_path', type: 'string', value: '', description: 'executable path')
++option('lvchange_path', type: 'string', value: '', description: 'executable path')
++option('lvcreate_path', type: 'string', value: '', description: 'executable path')
++option('lvremove_path', type: 'string', value: '', description: 'executable path')
++option('lvs_path', type: 'string', value: '', description: 'executable path')
++option('mdevctl_path', type: 'string', value: '', description: 'executable path')
++option('mkfs_path', type: 'string', value: '', description: 'executable path')
++option('mm_ctl_path', type: 'string', value: '', description: 'executable path')
++option('modprobe_path', type: 'string', value: '', description: 'executable path')
++option('mount_path', type: 'string', value: '', description: 'executable path')
++option('numad_path', type: 'string', value: '', description: 'executable path')
++option('ovs_vsctl_path', type: 'string', value: '', description: 'executable path')
++option('parted_path', type: 'string', value: '', description: 'executable path')
++option('pdwtags_path', type: 'string', value: '', description: 'executable path')
++option('pvcreate_path', type: 'string', value: '', description: 'executable path')
++option('pvremove_path', type: 'string', value: '', description: 'executable path')
++option('pvs_path', type: 'string', value: '', description: 'executable path')
++option('qemu_bridge_path', type: 'string', value: '', description: 'executable path')
++option('qemu_dbus_daemon_path', type: 'string', value: '', description: 'executable path')
++option('qemu_pr_path', type: 'string', value: '', description: 'executable path')
++option('qemu_slirp_path', type: 'string', value: '', description: 'executable path')
++option('radvd_path', type: 'string', value: '', description: 'executable path')
++option('rmmod_path', type: 'string', value: '', description: 'executable path')
++option('scrub_path', type: 'string', value: '', description: 'executable path')
++option('sheepdogcli_path', type: 'string', value: '', description: 'executable path')
++option('showmount_path', type: 'string', value: '', description: 'executable path')
++option('tc_path', type: 'string', value: '', description: 'executable path')
++option('udevadm_path', type: 'string', value: '', description: 'executable path')
++option('umount_path', type: 'string', value: '', description: 'executable path')
++option('vgchange_path', type: 'string', value: '', description: 'executable path')
++option('vgcreate_path', type: 'string', value: '', description: 'executable path')
++option('vgremove_path', type: 'string', value: '', description: 'executable path')
++option('vgs_path', type: 'string', value: '', description: 'executable path')
++option('vgscan_path', type: 'string', value: '', description: 'executable path')
++option('vstorage_path', type: 'string', value: '', description: 'executable path')
++option('vstorage_mount_path', type: 'string', value: '', description: 'executable path')
++option('zfs_path', type: 'string', value: '', description: 'executable path')
++option('zpool_path', type: 'string', value: '', description: 'executable path')

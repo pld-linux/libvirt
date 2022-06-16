@@ -1,6 +1,7 @@
 # TODO:
 # - parallels-sdk >= 7.0.22?
 # - virtuozzo storage?
+# - mdevctl
 # - mm-ctl (https://github.com/tfukushima/mm-ctl ?)
 # - numad (https://pagure.io/numad/ or https://github.com/yhaenggi/numad/releases ?)
 # - vstorage, vstorage-mount
@@ -44,22 +45,22 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	6.6.0
-Release:	4
+Version:	6.10.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	a1f1d1580292f8932bcbacf5801cf223
+# Source0-md5:	43037045ef94c8600d4289b49ec73a77
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
-Patch1:		%{name}-bash-completions-dir.patch
+Patch1:		%{name}-paths.patch
 Patch2:		%{name}-qemu-acl.patch
+Patch3:		%{name}-path-options.patch
 Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
 Patch7:		fix-docs-templates.patch
-Patch8:		fix-docs-css.patch
 URL:		https://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -91,6 +92,7 @@ BuildRequires:	libpcap-devel >= 1.5.0
 BuildRequires:	libselinux-devel >= 2.5
 BuildRequires:	libssh-devel >= 0.7
 BuildRequires:	libssh2-devel >= 1.3
+BuildRequires:	libtirpc-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.9.1
 BuildRequires:	libxml2-progs >= 1:2.9.1
@@ -98,20 +100,22 @@ BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
-BuildRequires:	numactl-devel
-%{?with_hyperv:BuildRequires:	openwsman-devel >= 2.2.3}
+BuildRequires:	nss-devel >= 3
+BuildRequires:	numactl-devel >= 2.0.6
+%{?with_hyperv:BuildRequires:	openwsman-devel >= 2.6.3}
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	pkgconfig
 %{?with_polkit:BuildRequires:	polkit}
 %{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
 BuildRequires:	python3 >= 1:3.0
-BuildRequires:	readline-devel
+BuildRequires:	readline-devel >= 7.0
 BuildRequires:	rpmbuild(macros) >= 1.752
-%{?with_sanlock:BuildRequires:	sanlock-devel >= 0.8}
+%{?with_sanlock:BuildRequires:	sanlock-devel >= 3.5.0}
+BuildRequires:	sed >= 4.0
 BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 BuildRequires:	udev-devel >= 1:219
-%{?with_wireshark:BuildRequires:	wireshark-devel >= 2.4.0}
+%{?with_wireshark:BuildRequires:	wireshark-devel >= 2.6.0}
 %{?with_libxl:BuildRequires:	xen-devel >= 4.6}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
@@ -128,14 +132,14 @@ Requires:	libselinux >= 2.5
 Requires:	libssh >= 0.7
 Requires:	libssh2 >= 1.3
 Requires:	libxml2 >= 1:2.9.1
-%{?with_hyperv:Requires:	openwsman-libs >= 2.2.3}
+%{?with_hyperv:Requires:	openwsman-libs >= 2.6.3}
 Requires:	yajl >= 2.0.3
-Obsoletes:	libvirt-daemon-esx
-Obsoletes:	libvirt-daemon-hyperv
-Obsoletes:	libvirt-daemon-openvz
+Obsoletes:	libvirt-daemon-esx < 0.9.13
+Obsoletes:	libvirt-daemon-hyperv < 0.9.13
+Obsoletes:	libvirt-daemon-openvz < 0.9.13
 Obsoletes:	libvirt-daemon-phyp < 6.0.0
 Obsoletes:	libvirt-daemon-uml < 5.0.0
-Obsoletes:	libvirt-daemon-vmware
+Obsoletes:	libvirt-daemon-vmware < 0.9.13
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -235,6 +239,7 @@ Summary:	Sanlock lock manager plugin for libvirt
 Summary(pl.UTF-8):	Zarządca blokad sanlock dla biblioteki libvirt
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
+Requires:	sanlock-libs >= 3.5.0
 
 %description lock-sanlock
 Sanlock lock manager plugin for libvirt.
@@ -455,7 +460,7 @@ Sondy systemtap/dtrace dla libvirt.
 Summary:	Wireshark dissector module for libvirt packets
 Summary(pl.UTF-8):	Moduł sekcji Wiresharka do pakietów libvirt
 Group:		Libraries
-Requires:	wireshark >= 2.4.0
+Requires:	wireshark >= 2.6.0
 
 %description -n wireshark-libvirt
 Wireshark dissector module for libvirt packets.
@@ -468,140 +473,102 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %patch4 -p1
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
+
+%if %{with static_libs}
+%{__sed} -i '/^libvirt\(_admin\|_lxc\|_qemu\)\?_lib = / s/shared_library/library/' src/meson.build
+%endif
 
 %build
-%{__libtoolize}
-%{__aclocal} -I m4
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-install -d build
-cd build
-../%configure \
-	PVCREATE=/sbin/pvcreate \
-	VGCREATE=/sbin/vgcreate \
-	LVCREATE=/sbin/lvcreate \
-	PVREMOVE=/sbin/pvremove \
-	VGREMOVE=/sbin/vgremove \
-	LVREMOVE=/sbin/lvremove \
-	LVCHANGE=/sbin/lvchange \
-	VGCHANGE=/sbin/vgchange \
-	  VGSCAN=/sbin/vgscan   \
-	     PVS=/sbin/pvs      \
-	     VGS=/sbin/vgs      \
-	     LVS=/sbin/lvs      \
-	      TC=/sbin/tc \
-	   BRCTL=/sbin/brctl    \
-	AUGPARSE=/usr/bin/augparse \
-	ISCSIADM=/sbin/iscsiadm	\
-	SHOWMOUNT=/usr/sbin/showmount \
-	MOUNT=/bin/mount \
-	UMOUNT=/bin/umount \
-	MKFS=/sbin/mkfs \
-	SHOWMOUNT=/usr/sbin/showmount \
-	IP_PATH=/sbin/ip \
-	IPTABLES_PATH=/usr/sbin/iptables \
-	IP6TABLES_PATH=/usr/sbin/ip6tables \
-	EBTABLES_PATH=/usr/sbin/ebtables \
-	ISCSIADM=/sbin/iscsiadm \
-	DMIDECODE=/usr/sbin/dmidecode \
-	DNSMASQ=/usr/sbin/dnsmasq \
-	RADVD=/usr/sbin/radvd \
-	UDEVADM=/sbin/udevadm \
-	MODPROBE=/sbin/modprobe \
-	RMMOD=/sbin/rmmod \
-	MMCTL=/usr/sbin/mm-ctl \
-	OVSVSCTL=/usr/bin/ovs-vsctl \
-	SCRUB=/usr/bin/scrub \
-	NUMAD=/usr/bin/numad \
-	QEMU_BRIDGE_HELPER=%{_libexecdir}/qemu-bridge-helper \
-	QEMU_PR_HELPER=/usr/bin/qemu-pr-helper \
-	SHEEPDOGCLI=/usr/sbin/collie \
-	ZFS=/usr/sbin/zfs \
-	ZPOOL=/usr/sbin/zpool \
-	--disable-silent-rules \
-	%{?with_static_libs:--enable-static} \
-	--with-bash-completion \
-	--with-bash-completions-dir=%{bash_compdir} \
-	--with-init-script=systemd \
-	--with-packager="PLD-Linux" \
-	--with-packager-version="%{name}-%{version}-%{release}.%{_target_cpu}" \
-	--with-qemu-user=qemu \
-	--with-qemu-group=qemu \
-	--with-storage-disk \
-	--with-storage-fs \
-	--with-storage-gluster%{!?with_glusterfs:=no} \
-	--with-storage-iscsi \
-	--with-storage-lvm \
-	--with-storage-mpath \
-	--with-storage-rbd%{!?with_ceph:=no} \
-	--with-storage-scsi \
-	--with-storage-sheepdog \
-	--with-apparmor \
-	--with-audit \
-	%{__with_without systemtap dtrace} \
-	%{__with_without esx} \
-	--with-driver-modules \
-	--without-hal \
-	%{__with_without hyperv} \
-	--with-blkid \
-	--with-ssh2 \
-	%{__with_without libxl} \
-	%{__with_without lxc} \
-	--with-macvtap \
-	%{__with_without netcf} \
-	--with-numactl \
-	--with-numad \
-	%{__with_without openvz} \
-	%{__with_without polkit} \
-	%{__with_without qemu} \
-	%{__with_without sanlock} \
-	--with-sasl \
-	--with-selinux \
-	--with-udev \
-	%{__with_without vbox vbox %{_libdir}/VirtualBox} \
-	--with-virtualport \
-	%{__with_without vmware} \
-	%{!?with_wireshark:--without-wireshark-dissector} \
-	--x-libraries=%{_libdir}
+%meson build \
+	-Dbash_completion=enabled \
+	-Dbash_completion_dir=%{bash_compdir} \
+	%{!?with_esx:-Ddriver_esx=disabled} \
+	%{!?with_hyperv:-Ddriver_hyperv=disabled} \
+	%{!?with_libxl:-Ddriver_libxl=disabled} \
+	%{!?with_lxc:-Ddriver_lxc=disabled} \
+	%{!?with_openvz:-Ddriver_openvz=disabled} \
+	%{!?with_qemu:-Ddriver_qemu=disabled} \
+	%{!?with_vbox:-Ddriver_vbox=disabled} \
+	%{!?with_vmware:-Ddriver_vmware=disabled} \
+	%{!?with_systemtap:-Ddtrace=disabled} \
+	%{!?with_glusterfs:-Dglusterfs=disabled} \
+	-Dinit_script=systemd \
+	%{!?with_netcf:-Dnetcf=disabled} \
+	-Dpackager="PLD-Linux" \
+	-Dpackager_version="%{name}-%{version}-%{release}.%{_target_cpu}" \
+	%{!?with_polkit:-Dpolkit=disabled} \
+	-Dqemu_group=qemu \
+	-Dqemu_user=qemu \
+	-Drpath=disabled \
+	%{!?with_sanlock:-Dsanlock=disabled} \
+	%{!?with_glusterfs:-Dstorage_gluster=disabled} \
+	%{!?with_ceph:-Dstorage_rbd=disabled} \
+	%{?with_vbox:-Dvbox_xpcomc_dir=%{_libdir}/VirtualBox} \
+	%{!?with_wireshark:-Dwireshark_dissector=disabled} \
+	-Daugparse_path=/usr/bin/augparse \
+	-Ddmidecode_path=/usr/sbin/dmidecode \
+	-Ddnsmasq_path=/usr/sbin/dnsmasq \
+	-Debtables_path=/usr/sbin/ebtables \
+	-Dip_path=/sbin/ip \
+	-Dip6tables_path=/usr/sbin/ip6tables \
+	-Diptables_path=/usr/sbin/iptables \
+	-Discsiadm_path=/sbin/iscsiadm \
+	-Dlvchange_path=/sbin/lvchange \
+	-Dlvcreate_path=/sbin/lvcreate \
+	-Dlvremove_path=/sbin/lvremove \
+	-Dlvs_path=/sbin/lvs \
+	-Dmm_ctl_path=/usr/sbin/mm-ctl \
+	-Dmkfs_path=/sbin/mkfs \
+	-Dmodprobe_path=/sbin/modprobe \
+	-Dmount_path=/bin/mount \
+	-Dnumad_path=/usr/bin/numad \
+	-Dovs_vsctl_path=/usr/bin/ovs-vsctl \
+	-Dparted_path=/usr/sbin/parted \
+	-Dpvcreate_path=/sbin/pvcreate \
+	-Dpvremove_path=/sbin/pvremove \
+	-Dpvs_path=/sbin/pvs \
+	-Dqemu_bridge_path=%{_libexecdir}/qemu-bridge-helper \
+	-Dqemu_dbus_daemon_path=/usr/bin/dbus-daemon \
+	-Dqemu_pr_path=/usr/bin/qemu-pr-helper \
+	-Dradvd_path=/usr/sbin/radvd \
+	-Drmmod_path=/sbin/rmmod \
+	-Dscrub_path=/usr/bin/scrub \
+	-Dsheepdogcli_path=/usr/sbin/collie \
+	-Dshowmount_path=/usr/sbin/showmount \
+	-Dtc_path=/sbin/tc \
+	-Dudevadm_path=/sbin/udevadm \
+	-Dumount_path=/bin/umount \
+	-Dvgchange_path=/sbin/vgchange \
+	-Dvgcreate_path=/sbin/vgcreate \
+	-Dvgremove_path=/sbin/vgremove \
+	-Dvgscan_path=/sbin/vgscan \
+	-Dvgs_path=/sbin/vgs \
+	-Dzfs_path=/usr/sbin/zfs \
+	-Dzpool_path=/usr/sbin/zpool
 
-%{__make} \
-	AWK=gawk
+# TODO: package and update paths
+# -Dmdevctl_path=???
+# -Dpdwtags=???
+# -Dqemu_slirp_path=???/slirp-helper
+# -Dvstorage_path=???/vstorage
+# -Dvstorage_mount_path=???/vstorage-mount
+
+%ninja_build -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{sysconfig,rc.d/init.d} \
 	$RPM_BUILD_ROOT%{systemdtmpfilesdir}
 
-%{__make} -C build install \
-	SYSTEMD_UNIT_DIR=%{systemdunitdir} \
-	sasldir=%{_sysconfdir}/sasl \
-	DESTDIR=$RPM_BUILD_ROOT
+%ninja_install -C build
 
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
-
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.la \
-	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/connection-driver/*.a}
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/storage-backend/*.la \
-	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/storage-backend/*.a}
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/storage-file/*.la \
-	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/storage-file/*.a}
-
-%if %{with sanlock}
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.la \
-	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/libvirt/lock-driver/*.a}
-%endif
-%if %{with wireshark}
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/epan/libvirt.la \
-	%{?with_static_libs:$RPM_BUILD_ROOT%{_libdir}/wireshark/plugins/*/epan/libvirt.a} \
-%endif
 
 %find_lang %{name}
 
@@ -644,7 +611,7 @@ fi
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS.rst README.rst
+%doc AUTHORS.rst NEWS.rst README.rst
 %dir %{_sysconfdir}/libvirt
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt.conf
 %attr(755,root,root) %{_libdir}/libvirt.so.*.*.*
@@ -987,6 +954,7 @@ fi
 %attr(4755,root,root) %{_bindir}/virt-login-shell
 %attr(755,root,root) %{_bindir}/virt-xml-validate
 %attr(755,root,root) %{_bindir}/virt-pki-validate
+%attr(755,root,root) %{_bindir}/virt-ssh-helper
 %attr(754,root,root) %{_libexecdir}/libvirt-guests.sh
 %attr(754,root,root) %{_libexecdir}/virt-login-shell-helper
 %{_mandir}/man1/virsh.1*
@@ -998,6 +966,7 @@ fi
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
 %{_datadir}/libvirt/schemas/capability.rng
+%{_datadir}/libvirt/schemas/cpu.rng
 %{_datadir}/libvirt/schemas/cputypes.rng
 %{_datadir}/libvirt/schemas/domain.rng
 %{_datadir}/libvirt/schemas/domainbackup.rng
