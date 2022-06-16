@@ -66,8 +66,6 @@ BuildRequires:	acl-devel
 BuildRequires:	attr-devel
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
-BuildRequires:	autoconf >= 2.50
-BuildRequires:	automake
 %{?with_ceph:BuildRequires:	ceph-devel}
 BuildRequires:	curl-devel >= 7.18.0
 BuildRequires:	cyrus-sasl-devel >= 2.1.26
@@ -93,11 +91,12 @@ BuildRequires:	libselinux-devel >= 2.5
 BuildRequires:	libssh-devel >= 0.7
 BuildRequires:	libssh2-devel >= 1.3
 BuildRequires:	libtirpc-devel
-BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.9.1
 BuildRequires:	libxml2-progs >= 1:2.9.1
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
+BuildRequires:	meson >= 0.54.0
+BuildRequires:	ninja >= 1.5
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
 BuildRequires:	nss-devel >= 3
