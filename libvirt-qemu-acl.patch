@@ -1,42 +1,7 @@
---- libvirt-6.6.0/src/qemu/qemu_command.c~	2020-07-21 13:39:30.000000000 +0000
-+++ libvirt-6.6.0/src/qemu/qemu_command.c	2021-07-08 18:33:22.029690230 +0000
-@@ -7644,6 +7644,9 @@
-         /* TODO: Support ACLs later */
-     }
- 
-+    if (cfg->vncACL)
-+	    virBufferAddLit(&opt, ",acl");
-+
-     virCommandAddArg(cmd, "-vnc");
-     virCommandAddArgBuffer(cmd, &opt);
-     if (graphics->data.vnc.keymap)
-
---- libvirt-6.6.0/src/qemu/qemu_conf.c~	2020-07-21 13:34:45.000000000 +0000
-+++ libvirt-6.6.0/src/qemu/qemu_conf.c	2021-07-08 18:37:21.789487295 +0000
-@@ -439,6 +439,8 @@
-         return -1;
-     if (virConfGetValueBool(conf, "vnc_allow_host_audio", &cfg->vncAllowHostAudio) < 0)
-         return -1;
-+    if (virConfGetValueBool(conf, "vnc_acl", &cfg->vncACL) < 0)
-+	return -1;
- 
-     return 0;
- }
-
---- libvirt-6.6.0/src/qemu/qemu_conf.h~	2020-07-21 13:34:45.000000000 +0000
-+++ libvirt-6.6.0/src/qemu/qemu_conf.h	2021-07-08 18:38:13.950893081 +0000
-@@ -119,6 +119,7 @@
-     bool vncTLSx509verify;
-     bool vncTLSx509verifyPresent;
-     bool vncSASL;
-+    bool vncACL;
-     char *vncTLSx509certdir;
-     char *vncTLSx509secretUUID;
-     char *vncListen;
-
---- libvirt-6.6.0/src/qemu/qemu.conf~	2021-07-08 18:39:03.982241321 +0000
-+++ libvirt-6.6.0/src/qemu/qemu.conf	2021-07-08 18:42:35.567942073 +0000
-@@ -141,6 +141,15 @@
+diff -urNp -x '*.orig' libvirt-8.4.0.org/src/qemu/qemu.conf.in libvirt-8.4.0/src/qemu/qemu.conf.in
+--- libvirt-8.4.0.org/src/qemu/qemu.conf.in	2022-06-19 22:15:27.653173791 +0200
++++ libvirt-8.4.0/src/qemu/qemu.conf.in	2022-06-19 22:15:28.366510311 +0200
+@@ -147,6 +147,15 @@
  #vnc_sasl = 1
  
  
@@ -52,3 +17,39 @@
  # The default SASL configuration file is located in /etc/sasl/
  # When running libvirtd unprivileged, it may be desirable to
  # override the configs in this location. Set this parameter to
+diff -urNp -x '*.orig' libvirt-8.4.0.org/src/qemu/qemu_command.c libvirt-8.4.0/src/qemu/qemu_command.c
+--- libvirt-8.4.0.org/src/qemu/qemu_command.c	2022-06-01 09:28:24.000000000 +0200
++++ libvirt-8.4.0/src/qemu/qemu_command.c	2022-06-19 22:15:28.366510311 +0200
+@@ -8333,6 +8333,9 @@ qemuBuildGraphicsVNCCommandLine(virQEMUD
+         virBufferAsprintf(&opt, ",audiodev=%s", audioid);
+     }
+ 
++    if (cfg->vncACL)
++	    virBufferAddLit(&opt, ",acl");
++
+     virCommandAddArg(cmd, "-vnc");
+     virCommandAddArgBuffer(cmd, &opt);
+     if (graphics->data.vnc.keymap)
+diff -urNp -x '*.orig' libvirt-8.4.0.org/src/qemu/qemu_conf.c libvirt-8.4.0/src/qemu/qemu_conf.c
+--- libvirt-8.4.0.org/src/qemu/qemu_conf.c	2022-06-01 09:28:24.000000000 +0200
++++ libvirt-8.4.0/src/qemu/qemu_conf.c	2022-06-19 22:15:28.366510311 +0200
+@@ -439,6 +439,8 @@ virQEMUDriverConfigLoadVNCEntry(virQEMUD
+         return -1;
+     if (virConfGetValueBool(conf, "vnc_allow_host_audio", &cfg->vncAllowHostAudio) < 0)
+         return -1;
++    if (virConfGetValueBool(conf, "vnc_acl", &cfg->vncACL) < 0)
++	return -1;
+ 
+     if (cfg->vncPassword &&
+         strlen(cfg->vncPassword) > 8) {
+diff -urNp -x '*.orig' libvirt-8.4.0.org/src/qemu/qemu_conf.h libvirt-8.4.0/src/qemu/qemu_conf.h
+--- libvirt-8.4.0.org/src/qemu/qemu_conf.h	2022-06-01 09:28:24.000000000 +0200
++++ libvirt-8.4.0/src/qemu/qemu_conf.h	2022-06-19 22:15:28.366510311 +0200
+@@ -114,6 +114,7 @@ struct _virQEMUDriverConfig {
+     bool vncTLSx509verify;
+     bool vncTLSx509verifyPresent;
+     bool vncSASL;
++    bool vncACL;
+     char *vncTLSx509certdir;
+     char *vncTLSx509secretUUID;
+     char *vncListen;

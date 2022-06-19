@@ -30,7 +30,7 @@
 %bcond_without	polkit		# PolicyKit support
 %bcond_without	systemtap	# systemtap/dtrace probes
 %bcond_without	wireshark	# wireshark dissector module
-%bcond_without	static_libs	# static libraries build
+%bcond_with	static_libs	# static libraries build
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -45,12 +45,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	6.10.0
-Release:	1
+Version:	8.4.0
+Release:	0.1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://libvirt.org/sources/libvirt-%{version}.tar.xz
-# Source0-md5:	43037045ef94c8600d4289b49ec73a77
+# Source0-md5:	d9ffa11bc1dcbf5aca13271f3248d3f7
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -60,7 +60,6 @@ Patch3:		%{name}-path-options.patch
 Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
-Patch7:		fix-docs-templates.patch
 URL:		https://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -476,7 +475,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %patch4 -p1
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
-%patch7 -p1
 
 %if %{with static_libs}
 %{__sed} -i '/^libvirt\(_admin\|_lxc\|_qemu\)\?_lib = / s/shared_library/library/' src/meson.build
@@ -635,7 +633,6 @@ fi
 %defattr(644,root,root,755)
 %{bash_compdir}/virsh
 %{bash_compdir}/virt-admin
-%{bash_compdir}/vsh
 
 %files devel
 %defattr(644,root,root,755)
@@ -703,16 +700,16 @@ fi
 %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/nwfilter/*.xml
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sasl/libvirt.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtinterfaced
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlockd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlogd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtnetworkd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtnodedevd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtnwfilterd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtproxyd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtsecretd
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtstoraged
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirtd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtinterfaced
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlockd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlogd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtnetworkd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtnodedevd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtnwfilterd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtproxyd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtsecretd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtstoraged
 %attr(754,root,root) /etc/rc.d/init.d/libvirtd
 %{systemdunitdir}/libvirtd.service
 %{systemdunitdir}/libvirtd.socket
@@ -859,7 +856,7 @@ fi
 %{?with_sanlock:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libxl-sanlock.conf}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtxend.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.libxl
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtxend
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtxend
 %{systemdunitdir}/virtxend.service
 %{systemdunitdir}/virtxend.socket
 %{systemdunitdir}/virtxend-admin.socket
@@ -881,7 +878,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/lxc.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtlxcd.conf
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.lxc
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlxcd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtlxcd
 %{systemdunitdir}/virtlxcd.service
 %{systemdunitdir}/virtlxcd.socket
 %{systemdunitdir}/virtlxcd-admin.socket
@@ -907,7 +904,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtqemud.conf
 %{?with_sanlock:%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-sanlock.conf}
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/libvirtd.qemu
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtqemud
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtqemud
 %{systemdunitdir}/virtqemud.service
 %{systemdunitdir}/virtqemud.socket
 %{systemdunitdir}/virtqemud-admin.socket
@@ -930,7 +927,7 @@ fi
 %files daemon-vbox
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtvboxd.conf
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtvboxd
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/virtvboxd
 %{systemdunitdir}/virtvboxd.service
 %{systemdunitdir}/virtvboxd.socket
 %{systemdunitdir}/virtvboxd-admin.socket
@@ -943,8 +940,8 @@ fi
 
 %files client
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
-%{systemdunitdir}/libvirt-guests.service
+#%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/libvirt-guests
+#%{systemdunitdir}/libvirt-guests.service
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virt-login-shell.conf
 %attr(755,root,root) %{_bindir}/virsh
 %attr(755,root,root) %{_bindir}/virt-admin

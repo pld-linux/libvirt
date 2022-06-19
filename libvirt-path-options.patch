@@ -1,6 +1,6 @@
 --- libvirt-6.10.0/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
 +++ libvirt-6.10.0/meson.build	2022-06-15 21:02:52.949418900 +0200
-@@ -943,17 +943,20 @@ optional_programs = [
+@@ -943,16 +943,19 @@ optional_programs = [
  ]
  
  foreach name : optional_programs
@@ -17,29 +17,11 @@
 + endif
  
    conf.set_quoted(varname.to_upper(), prog_path)
-   conf.set_quoted('@0@_PATH'.format(varname.to_upper()), prog_path)
 -  set_variable('@0@_prog'.format(varname), prog)
 +  set_variable('@0@_path'.format(varname), prog_path)
  endforeach
  
  
-@@ -1085,9 +1088,15 @@ endif
- libparted_version = '1.8.0'
- libparted_dep = dependency('libparted', version: '>=' + libparted_version, required: false)
- if libparted_dep.found()
-+ parted_path = get_option('parted_path')
-+ if parted_path == ''
-   parted_prog = find_program('parted', required: false, dirs: libvirt_sbin_path)
-   if parted_prog.found()
--    conf.set_quoted('PARTED', parted_prog.path())
-+    parted_path = parted_prog.path()
-+  endif
-+ endif
-+  if parted_path != ''
-+    conf.set_quoted('PARTED', parted_path)
-   else
-     libparted_dep = dependency('', required: false)
-   endif
 @@ -1725,6 +1734,8 @@ if not get_option('driver_qemu').disable
      conf.set_quoted('QEMU_USER', qemu_user)
      conf.set_quoted('QEMU_GROUP', qemu_group)
@@ -191,7 +173,7 @@
    if not get_option('storage_sheepdog').disabled()
 +   sheepdogcli_path = get_option('sheepdogcli_path')
 +   if sheepdogcli_path == ''
-     sheepdogcli_prog = find_program(['collie', 'dog'], required: get_option('storage_sheepdog'), dirs: libvirt_sbin_path)
+     sheepdogcli_prog = find_program('dog', required: get_option('storage_sheepdog'), dirs: libvirt_sbin_path)
 -
      if sheepdogcli_prog.found()
 +      sheepdogcli_path = sheepdogcli_prog.path()
@@ -205,66 +187,6 @@
      endif
    endif
  
-@@ -1958,11 +2010,17 @@ if conf.has('WITH_LIBVIRTD')
-     vstorage_enable = true
- 
-     foreach name : ['vstorage', 'vstorage-mount', 'umount']
-+      prog_path = get_option('@0@_path'.format(name.underscorify()))
-+      if prog_path == ''
-+        prog = find_program(name, required: get_option('storage_vstorage'), dirs: libvirt_sbin_path)
-+        if prog.found()
-+          prog_path = prog.path()
-+        endif
-+      endif
-       set_variable(
--        '@0@_prog'.format(name.underscorify()),
--        find_program(name, required: get_option('storage_vstorage'), dirs: libvirt_sbin_path)
-+        '@0@_path'.format(name.underscorify()), prog_path
-       )
--      if not get_variable('@0@_prog'.format(name.underscorify())).found()
-+      if prog_path == ''
-         vstorage_enable = false
-       endif
-     endforeach
-@@ -1971,7 +2029,7 @@ if conf.has('WITH_LIBVIRTD')
-       use_storage = true
-       conf.set('WITH_STORAGE_VSTORAGE', 1)
-       foreach name : ['vstorage', 'vstorage-mount', 'umount']
--        path = get_variable('@0@_prog'.format(name.underscorify())).path()
-+        path = get_variable('@0@_path'.format(name.underscorify()))
-         conf.set_quoted(name.to_upper(), path)
-       endforeach
-     endif
-@@ -1980,11 +2038,17 @@ if conf.has('WITH_LIBVIRTD')
-   if not get_option('storage_zfs').disabled()
-     zfs_enable = true
-     foreach name : ['zfs', 'zpool']
-+      prog_path = get_option('@0@_path'.format(name))
-+      if prog_path == ''
-+        prog = find_program(name, required: get_option('storage_zfs'), dirs: libvirt_sbin_path)
-+        if prog.found()
-+          prog_path = prog.path()
-+        endif
-+      endif
-       set_variable(
--        '@0@_prog'.format(name),
--        find_program(name, required: get_option('storage_zfs'), dirs: libvirt_sbin_path)
-+        '@0@_path'.format(name), prog_path
-       )
--      if not get_variable('@0@_prog'.format(name)).found()
-+      if prog_path == ''
-         zfs_enable = false
-       endif
-     endforeach
-@@ -1993,7 +2057,7 @@ if conf.has('WITH_LIBVIRTD')
-       use_storage = true
-       conf.set('WITH_STORAGE_ZFS', 1)
-       foreach name : ['zfs', 'zpool']
--        conf.set_quoted(name.to_upper(), get_variable('@0@_prog'.format(name)).path())
-+        conf.set_quoted(name.to_upper(), get_variable('@0@_path'.format(name)))
-       endforeach
-     endif
-   endif
 @@ -2104,10 +2168,16 @@ if not get_option('nss').disabled()
  endif
  
@@ -285,17 +207,14 @@
    error('You must have numactl enabled for numad support.')
 --- libvirt-6.10.0/build-aux/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
 +++ libvirt-6.10.0/build-aux/meson.build	2022-06-15 21:13:56.995821452 +0200
-@@ -2,10 +2,6 @@ syntax_check_conf = configuration_data()
- syntax_check_conf.set('top_srcdir', meson.source_root())
- syntax_check_conf.set('top_builddir', meson.build_root())
- 
+@@ -1,7 +1,3 @@ syntax_check_conf = configuration_data()
 -flake8_path = ''
 -if flake8_prog.found()
 -  flake8_path = flake8_prog.path()
 -endif
- syntax_check_conf.set('flake8_path', flake8_path)
- syntax_check_conf.set('runutf8', ' '.join(runutf8))
- syntax_check_conf.set('PYTHON3', python3_prog.path())
+ 
+ if host_machine.system() == 'freebsd' or host_machine.system() == 'darwin'
+   make_prog = find_program('gmake')
 --- libvirt-6.10.0/src/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
 +++ libvirt-6.10.0/src/meson.build	2022-06-15 21:23:22.326092128 +0200
 @@ -982,11 +982,11 @@ test(
