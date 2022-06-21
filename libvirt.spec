@@ -30,7 +30,7 @@
 %bcond_without	polkit		# PolicyKit support
 %bcond_without	systemtap	# systemtap/dtrace probes
 %bcond_without	wireshark	# wireshark dissector module
-%bcond_with	static_libs	# static libraries build
+%bcond_without	static_libs	# static libraries build
 
 # qemu available only on x86 and ppc
 %ifnarch %{ix86} %{x8664} ppc
@@ -49,7 +49,7 @@ Version:	8.4.0
 Release:	0.1
 License:	LGPL v2.1+
 Group:		Libraries
-Source0:	https://libvirt.org/sources/libvirt-%{version}.tar.xz
+Source0:	https://libvirt.org/sources/%{name}-%{version}.tar.xz
 # Source0-md5:	d9ffa11bc1dcbf5aca13271f3248d3f7
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
@@ -95,16 +95,16 @@ BuildRequires:	libxml2-progs >= 1:2.9.1
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	meson >= 0.54.0
-BuildRequires:	ninja >= 1.5
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
+BuildRequires:	ninja >= 1.5
 BuildRequires:	nss-devel >= 3
 BuildRequires:	numactl-devel >= 2.0.6
 %{?with_hyperv:BuildRequires:	openwsman-devel >= 2.6.3}
 BuildRequires:	parted-devel >= 1.8.0
 BuildRequires:	pkgconfig
-%{?with_polkit:BuildRequires:	polkit}
 %{?with_polkit:BuildRequires:	polkit-devel >= 0.90}
+%{?with_polkit:BuildRequires:	polkit}
 BuildRequires:	python3 >= 1:3.0
 BuildRequires:	readline-devel >= 7.0
 BuildRequires:	rpmbuild(macros) >= 1.752
@@ -653,7 +653,6 @@ fi
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libvirt.a
-%{_libdir}/libvirt-admin.a
 %{?with_lxc:%{_libdir}/libvirt-lxc.a}
 %{_libdir}/libvirt-qemu.a
 %endif
@@ -908,6 +907,7 @@ fi
 %attr(750,qemu,qemu) %dir /var/lib/libvirt/qemu
 %attr(700,root,root) %dir /var/log/libvirt/qemu
 %attr(700,root,root) %dir /var/run/libvirt/qemu
+%{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
 %endif
 
 %if %{with vbox}
@@ -926,7 +926,7 @@ fi
 
 %files client
 %defattr(644,root,root,755)
-#%{systemdunitdir}/libvirt-guests.service
+%{systemdunitdir}/libvirt-guests.service
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virt-login-shell.conf
 %attr(755,root,root) %{_bindir}/virsh
 %attr(755,root,root) %{_bindir}/virt-admin
@@ -987,3 +987,33 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/wireshark/plugins/*/epan/libvirt.so
 %endif
+
+
+#%{_sysconfdir}/libvirt/virtchd.conf
+#%{systemdunitdir}/virtchd.service
+#%{systemdunitdir}/virtchd.socket
+#%{systemdunitdir}/virtchd-admin.socket
+#%{systemdunitdir}/virtchd-ro.socket
+#%attr(755,root,root) %{_sbindir}/virtchd
+#%{_datadir}/augeas/lenses/virtchd.aug
+#%{_datadir}/augeas/lenses/tests/test_virtchd.aug
+#
+#%{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
+#%{_libdir}/libvirt/storage-backend/libvirt_storage_backend_vstorage.so
+#
+#%{_bindir}/virt-pki-query-dn
+#%{_mandir}/man1/virt-pki-query-dn.1*
+#
+#%{_mandir}/man8/libvirt-guests.8*
+#%{_mandir}/man8/virt-ssh-helper.8*
+#%{_mandir}/man8/virtinterfaced.8*
+#%{_mandir}/man8/virtlxcd.8*
+#%{_mandir}/man8/virtnetworkd.8*
+#%{_mandir}/man8/virtnodedevd.8*
+#%{_mandir}/man8/virtnwfilterd.8*
+#%{_mandir}/man8/virtproxyd.8*
+#%{_mandir}/man8/virtqemud.8*
+#%{_mandir}/man8/virtsecretd.8*
+#%{_mandir}/man8/virtstoraged.8*
+#%{_mandir}/man8/virtvboxd.8*
+#%{_mandir}/man8/virtxend.8*
