@@ -396,6 +396,21 @@ of VirtualBox.
 Sterownik wymagany po stronie serwera do zarządzania funkcjami
 wirtualizacji VirtualBoksa.
 
+%package daemon-chd
+Summary:	Cloud Hypervisor server side driver
+Group:		Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-chd
+Cloud Hypervisor is an open source Virtual Machine Monitor (VMM) that
+runs on top of KVM. The project focuses on exclusively running modern,
+cloud workloads, on top of a limited set of hardware architectures and
+platforms. Cloud workloads refers to those that are usually run by
+customers inside a cloud provider. For our purposes this means modern
+operating systems with most I/O handled by paravirtualised devices
+(i.e. virtio), no requirement for legacy devices, and 64-bit CPUs.
+
 %package client
 Summary:	Client side utilities of the libvirt library
 Summary(pl.UTF-8):	Narzędzia klienckie do biblioteki libvirt
@@ -779,6 +794,7 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_mpath.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_scsi.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_sheepdog.so
+%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_vstorage.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_zfs.so
 %dir %{_libdir}/libvirt/storage-file
 %attr(755,root,root) %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
@@ -812,6 +828,13 @@ fi
 %{_mandir}/man8/libvirtd.8*
 %{_mandir}/man8/virtlockd.8*
 %{_mandir}/man8/virtlogd.8*
+%{_mandir}/man8/virtinterfaced.8*
+%{_mandir}/man8/virtnetworkd.8*
+%{_mandir}/man8/virtnodedevd.8*
+%{_mandir}/man8/virtnwfilterd.8*
+%{_mandir}/man8/virtproxyd.8*
+%{_mandir}/man8/virtsecretd.8*
+%{_mandir}/man8/virtstoraged.8*
 %dir /var/lib/libvirt
 %dir /var/lib/libvirt/dnsmasq
 %attr(711,root,root) %dir /var/lib/libvirt/boot
@@ -858,6 +881,7 @@ fi
 %attr(700,root,root) %dir /var/lib/libvirt/libxl
 %attr(700,root,root) %dir /var/run/libvirt/libxl
 %attr(700,root,root) %dir /var/log/libvirt/libxl
+%{_mandir}/man8/virtxend.8*
 %endif
 
 %if %{with lxc}
@@ -880,6 +904,7 @@ fi
 %attr(700,root,root) %dir /var/lib/libvirt/lxc
 %attr(700,root,root) %dir /var/run/libvirt/lxc
 %attr(700,root,root) %dir /var/log/libvirt/lxc
+%{_mandir}/man8/virtlxcd.8*
 %endif
 
 %if %{with qemu}
@@ -908,6 +933,7 @@ fi
 %attr(700,root,root) %dir /var/log/libvirt/qemu
 %attr(700,root,root) %dir /var/run/libvirt/qemu
 %{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
+%{_mandir}/man8/virtqemud.8*
 %endif
 
 %if %{with vbox}
@@ -922,7 +948,20 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_vbox.so
 %{_datadir}/augeas/lenses/virtvboxd.aug
 %{_datadir}/augeas/lenses/tests/test_virtvboxd.aug
+%{_mandir}/man8/virtvboxd.8*
 %endif
+
+%files daemon-chd
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtchd.conf
+%{systemdunitdir}/virtchd.service
+%{systemdunitdir}/virtchd.socket
+%{systemdunitdir}/virtchd-admin.socket
+%{systemdunitdir}/virtchd-ro.socket
+%attr(755,root,root) %{_sbindir}/virtchd
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
+%{_datadir}/augeas/lenses/virtchd.aug
+%{_datadir}/augeas/lenses/tests/test_virtchd.aug
 
 %files client
 %defattr(644,root,root,755)
@@ -934,6 +973,7 @@ fi
 # TODO: %attr(4754,root,virtlogin) and virtlogin group to access binary
 %attr(4755,root,root) %{_bindir}/virt-login-shell
 %attr(755,root,root) %{_bindir}/virt-xml-validate
+%attr(755,root,root) %{_bindir}/virt-pki-query-dn
 %attr(755,root,root) %{_bindir}/virt-pki-validate
 %attr(755,root,root) %{_bindir}/virt-ssh-helper
 %attr(754,root,root) %{_libexecdir}/libvirt-guests.sh
@@ -943,7 +983,10 @@ fi
 %{_mandir}/man1/virt-host-validate.1*
 %{_mandir}/man1/virt-login-shell.1*
 %{_mandir}/man1/virt-xml-validate.1*
+%{_mandir}/man1/virt-pki-query-dn.1*
 %{_mandir}/man1/virt-pki-validate.1*
+%{_mandir}/man8/libvirt-guests.8*
+%{_mandir}/man8/virt-ssh-helper.8*
 %dir %{_datadir}/libvirt/schemas
 %{_datadir}/libvirt/schemas/basictypes.rng
 %{_datadir}/libvirt/schemas/capability.rng
@@ -987,33 +1030,3 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/wireshark/plugins/*/epan/libvirt.so
 %endif
-
-
-#%{_sysconfdir}/libvirt/virtchd.conf
-#%{systemdunitdir}/virtchd.service
-#%{systemdunitdir}/virtchd.socket
-#%{systemdunitdir}/virtchd-admin.socket
-#%{systemdunitdir}/virtchd-ro.socket
-#%attr(755,root,root) %{_sbindir}/virtchd
-#%{_datadir}/augeas/lenses/virtchd.aug
-#%{_datadir}/augeas/lenses/tests/test_virtchd.aug
-#
-#%{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
-#%{_libdir}/libvirt/storage-backend/libvirt_storage_backend_vstorage.so
-#
-#%{_bindir}/virt-pki-query-dn
-#%{_mandir}/man1/virt-pki-query-dn.1*
-#
-#%{_mandir}/man8/libvirt-guests.8*
-#%{_mandir}/man8/virt-ssh-helper.8*
-#%{_mandir}/man8/virtinterfaced.8*
-#%{_mandir}/man8/virtlxcd.8*
-#%{_mandir}/man8/virtnetworkd.8*
-#%{_mandir}/man8/virtnodedevd.8*
-#%{_mandir}/man8/virtnwfilterd.8*
-#%{_mandir}/man8/virtproxyd.8*
-#%{_mandir}/man8/virtqemud.8*
-#%{_mandir}/man8/virtsecretd.8*
-#%{_mandir}/man8/virtstoraged.8*
-#%{_mandir}/man8/virtvboxd.8*
-#%{_mandir}/man8/virtxend.8*
