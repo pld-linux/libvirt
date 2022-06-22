@@ -951,6 +951,7 @@ fi
 %{_mandir}/man8/virtvboxd.8*
 %endif
 
+%ifnarch %{ix86}
 %files daemon-chd
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtchd.conf
@@ -962,6 +963,7 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
 %{_datadir}/augeas/lenses/virtchd.aug
 %{_datadir}/augeas/lenses/tests/test_virtchd.aug
+%endif
 
 %files client
 %defattr(644,root,root,755)
