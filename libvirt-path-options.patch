@@ -1,5 +1,5 @@
---- libvirt-6.10.0/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
-+++ libvirt-6.10.0/meson.build	2022-06-15 21:02:52.949418900 +0200
+--- libvirt-8.8.0/meson.build.orig	2020-12-01 09:51:29.000000000 +0100
++++ libvirt-8.8.0/meson.build	2022-06-15 21:02:52.949418900 +0200
 @@ -943,16 +943,19 @@ optional_programs = [
  ]
  
@@ -167,26 +167,6 @@
        endforeach
      endif
    endif
-@@ -1945,12 +1992,17 @@ if conf.has('WITH_LIBVIRTD')
-   endif
- 
-   if not get_option('storage_sheepdog').disabled()
-+   sheepdogcli_path = get_option('sheepdogcli_path')
-+   if sheepdogcli_path == ''
-     sheepdogcli_prog = find_program('dog', required: get_option('storage_sheepdog'), dirs: libvirt_sbin_path)
--
-     if sheepdogcli_prog.found()
-+      sheepdogcli_path = sheepdogcli_prog.path()
-+    endif
-+   endif
-+    if sheepdogcli_path != ''
-       use_storage = true
-       conf.set('WITH_STORAGE_SHEEPDOG', 1)
--      conf.set_quoted('SHEEPDOGCLI', sheepdogcli_prog.path())
-+      conf.set_quoted('SHEEPDOGCLI', sheepdogcli_path)
-     endif
-   endif
- 
 @@ -2104,10 +2168,16 @@ if not get_option('nss').disabled()
  endif
  
@@ -249,9 +229,9 @@
          files('@0@-structs'.format(proto['name'])),
        ],
        env: runutf8,
---- libvirt-6.10.0/meson_options.txt.orig	2020-12-01 09:51:29.000000000 +0100
-+++ libvirt-6.10.0/meson_options.txt	2022-06-15 21:47:27.468263121 +0200
-@@ -102,3 +102,51 @@ option('numad', type: 'feature', value:
+--- libvirt-8.8.0/meson_options.txt.orig	2020-12-01 09:51:29.000000000 +0100
++++ libvirt-8.8.0/meson_options.txt	2022-06-15 21:47:27.468263121 +0200
+@@ -102,3 +102,50 @@ option('numad', type: 'feature', value:
  option('pm_utils', type: 'feature', value: 'auto', description: 'use pm-utils for power management')
  option('sysctl_config', type: 'feature', value: 'auto', description: 'Whether to install sysctl configs')
  option('tls_priority', type: 'string', value: 'NORMAL', description: 'set the default TLS session priority string')
@@ -289,7 +269,6 @@
 +option('radvd_path', type: 'string', value: '', description: 'executable path')
 +option('rmmod_path', type: 'string', value: '', description: 'executable path')
 +option('scrub_path', type: 'string', value: '', description: 'executable path')
-+option('sheepdogcli_path', type: 'string', value: '', description: 'executable path')
 +option('showmount_path', type: 'string', value: '', description: 'executable path')
 +option('tc_path', type: 'string', value: '', description: 'executable path')
 +option('udevadm_path', type: 'string', value: '', description: 'executable path')

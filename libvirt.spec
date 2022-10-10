@@ -45,12 +45,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	8.4.0
+Version:	8.8.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://libvirt.org/sources/%{name}-%{version}.tar.xz
-# Source0-md5:	d9ffa11bc1dcbf5aca13271f3248d3f7
+# Source0-md5:	c20121ef8c9297a982dd1f2e529159f3
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -66,7 +66,7 @@ BuildRequires:	attr-devel
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
 %{?with_ceph:BuildRequires:	ceph-devel}
-BuildRequires:	curl-devel >= 7.18.0
+BuildRequires:	curl-devel >= 7.19.1
 BuildRequires:	cyrus-sasl-devel >= 2.1.26
 BuildRequires:	dbus-devel >= 1.0.0
 BuildRequires:	device-mapper-devel >= 1.0.0
@@ -75,19 +75,19 @@ BuildRequires:	docutils
 BuildRequires:	gawk
 BuildRequires:	gcc >= 6:4.4
 BuildRequires:	gettext-tools >= 0.17
-BuildRequires:	glib2-devel >= 1:2.48.0
+BuildRequires:	glib2-devel >= 1:2.56.0
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 3.4.1}
-BuildRequires:	gnutls-devel >= 3.2.0
+BuildRequires:	gnutls-devel >= 3.6.0
 BuildRequires:	libapparmor-devel
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
-BuildRequires:	libfuse-devel >= 2.8.6
+BuildRequires:	libfuse3-devel >= 3.1.0
 BuildRequires:	libgcrypt-devel
 BuildRequires:	libiscsi-devel >= 1.18.0
 BuildRequires:	libnl-devel >= 3.2
 BuildRequires:	libpcap-devel >= 1.5.0
 BuildRequires:	libselinux-devel >= 2.5
-BuildRequires:	libssh-devel >= 0.7
+BuildRequires:	libssh-devel >= 0.8.1
 BuildRequires:	libssh2-devel >= 1.3
 BuildRequires:	libtirpc-devel
 BuildRequires:	libxml2-devel >= 1:2.9.1
@@ -114,20 +114,20 @@ BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 BuildRequires:	udev-devel >= 1:219
 %{?with_wireshark:BuildRequires:	wireshark-devel >= 2.6.0}
-%{?with_libxl:BuildRequires:	xen-devel >= 4.6}
+%{?with_libxl:BuildRequires:	xen-devel >= 4.9}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
 BuildRequires:	yajl-devel >= 2.0.3
-Requires:	curl-libs >= 7.18.0
+Requires:	curl-libs >= 7.19.1
 Requires:	cyrus-sasl-libs >= 2.1.26
 Requires:	device-mapper-libs >= 1.0.0
-Requires:	glib2 >= 1:2.48.0
-Requires:	gnutls-libs >= 3.2.0
+Requires:	glib2 >= 1:2.56.0
+Requires:	gnutls-libs >= 3.6.0
 Requires:	libcap-ng >= 0.4.0
 Requires:	libnl >= 3.2
 Requires:	libpcap >= 1.5.0
 Requires:	libselinux >= 2.5
-Requires:	libssh >= 0.7
+Requires:	libssh >= 0.8.1
 Requires:	libssh2 >= 1.3
 Requires:	libxml2 >= 1:2.9.1
 %{?with_hyperv:Requires:	openwsman-libs >= 2.6.3}
@@ -171,7 +171,7 @@ Ten pakiet zawiera podstawowe biblioteki oraz plik konfiguracyjny.
 Summary:	bash-completion for libvirt
 Summary(pl.UTF-8):	Bashowe dopełnianie składni poleceń libvirt
 Group:		Applications/Shells
-Requires:	bash-completion >= 2.0
+Requires:	bash-completion >= 1:2.0
 BuildArch:	noarch
 
 %description -n bash-completion-%{name}
@@ -287,7 +287,6 @@ Suggests:	parted >= 1.8.0
 Suggests:	polkit >= 0.93
 #Suggests:	radvd
 Suggests:	scrub
-#Suggests:	sheepdog
 Provides:	libvirt(hypervisor)
 
 %description daemon
@@ -331,7 +330,7 @@ Summary:	Server side driver required to run XEN guests (xenlight)
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN (xenlight)
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
-Requires:	xen >= 4.6
+Requires:	xen >= 4.9
 Provides:	libvirt(hypervisor)
 Obsoletes:	libvirt-daemon-xen < 4.3.0
 
@@ -348,7 +347,7 @@ Summary:	Server side driver required to run LXC guests
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości LXC
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
-Requires:	libfuse >= 2.8.6
+Requires:	libfuse3 >= 3.1.0
 Provides:	libvirt(hypervisor)
 
 %description daemon-lxc
@@ -368,7 +367,7 @@ Requires:	/usr/bin/qemu-img
 Requires:	bzip2
 Requires:	gzip
 Requires:	lzop
-Requires:	qemu-system-x86
+Requires:	qemu-system-x86 >= 4.2
 Requires:	xz
 Provides:	libvirt(hypervisor)
 
@@ -421,7 +420,7 @@ Requires(postun):	systemd-units
 Requires(preun):	systemd-units
 Requires:	%{name} = %{version}-%{release}
 Requires:	gettext >= 0.18.1.1-6
-Requires:	gnutls >= 3.2.0
+Requires:	gnutls >= 3.6.0
 Requires:	netcat-openbsd
 Requires:	rc-scripts
 
@@ -550,7 +549,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	-Dradvd_path=/usr/sbin/radvd \
 	-Drmmod_path=/sbin/rmmod \
 	-Dscrub_path=/usr/bin/scrub \
-	-Dsheepdogcli_path=/usr/sbin/collie \
 	-Dshowmount_path=/usr/sbin/showmount \
 	-Dtc_path=/sbin/tc \
 	-Dudevadm_path=/sbin/udevadm \
@@ -694,6 +692,14 @@ fi
 
 %files daemon
 %defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/abstractions/libvirt-lxc
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/abstractions/libvirt-qemu
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/libvirt
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/local/usr.lib.libvirt.virt-aa-helper
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.lib.libvirt.virt-aa-helper
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.sbin.libvirtd
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.sbin.virtqemud
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.sbin.virtxend
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt-admin.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirtd.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtinterfaced.conf
@@ -793,7 +799,6 @@ fi
 # mpath requires libdevmapper, but libvirt itself requires it too
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_mpath.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_scsi.so
-%attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_sheepdog.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_vstorage.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_zfs.so
 %dir %{_libdir}/libvirt/storage-file
@@ -999,7 +1004,9 @@ fi
 %{_datadir}/libvirt/schemas/domaincaps.rng
 %{_datadir}/libvirt/schemas/domaincheckpoint.rng
 %{_datadir}/libvirt/schemas/domaincommon.rng
+%{_datadir}/libvirt/schemas/domainoverrides.rng
 %{_datadir}/libvirt/schemas/domainsnapshot.rng
+%{_datadir}/libvirt/schemas/inactiveDomain.rng
 %{_datadir}/libvirt/schemas/interface.rng
 %{_datadir}/libvirt/schemas/network.rng
 %{_datadir}/libvirt/schemas/networkcommon.rng

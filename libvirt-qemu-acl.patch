@@ -17,12 +17,11 @@ diff -urNp -x '*.orig' libvirt-8.4.0.org/src/qemu/qemu.conf.in libvirt-8.4.0/src
  # The default SASL configuration file is located in /etc/sasl/
  # When running libvirtd unprivileged, it may be desirable to
  # override the configs in this location. Set this parameter to
-diff -urNp -x '*.orig' libvirt-8.4.0.org/src/qemu/qemu_command.c libvirt-8.4.0/src/qemu/qemu_command.c
---- libvirt-8.4.0.org/src/qemu/qemu_command.c	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0/src/qemu/qemu_command.c	2022-06-19 22:15:28.366510311 +0200
-@@ -8333,6 +8333,9 @@ qemuBuildGraphicsVNCCommandLine(virQEMUD
-         virBufferAsprintf(&opt, ",audiodev=%s", audioid);
-     }
+--- libvirt-8.8.0/src/qemu/qemu_command.c.orig	2022-10-09 21:14:42.031046895 +0200
++++ libvirt-8.8.0/src/qemu/qemu_command.c	2022-10-09 21:16:56.026987643 +0200
+@@ -7737,6 +7737,9 @@ qemuBuildGraphicsVNCCommandLine(virQEMUD
+ 
+     virBufferAsprintf(&opt, ",audiodev=%s", audioid);
  
 +    if (cfg->vncACL)
 +	    virBufferAddLit(&opt, ",acl");
