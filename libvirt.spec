@@ -397,6 +397,7 @@ wirtualizacji VirtualBoksa.
 
 %package daemon-chd
 Summary:	Cloud Hypervisor server side driver
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Cloud Hypervisor
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
 Provides:	libvirt(hypervisor)
@@ -409,6 +410,16 @@ platforms. Cloud workloads refers to those that are usually run by
 customers inside a cloud provider. For our purposes this means modern
 operating systems with most I/O handled by paravirtualised devices
 (i.e. virtio), no requirement for legacy devices, and 64-bit CPUs.
+
+%description daemon-chd -l pl.UTF-8
+Cloud Hypervisor to mający otwarte źródła monitor maszyn wirtualnych
+(VMM), działający powyżej KVM. Projekt skupia się wyłącznie na
+uruchamianiu nowoczesnych, chmurowych zadań na ograniczonym zbiorze
+architektur i platform sprzętowych. Zadania chmurowe to te, które
+zwykle są uruchamiane przez klientów u dostawców chmurowych. W tym
+przypadku oznacza to nowoczesne systemy operacyjne z większością
+we/wy obsługiwaną przez urządzenia parawirtualizowane (np. virtio),
+bez wymogu tradycyjnych urządzeń, oraz 64-bitowe procesory.
 
 %package client
 Summary:	Client side utilities of the libvirt library
