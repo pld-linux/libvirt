@@ -45,12 +45,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	8.8.0
+Version:	8.10.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
-Source0:	https://libvirt.org/sources/%{name}-%{version}.tar.xz
-# Source0-md5:	c20121ef8c9297a982dd1f2e529159f3
+Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
+# Source0-md5:	47feb4bed510cb7ed8fdc5be6b9d6d04
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -505,6 +505,8 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %{__sed} -i '/^libvirt\(_admin\|_lxc\|_qemu\)\?_lib = / s/shared_library/library/' src/meson.build
 %endif
 
+%{__sed} -i -e '1s,/usr/bin/env python3,%{__python3},' tools/virt-qemu-qmp-proxy
+
 %build
 %meson build \
 	-Dbash_completion=enabled \
@@ -791,7 +793,11 @@ fi
 %attr(755,root,root) %{_libexecdir}/libvirt_parthelper
 %attr(755,root,root) %{_libexecdir}/virt-aa-helper
 # TODO:
+#%{_libdir}/firewalld/policies/libvirt-routed-in.xml
+#%{_libdir}/firewalld/policies/libvirt-routed-out.xml
+#%{_libdir}/firewalld/policies/libvirt-to-host.xml
 #%{_libdir}/firewalld/zones/libvirt.xml
+#%{_libdir}/firewalld/zones/libvirt-routed.xml
 %dir %{_libdir}/libvirt/connection-driver
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_interface.so
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_network.so
@@ -926,7 +932,10 @@ fi
 %if %{with qemu}
 %files daemon-qemu
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/virt-qemu-qmp-proxy
 %attr(755,root,root) %{_bindir}/virt-qemu-run
+%attr(755,root,root) %{_bindir}/virt-qemu-sev-validate
+%attr(755,root,root) %{_sbindir}/virtqemud
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/qemu-lockd.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtqemud.conf
@@ -936,19 +945,20 @@ fi
 %{systemdunitdir}/virtqemud.socket
 %{systemdunitdir}/virtqemud-admin.socket
 %{systemdunitdir}/virtqemud-ro.socket
-%attr(755,root,root) %{_sbindir}/virtqemud
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_qemu.so
 %{_datadir}/augeas/lenses/libvirtd_qemu.aug
 %{_datadir}/augeas/lenses/virtqemud.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd_qemu.aug
 %{_datadir}/augeas/lenses/tests/test_libvirt_lockd.aug
 %{_datadir}/augeas/lenses/tests/test_virtqemud.aug
-%{_mandir}/man1/virt-qemu-run.1*
 %attr(750,qemu,qemu) %dir /var/cache/libvirt/qemu
 %attr(750,qemu,qemu) %dir /var/lib/libvirt/qemu
 %attr(700,root,root) %dir /var/log/libvirt/qemu
 %attr(700,root,root) %dir /var/run/libvirt/qemu
 %{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
+%{_mandir}/man1/virt-qemu-qmp-proxy.1*
+%{_mandir}/man1/virt-qemu-run.1*
+%{_mandir}/man1/virt-qemu-sev-validate.1*
 %{_mandir}/man8/virtqemud.8*
 %endif
 
@@ -1026,6 +1036,7 @@ fi
 %{_datadir}/libvirt/schemas/nwfilter.rng
 %{_datadir}/libvirt/schemas/nwfilter_params.rng
 %{_datadir}/libvirt/schemas/nwfilterbinding.rng
+%{_datadir}/libvirt/schemas/privatedata.rng
 %{_datadir}/libvirt/schemas/secret.rng
 %{_datadir}/libvirt/schemas/storagecommon.rng
 %{_datadir}/libvirt/schemas/storagepool.rng
