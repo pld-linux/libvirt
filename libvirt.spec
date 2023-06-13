@@ -114,11 +114,13 @@ BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 BuildRequires:	systemd-devel
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	udev-devel >= 1:219
 %{?with_wireshark:BuildRequires:	wireshark-devel >= 2.6.0}
 %{?with_libxl:BuildRequires:	xen-devel >= 4.9}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
+BuildRequires:	xz
 BuildRequires:	yajl-devel >= 2.0.3
 Requires:	curl-libs >= 7.19.1
 Requires:	cyrus-sasl-libs >= 2.1.26
