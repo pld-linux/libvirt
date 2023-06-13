@@ -108,6 +108,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	python3 >= 1:3.0
 BuildRequires:	readline-devel >= 7.0
 BuildRequires:	rpcsvc-proto
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.752
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 3.5.0}
 BuildRequires:	sed >= 4.0
