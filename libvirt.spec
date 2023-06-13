@@ -94,7 +94,7 @@ BuildRequires:	libxml2-devel >= 1:2.9.1
 BuildRequires:	libxml2-progs >= 1:2.9.1
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
-BuildRequires:	meson >= 0.54.0
+BuildRequires:	meson >= 0.56.0
 BuildRequires:	ncurses-devel
 %{?with_netcf:BuildRequires:	netcf-devel >= 0.2.0}
 BuildRequires:	ninja >= 1.5
