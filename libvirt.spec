@@ -107,6 +107,7 @@ BuildRequires:	pkgconfig
 %{?with_polkit:BuildRequires:	polkit}
 BuildRequires:	python3 >= 1:3.0
 BuildRequires:	readline-devel >= 7.0
+BuildRequires:	rpcsvc-proto
 BuildRequires:	rpmbuild(macros) >= 1.752
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 3.5.0}
 BuildRequires:	sed >= 4.0
