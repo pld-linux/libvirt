@@ -33,7 +33,7 @@
 %bcond_without	static_libs	# static libraries build
 
 # qemu available only on x86 and ppc
-%ifnarch %{ix86} %{x8664} ppc
+%ifnarch %{ix86} %{x8664} aarch64 ppc
 %undefine	with_qemu
 %endif
 
