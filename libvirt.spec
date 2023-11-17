@@ -65,6 +65,7 @@ BuildRequires:	acl-devel
 BuildRequires:	attr-devel
 BuildRequires:	audit-libs-devel
 BuildRequires:	augeas-devel
+BuildRequires:	bash-completion-devel >= 1:2.0
 %{?with_ceph:BuildRequires:	ceph-devel}
 BuildRequires:	curl-devel >= 7.19.1
 BuildRequires:	cyrus-sasl-devel >= 2.1.26
