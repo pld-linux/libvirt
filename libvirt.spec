@@ -60,6 +60,7 @@ Patch3:		%{name}-path-options.patch
 Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
+Patch7:		missing-includes.patch
 URL:		https://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -505,6 +506,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %patch4 -p1
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
+%patch7 -p1
 
 %if %{with static_libs}
 %{__sed} -i '/^libvirt\(_admin\|_lxc\|_qemu\)\?_lib = / s/shared_library/library/' src/meson.build
