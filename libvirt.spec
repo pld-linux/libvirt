@@ -45,12 +45,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	8.10.0
-Release:	2
+Version:	9.10.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
-# Source0-md5:	47feb4bed510cb7ed8fdc5be6b9d6d04
+# Source0-md5:	c546d8745508bd95147bc749dea82ff1
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -60,7 +60,6 @@ Patch3:		%{name}-path-options.patch
 Patch4:		%{name}-udevadm-settle.patch
 Patch5:		vserver.patch
 Patch6:		bashisms.patch
-Patch7:		missing-includes.patch
 URL:		https://www.libvirt.org/
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
@@ -80,12 +79,13 @@ BuildRequires:	gettext-tools >= 0.17
 BuildRequires:	glib2-devel >= 1:2.56.0
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 3.4.1}
 BuildRequires:	gnutls-devel >= 3.6.0
-BuildRequires:	libapparmor-devel
+BuildRequires:	libapparmor-devel >= 3.0.0
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
 BuildRequires:	libfuse3-devel >= 3.1.0
 BuildRequires:	libgcrypt-devel
 BuildRequires:	libiscsi-devel >= 1.18.0
+BuildRequires:	libnbd-devel >= 1.0
 BuildRequires:	libnl-devel >= 3.2
 BuildRequires:	libpcap-devel >= 1.5.0
 BuildRequires:	libselinux-devel >= 2.5
@@ -119,7 +119,7 @@ BuildRequires:	systemd-devel
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	udev-devel >= 1:219
 %{?with_wireshark:BuildRequires:	wireshark-devel >= 2.6.0}
-%{?with_libxl:BuildRequires:	xen-devel >= 4.9}
+%{?with_libxl:BuildRequires:	xen-devel >= 4.13}
 # For disk driver
 BuildRequires:	xorg-lib-libpciaccess-devel >= 0.10.0
 BuildRequires:	xz
@@ -129,6 +129,7 @@ Requires:	cyrus-sasl-libs >= 2.1.26
 Requires:	device-mapper-libs >= 1.0.0
 Requires:	glib2 >= 1:2.56.0
 Requires:	gnutls-libs >= 3.6.0
+Requires:	libapparmor >= 3.0.0
 Requires:	libcap-ng >= 0.4.0
 Requires:	libnl >= 3.2
 Requires:	libpcap >= 1.5.0
@@ -336,7 +337,7 @@ Summary:	Server side driver required to run XEN guests (xenlight)
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN (xenlight)
 Group:		Libraries
 Requires:	%{name}-daemon = %{version}-%{release}
-Requires:	xen >= 4.9
+Requires:	xen >= 4.13
 Provides:	libvirt(hypervisor)
 Obsoletes:	libvirt-daemon-xen < 4.3.0
 
@@ -372,6 +373,7 @@ Requires:	%{name}-daemon = %{version}-%{release}
 Requires:	/usr/bin/qemu-img
 Requires:	bzip2
 Requires:	gzip
+Requires:	libnbd >= 1.0
 Requires:	lzop
 Requires:	qemu-system-x86 >= 4.2
 Requires:	xz
@@ -506,13 +508,15 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %patch4 -p1
 %{?with_vserver:%patch5 -p1}
 %patch6 -p1
-%patch7 -p1
 
 %if %{with static_libs}
 %{__sed} -i '/^libvirt\(_admin\|_lxc\|_qemu\)\?_lib = / s/shared_library/library/' src/meson.build
 %endif
 
-%{__sed} -i -e '1s,/usr/bin/env python3,%{__python3},' tools/virt-qemu-qmp-proxy
+%{__sed} -i -e '1s,/usr/bin/env python3,%{__python3},' tools/{virt-qemu-qmp-proxy,virt-qemu-sev-validate}
+
+%{__sed} -i -e 's,/usr/lib/qemu,/usr/%{_lib}/qemu,' -e 's,/usr/lib",/usr/%{_lib}/",' src/qemu/qemu_interface.c
+%{__sed} -i -e 's,/usr/libexec",%{_libexecdir}",' src/qemu/qemu_process.c
 
 %build
 %meson build \
@@ -563,9 +567,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	-Dpvcreate_path=/sbin/pvcreate \
 	-Dpvremove_path=/sbin/pvremove \
 	-Dpvs_path=/sbin/pvs \
-	-Dqemu_bridge_path=%{_libexecdir}/qemu-bridge-helper \
-	-Dqemu_dbus_daemon_path=/usr/bin/dbus-daemon \
-	-Dqemu_pr_path=/usr/bin/qemu-pr-helper \
 	-Dradvd_path=/usr/sbin/radvd \
 	-Drmmod_path=/sbin/rmmod \
 	-Dscrub_path=/usr/bin/scrub \
@@ -715,7 +716,6 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/abstractions/libvirt-lxc
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/abstractions/libvirt-qemu
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/libvirt
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/local/usr.lib.libvirt.virt-aa-helper
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.lib.libvirt.virt-aa-helper
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.sbin.libvirtd
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.sbin.virtqemud

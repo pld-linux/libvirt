@@ -10,30 +10,28 @@ diff -ur libvirt-8.4.0/docs/auth.rst libvirt-8.4.0-sasl/docs/auth.rst
  parameter to ``scram-sha-256``.
  
  **Note:** previous versions of libvirt suggested ``DIGEST-MD5`` and
-diff -ur libvirt-8.4.0/libvirt.spec libvirt-8.4.0-sasl/libvirt.spec
---- libvirt-8.4.0/libvirt.spec	2022-06-01 09:28:50.874389600 +0200
-+++ libvirt-8.4.0-sasl/libvirt.spec	2022-06-19 22:04:15.936263095 +0200
-@@ -1675,7 +1675,7 @@
- %config(noreplace) %{_sysconfdir}/libvirt/virtproxyd.conf
- %config(noreplace) %{_sysconfdir}/libvirt/virtlogd.conf
- %config(noreplace) %{_sysconfdir}/libvirt/virtlockd.conf
+--- libvirt-9.10.0/libvirt.spec.orig	2024-04-05 22:06:11.920080254 +0200
++++ libvirt-9.10.0/libvirt.spec	2024-04-05 22:10:45.821929734 +0200
+@@ -1980,7 +1980,7 @@ exit 0
+ %files daemon-common
+ %{_unitdir}/virt-guest-shutdown.target
+ %{_unitdir}/libvirt-guests.service
 -%config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 +%config(noreplace) %{_sysconfdir}/sasl/libvirt.conf
- %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
- 
- %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd
-diff -ur libvirt-8.4.0/libvirt.spec.in libvirt-8.4.0-sasl/libvirt.spec.in
---- libvirt-8.4.0/libvirt.spec.in	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0-sasl/libvirt.spec.in	2022-06-19 22:04:15.936263095 +0200
-@@ -1675,7 +1675,7 @@
- %config(noreplace) %{_sysconfdir}/libvirt/virtproxyd.conf
- %config(noreplace) %{_sysconfdir}/libvirt/virtlogd.conf
- %config(noreplace) %{_sysconfdir}/libvirt/virtlockd.conf
+ %dir %{_datadir}/libvirt/
+ %ghost %dir %{_rundir}/libvirt/
+ %ghost %dir %{_rundir}/libvirt/common/
+--- libvirt-9.10.0/libvirt.spec.in.orig	2024-04-05 22:06:11.953413407 +0200
++++ libvirt-9.10.0/libvirt.spec.in	2024-04-05 22:10:58.908525504 +0200
+@@ -1980,7 +1980,7 @@ exit 0
+ %files daemon-common
+ %{_unitdir}/virt-guest-shutdown.target
+ %{_unitdir}/libvirt-guests.service
 -%config(noreplace) %{_sysconfdir}/sasl2/libvirt.conf
 +%config(noreplace) %{_sysconfdir}/sasl/libvirt.conf
- %config(noreplace) %{_prefix}/lib/sysctl.d/60-libvirtd.conf
- 
- %config(noreplace) %{_sysconfdir}/logrotate.d/libvirtd
+ %dir %{_datadir}/libvirt/
+ %ghost %dir %{_rundir}/libvirt/
+ %ghost %dir %{_rundir}/libvirt/common/
 diff -ur libvirt-8.4.0/src/qemu/qemu.conf.in libvirt-8.4.0-sasl/src/qemu/qemu.conf.in
 --- libvirt-8.4.0/src/qemu/qemu.conf.in	2022-06-01 09:28:24.000000000 +0200
 +++ libvirt-8.4.0-sasl/src/qemu/qemu.conf.in	2022-06-19 22:04:16.306265553 +0200
@@ -134,87 +132,61 @@ diff -ur libvirt-8.4.0/src/remote/meson.build libvirt-8.4.0-sasl/src/remote/meso
      rename: [ 'libvirt.conf' ],
    )
  endif
-diff -ur libvirt-8.4.0/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args
---- libvirt-8.4.0/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args	2022-06-19 22:04:16.769601963 +0200
-@@ -6,7 +6,7 @@
- XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
- XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
- XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
--SASL_CONF_PATH=/root/.sasl2 \
-+SASL_CONF_PATH=/root/.sasl \
+--- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args.orig	2024-04-05 22:06:12.593409940 +0200
++++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args	2024-04-05 22:13:33.401021880 +0200
+@@ -6,7 +6,7 @@ LOGNAME=test \
+ XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
+ XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
+ XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.config \
+-SASL_CONF_PATH=/etc/sasl2 \
++SASL_CONF_PATH=/etc/sasl \
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
-diff -ur libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args
---- libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args	2022-06-19 22:04:16.772935320 +0200
-@@ -6,7 +6,7 @@
- XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
- XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
- XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
--SASL_CONF_PATH=/root/.sasl2 \
-+SASL_CONF_PATH=/root/.sasl \
+--- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args.orig	2024-04-05 22:06:12.796742172 +0200
++++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args	2024-04-05 22:13:53.787578103 +0200
+@@ -6,7 +6,7 @@ LOGNAME=test \
+ XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
+ XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
+ XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.config \
+-SASL_CONF_PATH=/etc/sasl2 \
++SASL_CONF_PATH=/etc/sasl \
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
-diff -ur libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args
---- libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args	2022-06-19 22:04:16.772935320 +0200
-@@ -6,7 +6,7 @@
- XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
- XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
- XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
--SASL_CONF_PATH=/root/.sasl2 \
-+SASL_CONF_PATH=/root/.sasl \
+--- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args.orig	2024-04-05 22:06:12.800075487 +0200
++++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args	2024-04-05 22:14:10.387488174 +0200
+@@ -6,7 +6,7 @@ LOGNAME=test \
+ XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
+ XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
+ XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.config \
+-SASL_CONF_PATH=/etc/sasl2 \
++SASL_CONF_PATH=/etc/sasl \
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
-diff -ur libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args
---- libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args	2022-06-19 22:04:16.772935320 +0200
-@@ -6,7 +6,7 @@
- XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
- XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
- XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
--SASL_CONF_PATH=/root/.sasl2 \
-+SASL_CONF_PATH=/root/.sasl \
+--- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args.orig	2024-04-05 22:06:12.843408586 +0200
++++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args	2024-04-05 22:14:23.584083348 +0200
+@@ -6,7 +6,7 @@ LOGNAME=test \
+ XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
+ XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
+ XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.config \
+-SASL_CONF_PATH=/etc/sasl2 \
++SASL_CONF_PATH=/etc/sasl \
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
-diff -ur libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args
---- libvirt-8.4.0/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0-sasl/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args	2022-06-19 22:04:16.772935320 +0200
-@@ -6,7 +6,7 @@
- XDG_DATA_HOME=/tmp/lib/domain--1-QEMUGuest1/.local/share \
- XDG_CACHE_HOME=/tmp/lib/domain--1-QEMUGuest1/.cache \
- XDG_CONFIG_HOME=/tmp/lib/domain--1-QEMUGuest1/.config \
--SASL_CONF_PATH=/root/.sasl2 \
-+SASL_CONF_PATH=/root/.sasl \
+--- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args.orig	2024-04-05 22:06:12.853408531 +0200
++++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args	2024-04-05 22:14:38.737334590 +0200
+@@ -6,7 +6,7 @@ LOGNAME=test \
+ XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
+ XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
+ XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.config \
+-SASL_CONF_PATH=/etc/sasl2 \
++SASL_CONF_PATH=/etc/sasl \
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
-diff -ur libvirt-8.4.0/tests/qemuxml2argvtest.c libvirt-8.4.0-sasl/tests/qemuxml2argvtest.c
---- libvirt-8.4.0/tests/qemuxml2argvtest.c	2022-06-01 09:28:24.000000000 +0200
-+++ libvirt-8.4.0-sasl/tests/qemuxml2argvtest.c	2022-06-19 22:04:16.872935984 +0200
-@@ -1509,7 +1509,7 @@
- 
-     driver.config->vncSASL = 1;
-     VIR_FREE(driver.config->vncSASLdir);
--    driver.config->vncSASLdir = g_strdup("/root/.sasl2");
-+    driver.config->vncSASLdir = g_strdup("/root/.sasl");
-     DO_TEST_CAPS_LATEST("graphics-vnc-sasl");
-     driver.config->vncTLS = 1;
-     driver.config->vncTLSx509verify = 1;
-@@ -1531,7 +1531,7 @@
-     DO_TEST_CAPS_LATEST("graphics-spice");
-     DO_TEST_CAPS_LATEST("graphics-spice-no-args");
-     driver.config->spiceSASL = 1;
--    driver.config->spiceSASLdir = g_strdup("/root/.sasl2");
-+    driver.config->spiceSASLdir = g_strdup("/root/.sasl");
-     DO_TEST_CAPS_LATEST("graphics-spice-sasl");
-     VIR_FREE(driver.config->spiceSASLdir);
-     driver.config->spiceSASL = 0;
 diff -ur libvirt-8.4.0/tests/virconfdata/libvirtd.conf libvirt-8.4.0-sasl/tests/virconfdata/libvirtd.conf
 --- libvirt-8.4.0/tests/virconfdata/libvirtd.conf	2022-06-01 09:28:24.000000000 +0200
 +++ libvirt-8.4.0-sasl/tests/virconfdata/libvirtd.conf	2022-06-19 22:04:16.999603490 +0200
