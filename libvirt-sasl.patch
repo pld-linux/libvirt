@@ -132,8 +132,8 @@ diff -ur libvirt-8.4.0/src/remote/meson.build libvirt-8.4.0-sasl/src/remote/meso
      rename: [ 'libvirt.conf' ],
    )
  endif
---- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args.orig	2024-04-05 22:06:12.593409940 +0200
-+++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-spice-sasl.x86_64-latest.args	2024-04-05 22:13:33.401021880 +0200
+--- libvirt-10.2.0/tests/qemuxmlconfdata/graphics-spice-sasl.x86_64-latest.args.orig	2024-04-05 22:06:12.593409940 +0200
++++ libvirt-10.2.0/tests/qemuxmlconfdata/graphics-spice-sasl.x86_64-latest.args	2024-04-05 22:13:33.401021880 +0200
 @@ -6,7 +6,7 @@ LOGNAME=test \
  XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
@@ -143,8 +143,8 @@ diff -ur libvirt-8.4.0/src/remote/meson.build libvirt-8.4.0-sasl/src/remote/meso
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
---- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args.orig	2024-04-05 22:06:12.796742172 +0200
-+++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-sasl.x86_64-latest.args	2024-04-05 22:13:53.787578103 +0200
+--- libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-sasl.x86_64-latest.args.orig	2024-04-05 22:06:12.796742172 +0200
++++ libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-sasl.x86_64-latest.args	2024-04-05 22:13:53.787578103 +0200
 @@ -6,7 +6,7 @@ LOGNAME=test \
  XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
@@ -154,8 +154,8 @@ diff -ur libvirt-8.4.0/src/remote/meson.build libvirt-8.4.0-sasl/src/remote/meso
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
---- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args.orig	2024-04-05 22:06:12.800075487 +0200
-+++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-5.2.0.args	2024-04-05 22:14:10.387488174 +0200
+--- libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls-secret.x86_64-5.2.0.args.orig	2024-04-05 22:06:12.800075487 +0200
++++ libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls-secret.x86_64-5.2.0.args	2024-04-05 22:14:10.387488174 +0200
 @@ -6,7 +6,7 @@ LOGNAME=test \
  XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
@@ -165,8 +165,8 @@ diff -ur libvirt-8.4.0/src/remote/meson.build libvirt-8.4.0-sasl/src/remote/meso
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
---- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args.orig	2024-04-05 22:06:12.843408586 +0200
-+++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls-secret.x86_64-latest.args	2024-04-05 22:14:23.584083348 +0200
+--- libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls-secret.x86_64-latest.args.orig	2024-04-05 22:06:12.843408586 +0200
++++ libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls-secret.x86_64-latest.args	2024-04-05 22:14:23.584083348 +0200
 @@ -6,7 +6,7 @@ LOGNAME=test \
  XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
@@ -176,8 +176,8 @@ diff -ur libvirt-8.4.0/src/remote/meson.build libvirt-8.4.0-sasl/src/remote/meso
  /usr/bin/qemu-system-x86_64 \
  -name guest=QEMUGuest1,debug-threads=on \
  -S \
---- libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args.orig	2024-04-05 22:06:12.853408531 +0200
-+++ libvirt-9.10.0/tests/qemuxml2argvdata/graphics-vnc-tls.x86_64-latest.args	2024-04-05 22:14:38.737334590 +0200
+--- libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls.x86_64-latest.args.orig	2024-04-05 22:06:12.853408531 +0200
++++ libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls.x86_64-latest.args	2024-04-05 22:14:38.737334590 +0200
 @@ -6,7 +6,7 @@ LOGNAME=test \
  XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \

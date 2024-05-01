@@ -1,8 +1,8 @@
---- libvirt-9.10.0/meson.build.orig	2023-12-01 16:11:26.000000000 +0100
-+++ libvirt-9.10.0/meson.build	2024-04-06 08:09:14.274063626 +0200
-@@ -824,16 +824,19 @@ optional_programs = [
- ]
+--- libvirt-10.2.0/meson.build.orig	2024-04-02 13:38:48.000000000 +0200
++++ libvirt-10.2.0/meson.build	2024-05-01 06:11:02.127427471 +0200
+@@ -833,8 +833,10 @@ optional_programs = [
  
+ missing_optional_programs = []
  foreach name : optional_programs
 + varname = name.underscorify()
 + prog_path = get_option('@0@_path'.format(varname))
@@ -12,7 +12,9 @@
    if prog.found()
      prog_path = prog.full_path()
    else
-     prog_path = name
+@@ -843,9 +845,10 @@ foreach name : optional_programs
+       missing_optional_programs += [ name ]
+     endif
    endif
 + endif
  
@@ -22,7 +24,7 @@
  endforeach
  
  
-@@ -1675,6 +1678,8 @@ if not get_option('driver_qemu').disable
+@@ -1697,6 +1700,8 @@ if not get_option('driver_qemu').disable
      conf.set_quoted('QEMU_USER', qemu_user)
      conf.set_quoted('QEMU_GROUP', qemu_group)
  
@@ -31,7 +33,7 @@
      qemu_slirp_prog = find_program(
        'slirp-helper',
        dirs: [ '/usr/bin', '/usr/libexec' ],
-@@ -1685,6 +1690,7 @@ if not get_option('driver_qemu').disable
+@@ -1707,6 +1712,7 @@ if not get_option('driver_qemu').disable
      else
        qemu_slirp_path = '/usr/bin/slirp-helper'
      endif
@@ -39,7 +41,7 @@
      conf.set_quoted('QEMU_SLIRP_HELPER', qemu_slirp_path)
    endif
  endif
-@@ -1764,11 +1770,29 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1786,11 +1792,29 @@ if conf.has('WITH_LIBVIRTD')
      endif
  
      if fs_enable
@@ -70,7 +72,7 @@
          fs_enable = false
        endif
      endif
-@@ -1777,15 +1801,17 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1799,15 +1823,17 @@ if conf.has('WITH_LIBVIRTD')
        use_storage = true
  
        conf.set('WITH_STORAGE_FS', 1)
@@ -92,7 +94,7 @@
        conf.set_quoted('SHOWMOUNT', showmount_path)
      endif
    endif
-@@ -1797,7 +1823,7 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1819,7 +1845,7 @@ if conf.has('WITH_LIBVIRTD')
      error('Need glusterfs (libgfapi) for gluster storage driver')
    endif
  
@@ -101,7 +103,7 @@
      use_storage = true
      conf.set('WITH_STORAGE_ISCSI', 1)
    elif get_option('storage_iscsi').enabled()
-@@ -1820,11 +1846,17 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1842,11 +1868,17 @@ if conf.has('WITH_LIBVIRTD')
        'pvs', 'vgs', 'lvs',
      ]
      foreach name : lvm_progs
@@ -122,7 +124,7 @@
          lvm_enable = false
        endif
      endforeach
-@@ -1834,7 +1866,7 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1856,7 +1888,7 @@ if conf.has('WITH_LIBVIRTD')
        conf.set('WITH_STORAGE_LVM', 1)
  
        foreach name : lvm_progs
@@ -131,7 +133,7 @@
        endforeach
      endif
    endif
-@@ -1985,10 +2017,16 @@ if not get_option('nss').disabled()
+@@ -2007,10 +2039,16 @@ if not get_option('nss').disabled()
  endif
  
  if not get_option('numad').disabled() and numactl_dep.found()
@@ -194,11 +196,11 @@
            files('@0@-structs'.format(proto['name'])),
          ],
          env: runutf8,
---- libvirt-8.8.0/meson_options.txt.orig	2020-12-01 09:51:29.000000000 +0100
-+++ libvirt-8.8.0/meson_options.txt	2022-06-15 21:47:27.468263121 +0200
-@@ -102,3 +102,50 @@ option('numad', type: 'feature', value:
- option('pm_utils', type: 'feature', value: 'auto', description: 'use pm-utils for power management')
+--- libvirt-10.2.0/meson_options.txt.orig	2024-05-01 06:12:22.153660598 +0200
++++ libvirt-10.2.0/meson_options.txt	2024-05-01 06:12:47.590189463 +0200
+@@ -110,3 +110,50 @@ option('pm_utils', type: 'feature', valu
  option('sysctl_config', type: 'feature', value: 'auto', description: 'Whether to install sysctl configs')
+ option('userfaultfd_sysctl', type: 'feature', value: 'auto', description: 'Whether to install sysctl config for enabling unprivileged userfaultfd')
  option('tls_priority', type: 'string', value: 'NORMAL', description: 'set the default TLS session priority string')
 +
 +option('addr2line_path', type: 'string', value: '', description: 'executable path')
