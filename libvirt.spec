@@ -601,6 +601,9 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 
+# PLD: kvm group, qemu user+group are handled in qemu-common package; uids and gids differ from file provided here, so kill it
+%{__rm} $RPM_BUILD_ROOT%{_prefix}/lib/sysusers.d/libvirt-qemu.conf
+
 %find_lang %{name}
 
 %clean
