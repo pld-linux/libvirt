@@ -33,7 +33,7 @@
 %bcond_without	static_libs	# static libraries build
 
 # qemu available only on x86 and ppc
-%ifnarch %{ix86} %{x8664} aarch64 ppc
+%ifnarch %{ix86} %{x8664} x32 aarch64 ppc
 %undefine	with_qemu
 %endif
 
@@ -601,8 +601,10 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
 
+%if %{with qemu}
 # PLD: kvm group, qemu user+group are handled in qemu-common package; uids and gids differ from file provided here, so kill it
 %{__rm} $RPM_BUILD_ROOT%{_prefix}/lib/sysusers.d/libvirt-qemu.conf
+%endif
 
 %find_lang %{name}
 
