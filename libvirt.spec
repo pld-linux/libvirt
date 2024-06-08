@@ -45,12 +45,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	10.3.0
+Version:	10.4.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
-# Source0-md5:	046625ca97f32aaf06737fa1ede6d018
+# Source0-md5:	446cbe5e81c8cce8b6830b93a0c7b2ee
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -451,6 +451,19 @@ recent versions of Linux (and other OSes).
 Programy klienckie potrzebne do funkcji wirtualizacji nowych wersji
 Linuksa (oraz innych systemów operacyjnych).
 
+%package ssh-proxy
+Summary:	Libvirt SSH proxy
+Summary(pl.UTF-8):	Proxy SSH dla Libvirt
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
+Requires:	openssh-clients
+
+%description ssh-proxy
+Allows SSH into domains via VSOCK without need for network.
+
+%description ssh-proxy -l pl.UTF-8
+Ten pakiet pozwala na SSH do domen poprzez VSOCK bez wymagania sieci.
+
 %package utils
 Summary:	Tools to interact with virtualization capabilities (metapackage)
 Summary(pl.UTF-8):	Narzędzia do współpracy z funkcjami wirtualizacyjnymi (metapakiet)
@@ -727,6 +740,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apparmor.d/usr.sbin.virtxend
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirt-admin.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/libvirtd.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/network.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtinterfaced.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtlockd.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtlogd.conf
@@ -833,6 +847,7 @@ fi
 %dir %{_libdir}/libvirt/storage-file
 %attr(755,root,root) %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
 %{_datadir}/augeas/lenses/libvirtd.aug
+%{_datadir}/augeas/lenses/libvirtd_network.aug
 %{_datadir}/augeas/lenses/libvirt_lockd.aug
 %{_datadir}/augeas/lenses/virtinterfaced.aug
 %{_datadir}/augeas/lenses/virtlockd.aug
@@ -844,6 +859,7 @@ fi
 %{_datadir}/augeas/lenses/virtsecretd.aug
 %{_datadir}/augeas/lenses/virtstoraged.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd.aug
+%{_datadir}/augeas/lenses/tests/test_libvirtd_network.aug
 %{_datadir}/augeas/lenses/tests/test_virtinterfaced.aug
 %{_datadir}/augeas/lenses/tests/test_virtlockd.aug
 %{_datadir}/augeas/lenses/tests/test_virtlogd.aug
@@ -1056,6 +1072,11 @@ fi
 %{_datadir}/libvirt/schemas/storagevol.rng
 # for test driver (built into libvirt)
 %{_datadir}/libvirt/test-screenshot.png
+
+%files ssh-proxy
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/libvirt-ssh-proxy
+%config(noreplace) %verify(not md5 mtime size) /etc/ssh/ssh_config.d/30-libvirt-ssh-proxy.conf
 
 %files utils
 %defattr(644,root,root,755)
