@@ -45,16 +45,15 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	10.4.0
+Version:	10.5.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
-# Source0-md5:	446cbe5e81c8cce8b6830b93a0c7b2ee
+# Source0-md5:	e0961d2151df2d62355820fcf4617374
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
-Patch1:		%{name}-paths.patch
 Patch2:		%{name}-qemu-acl.patch
 Patch3:		%{name}-path-options.patch
 Patch4:		%{name}-udevadm-settle.patch
@@ -515,7 +514,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -556,6 +554,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	%{!?with_sanlock:-Dsanlock=disabled} \
 	%{!?with_glusterfs:-Dstorage_gluster=disabled} \
 	%{!?with_ceph:-Dstorage_rbd=disabled} \
+	-Dunitdir=%{systemdunitdir} \
 	%{?with_vbox:-Dvbox_xpcomc_dir=%{_libdir}/VirtualBox} \
 	%{!?with_wireshark:-Dwireshark_dissector=disabled} \
 	-Daugparse_path=/usr/bin/augparse \
