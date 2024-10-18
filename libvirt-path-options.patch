@@ -1,6 +1,6 @@
---- libvirt-10.2.0/meson.build.orig	2024-04-02 13:38:48.000000000 +0200
-+++ libvirt-10.2.0/meson.build	2024-05-01 06:11:02.127427471 +0200
-@@ -833,8 +833,10 @@ optional_programs = [
+--- libvirt-10.8.0/meson.build.orig	2024-10-01 11:02:31.000000000 +0200
++++ libvirt-10.8.0/meson.build	2024-10-18 20:15:30.011600629 +0200
+@@ -861,8 +861,10 @@ optional_programs = [
  
  missing_optional_programs = []
  foreach name : optional_programs
@@ -12,7 +12,7 @@
    if prog.found()
      prog_path = prog.full_path()
    else
-@@ -843,9 +845,10 @@ foreach name : optional_programs
+@@ -871,9 +873,10 @@ foreach name : optional_programs
        missing_optional_programs += [ name ]
      endif
    endif
@@ -24,7 +24,7 @@
  endforeach
  
  
-@@ -1697,6 +1700,8 @@ if not get_option('driver_qemu').disable
+@@ -1722,6 +1725,8 @@ if not get_option('driver_qemu').disable
      conf.set_quoted('QEMU_USER', qemu_user)
      conf.set_quoted('QEMU_GROUP', qemu_group)
  
@@ -33,7 +33,7 @@
      qemu_slirp_prog = find_program(
        'slirp-helper',
        dirs: [ '/usr/bin', '/usr/libexec' ],
-@@ -1707,6 +1712,7 @@ if not get_option('driver_qemu').disable
+@@ -1732,6 +1737,7 @@ if not get_option('driver_qemu').disable
      else
        qemu_slirp_path = '/usr/bin/slirp-helper'
      endif
@@ -41,7 +41,7 @@
      conf.set_quoted('QEMU_SLIRP_HELPER', qemu_slirp_path)
    endif
  endif
-@@ -1786,11 +1792,29 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1811,11 +1817,29 @@ if conf.has('WITH_LIBVIRTD')
      endif
  
      if fs_enable
@@ -72,7 +72,7 @@
          fs_enable = false
        endif
      endif
-@@ -1799,15 +1823,17 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1824,9 +1848,9 @@ if conf.has('WITH_LIBVIRTD')
        use_storage = true
  
        conf.set('WITH_STORAGE_FS', 1)
@@ -82,19 +82,10 @@
 +      conf.set_quoted('MOUNT', mount_path)
 +      conf.set_quoted('UMOUNT', umount_path)
 +      conf.set_quoted('MKFS', mkfs_path)
- 
-+    showmount_path = get_option('showmount_path')
-+    if showmount_path == ''
-       showmount_prog = find_program('showmount', required: false, dirs: libvirt_sbin_path)
--      showmount_path = ''
-       if showmount_prog.found()
-         showmount_path = showmount_prog.full_path()
-       endif
-+    endif
-       conf.set_quoted('SHOWMOUNT', showmount_path)
      endif
    endif
-@@ -1819,7 +1845,7 @@ if conf.has('WITH_LIBVIRTD')
+ 
+@@ -1837,7 +1861,7 @@ if conf.has('WITH_LIBVIRTD')
      error('Need glusterfs (libgfapi) for gluster storage driver')
    endif
  
@@ -103,7 +94,7 @@
      use_storage = true
      conf.set('WITH_STORAGE_ISCSI', 1)
    elif get_option('storage_iscsi').enabled()
-@@ -1842,11 +1868,17 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1860,11 +1884,17 @@ if conf.has('WITH_LIBVIRTD')
        'pvs', 'vgs', 'lvs',
      ]
      foreach name : lvm_progs
@@ -124,7 +115,7 @@
          lvm_enable = false
        endif
      endforeach
-@@ -1856,7 +1888,7 @@ if conf.has('WITH_LIBVIRTD')
+@@ -1874,7 +1904,7 @@ if conf.has('WITH_LIBVIRTD')
        conf.set('WITH_STORAGE_LVM', 1)
  
        foreach name : lvm_progs
@@ -133,7 +124,7 @@
        endforeach
      endif
    endif
-@@ -2007,10 +2039,16 @@ if not get_option('nss').disabled()
+@@ -2025,10 +2055,16 @@ if not get_option('nss').disabled()
  endif
  
  if not get_option('numad').disabled() and numactl_dep.found()
@@ -151,17 +142,6 @@
    endif
  elif get_option('numad').enabled()
    error('You must have numactl enabled for numad support.')
---- libvirt-10.4.0/scripts/rpcgen/meson.build.orig	2024-06-08 19:45:31.292144421 +0200
-+++ libvirt-10.4.0/scripts/rpcgen/meson.build	2024-06-08 20:36:12.822333704 +0200
-@@ -3,7 +3,7 @@ subdir('rpcgen')
- if tests_enabled[0] and xdr_dep.found()
-   subdir('tests')
- 
--  if pytest_prog.found() and host_machine.system() != 'darwin'
-+  if pytest_path != '' and host_machine.system() != 'darwin'
-     test(
-       'rpcgen-pytest',
-       python3_prog,
 --- libvirt-9.10.0/src/meson.build.orig	2024-04-05 22:18:26.619433380 +0200
 +++ libvirt-9.10.0/src/meson.build	2024-04-06 08:12:28.779676565 +0200
 @@ -1029,11 +1029,11 @@ if tests_enabled[0]
@@ -196,9 +176,9 @@
            files('@0@-structs'.format(proto['name'])),
          ],
          env: runutf8,
---- libvirt-10.4.0/meson_options.txt.orig	2024-06-08 19:45:31.292144421 +0200
-+++ libvirt-10.4.0/meson_options.txt	2024-06-08 20:37:08.235366839 +0200
-@@ -133,3 +133,50 @@ option('sysctl_config', type: 'feature',
+--- libvirt-10.8.0/meson_options.txt.orig	2024-06-08 19:45:31.292144421 +0200
++++ libvirt-10.8.0/meson_options.txt	2024-06-08 20:37:08.235366839 +0200
+@@ -133,3 +133,49 @@ option('sysctl_config', type: 'feature',
  # dep:sysctl_config
  option('userfaultfd_sysctl', type: 'feature', value: 'auto', description: 'Whether to install sysctl config for enabling unprivileged userfaultfd')
  option('tls_priority', type: 'string', value: 'NORMAL', description: 'set the default TLS session priority string')
@@ -236,7 +216,6 @@
 +option('radvd_path', type: 'string', value: '', description: 'executable path')
 +option('rmmod_path', type: 'string', value: '', description: 'executable path')
 +option('scrub_path', type: 'string', value: '', description: 'executable path')
-+option('showmount_path', type: 'string', value: '', description: 'executable path')
 +option('tc_path', type: 'string', value: '', description: 'executable path')
 +option('udevadm_path', type: 'string', value: '', description: 'executable path')
 +option('umount_path', type: 'string', value: '', description: 'executable path')
@@ -249,3 +228,14 @@
 +option('vstorage_mount_path', type: 'string', value: '', description: 'executable path')
 +option('zfs_path', type: 'string', value: '', description: 'executable path')
 +option('zpool_path', type: 'string', value: '', description: 'executable path')
+--- libvirt-10.8.0/scripts/rpcgen/meson.build.orig	2024-10-01 11:02:31.000000000 +0200
++++ libvirt-10.8.0/scripts/rpcgen/meson.build	2024-10-18 20:19:16.163708791 +0200
+@@ -3,7 +3,7 @@ subdir('rpcgen')
+ if tests_enabled[0] and xdr_dep.found()
+   subdir('tests')
+ 
+-  if pytest_prog.found() and host_machine.system() != 'darwin'
++  if pytest_path != '' and host_machine.system() != 'darwin'
+     test(
+       'rpcgen-pytest',
+       python3_prog,

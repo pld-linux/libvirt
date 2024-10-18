@@ -8,6 +8,7 @@
 # - pldize virtlockd.init
 # - update vserver patch, if anybody needs it
 # - package firewalld zone definition (see files)
+# - driver_ch (x86_64 and aarch64 only)?
 #
 # Conditional build:
 # - virtualization
@@ -45,12 +46,12 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	10.5.0
+Version:	10.8.0
 Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
-# Source0-md5:	e0961d2151df2d62355820fcf4617374
+# Source0-md5:	8323e708c3d8c2532420d215ac7e9aa8
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
@@ -75,9 +76,10 @@ BuildRequires:	docutils
 BuildRequires:	gawk
 BuildRequires:	gcc >= 6:4.4
 BuildRequires:	gettext-tools >= 0.17
-BuildRequires:	glib2-devel >= 1:2.56.0
+BuildRequires:	glib2-devel >= 1:2.58.0
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 3.4.1}
 BuildRequires:	gnutls-devel >= 3.6.0
+BuildRequires:	json-c-devel >= 0.14
 BuildRequires:	libapparmor-devel >= 3.0.0
 BuildRequires:	libblkid-devel >= 2.17
 BuildRequires:	libcap-ng-devel >= 0.4.0
@@ -126,8 +128,9 @@ BuildRequires:	yajl-devel >= 2.0.3
 Requires:	curl-libs >= 7.19.1
 Requires:	cyrus-sasl-libs >= 2.1.26
 Requires:	device-mapper-libs >= 1.0.0
-Requires:	glib2 >= 1:2.56.0
+Requires:	glib2 >= 1:2.58.0
 Requires:	gnutls-libs >= 3.6.0
+Requires:	json-c >= 0.14
 Requires:	libapparmor >= 3.0.0
 Requires:	libcap-ng >= 0.4.0
 Requires:	libnl >= 3.2
@@ -283,7 +286,6 @@ Suggests:	dnsmasq >= 2.41
 Suggests:	ebtables
 Suggests:	gawk
 Suggests:	glusterfs-client >= 3.4.1
-Suggests:	iptables
 Suggests:	iptables
 Suggests:	libcgroup
 Suggests:	lvm2
@@ -582,7 +584,6 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	-Dradvd_path=/usr/sbin/radvd \
 	-Drmmod_path=/sbin/rmmod \
 	-Dscrub_path=/usr/bin/scrub \
-	-Dshowmount_path=/usr/sbin/showmount \
 	-Dtc_path=/sbin/tc \
 	-Dudevadm_path=/sbin/udevadm \
 	-Dumount_path=/bin/umount \
@@ -596,7 +597,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 
 # TODO: package and update paths
 # -Dmdevctl_path=???
-# -Dpdwtags=???
+# -Dpdwtags_path=???
 # -Dqemu_slirp_path=???/slirp-helper
 # -Dvstorage_path=???/vstorage
 # -Dvstorage_mount_path=???/vstorage-mount
