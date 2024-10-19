@@ -8,10 +8,10 @@
 # - pldize virtlockd.init
 # - update vserver patch, if anybody needs it
 # - package firewalld zone definition (see files)
-# - driver_ch (x86_64 and aarch64 only)?
 #
 # Conditional build:
 # - virtualization
+%bcond_without	cloud		# Cloud-Hypervisor support
 %bcond_without	esx		# VMware ESX support
 %bcond_without	hyperv		# Hyper-V support
 %bcond_without	libxl		# libxenlight support
@@ -33,14 +33,19 @@
 %bcond_without	wireshark	# wireshark dissector module
 %bcond_without	static_libs	# static libraries build
 
-# qemu available only on x86 and ppc
-%ifnarch %{ix86} %{x8664} x32 aarch64 ppc
-%undefine	with_qemu
+# Cloud-Hypervisor available only on Linux/x86_64 or aarch64
+%ifnarch %{x8664} x32 aarch64
+%undefine	with_cloud
 %endif
 
 # Xen supported architectures
 %ifnarch %{ix86} %{x8664} %{arm} aarch64
 %undefine	with_libxl
+%endif
+
+# qemu available only on x86 and ppc
+%ifnarch %{ix86} %{x8664} x32 aarch64 ppc
+%undefine	with_qemu
 %endif
 
 Summary:	Toolkit to interact with virtualization capabilities
@@ -333,6 +338,32 @@ Storage driver plugin for Ceph RADOS Block Device.
 Wtyczka składowania danych wykorzystująca urządzenie blokowe RADOS
 (system plików Ceph).
 
+%package daemon-chd
+Summary:	Cloud Hypervisor server side driver
+Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Cloud Hypervisor
+Group:		Libraries
+Requires:	%{name}-daemon = %{version}-%{release}
+Provides:	libvirt(hypervisor)
+
+%description daemon-chd
+Cloud Hypervisor is an open source Virtual Machine Monitor (VMM) that
+runs on top of KVM. The project focuses on exclusively running modern,
+cloud workloads, on top of a limited set of hardware architectures and
+platforms. Cloud workloads refers to those that are usually run by
+customers inside a cloud provider. For our purposes this means modern
+operating systems with most I/O handled by paravirtualised devices
+(i.e. virtio), no requirement for legacy devices, and 64-bit CPUs.
+
+%description daemon-chd -l pl.UTF-8
+Cloud Hypervisor to mający otwarte źródła monitor maszyn wirtualnych
+(VMM), działający powyżej KVM. Projekt skupia się wyłącznie na
+uruchamianiu nowoczesnych, chmurowych zadań na ograniczonym zbiorze
+architektur i platform sprzętowych. Zadania chmurowe to te, które
+zwykle są uruchamiane przez klientów u dostawców chmurowych. W tym
+przypadku oznacza to nowoczesne systemy operacyjne z większością
+we/wy obsługiwaną przez urządzenia parawirtualizowane (np. virtio),
+bez wymogu tradycyjnych urządzeń, oraz 64-bitowe procesory.
+
 %package daemon-libxl
 Summary:	Server side driver required to run XEN guests (xenlight)
 Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości XEN (xenlight)
@@ -403,32 +434,6 @@ of VirtualBox.
 %description daemon-vbox -l pl.UTF-8
 Sterownik wymagany po stronie serwera do zarządzania funkcjami
 wirtualizacji VirtualBoksa.
-
-%package daemon-chd
-Summary:	Cloud Hypervisor server side driver
-Summary(pl.UTF-8):	Sterownik wymagany po stronie serwera do uruchamiania gości Cloud Hypervisor
-Group:		Libraries
-Requires:	%{name}-daemon = %{version}-%{release}
-Provides:	libvirt(hypervisor)
-
-%description daemon-chd
-Cloud Hypervisor is an open source Virtual Machine Monitor (VMM) that
-runs on top of KVM. The project focuses on exclusively running modern,
-cloud workloads, on top of a limited set of hardware architectures and
-platforms. Cloud workloads refers to those that are usually run by
-customers inside a cloud provider. For our purposes this means modern
-operating systems with most I/O handled by paravirtualised devices
-(i.e. virtio), no requirement for legacy devices, and 64-bit CPUs.
-
-%description daemon-chd -l pl.UTF-8
-Cloud Hypervisor to mający otwarte źródła monitor maszyn wirtualnych
-(VMM), działający powyżej KVM. Projekt skupia się wyłącznie na
-uruchamianiu nowoczesnych, chmurowych zadań na ograniczonym zbiorze
-architektur i platform sprzętowych. Zadania chmurowe to te, które
-zwykle są uruchamiane przez klientów u dostawców chmurowych. W tym
-przypadku oznacza to nowoczesne systemy operacyjne z większością
-we/wy obsługiwaną przez urządzenia parawirtualizowane (np. virtio),
-bez wymogu tradycyjnych urządzeń, oraz 64-bitowe procesory.
 
 %package client
 Summary:	Client side utilities of the libvirt library
@@ -535,6 +540,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %meson build \
 	-Dbash_completion=enabled \
 	-Dbash_completion_dir=%{bash_compdir} \
+	%{!?with_cloud:-Ddriver_ch=disabled} \
 	%{!?with_esx:-Ddriver_esx=disabled} \
 	%{!?with_hyperv:-Ddriver_hyperv=disabled} \
 	%{!?with_libxl:-Ddriver_libxl=disabled} \
@@ -910,6 +916,20 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_rbd.so
 %endif
 
+%if %{with cloud}
+%files daemon-chd
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtchd.conf
+%{systemdunitdir}/virtchd.service
+%{systemdunitdir}/virtchd.socket
+%{systemdunitdir}/virtchd-admin.socket
+%{systemdunitdir}/virtchd-ro.socket
+%attr(755,root,root) %{_sbindir}/virtchd
+%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
+%{_datadir}/augeas/lenses/virtchd.aug
+%{_datadir}/augeas/lenses/tests/test_virtchd.aug
+%endif
+
 %if %{with libxl}
 %files daemon-libxl
 %defattr(644,root,root,755)
@@ -1003,20 +1023,6 @@ fi
 %{_datadir}/augeas/lenses/virtvboxd.aug
 %{_datadir}/augeas/lenses/tests/test_virtvboxd.aug
 %{_mandir}/man8/virtvboxd.8*
-%endif
-
-%ifnarch %{ix86}
-%files daemon-chd
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtchd.conf
-%{systemdunitdir}/virtchd.service
-%{systemdunitdir}/virtchd.socket
-%{systemdunitdir}/virtchd-admin.socket
-%{systemdunitdir}/virtchd-ro.socket
-%attr(755,root,root) %{_sbindir}/virtchd
-%attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
-%{_datadir}/augeas/lenses/virtchd.aug
-%{_datadir}/augeas/lenses/tests/test_virtchd.aug
 %endif
 
 %files client
