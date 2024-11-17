@@ -10,9 +10,9 @@ diff -ur libvirt-8.4.0/docs/auth.rst libvirt-8.4.0-sasl/docs/auth.rst
  parameter to ``scram-sha-256``.
  
  **Note:** previous versions of libvirt suggested ``DIGEST-MD5`` and
---- libvirt-9.10.0/libvirt.spec.orig	2024-04-05 22:06:11.920080254 +0200
-+++ libvirt-9.10.0/libvirt.spec	2024-04-05 22:10:45.821929734 +0200
-@@ -1980,7 +1980,7 @@ exit 0
+--- libvirt-10.9.0/libvirt.spec.orig	2024-11-17 12:57:04.113104647 +0100
++++ libvirt-10.9.0/libvirt.spec	2024-11-17 12:57:32.579617097 +0100
+@@ -2035,7 +2035,7 @@ exit 0
  %files daemon-common
  %{_unitdir}/virt-guest-shutdown.target
  %{_unitdir}/libvirt-guests.service
@@ -20,10 +20,10 @@ diff -ur libvirt-8.4.0/docs/auth.rst libvirt-8.4.0-sasl/docs/auth.rst
 +%config(noreplace) %{_sysconfdir}/sasl/libvirt.conf
  %dir %{_datadir}/libvirt/
  %ghost %dir %{_rundir}/libvirt/
- %ghost %dir %{_rundir}/libvirt/common/
---- libvirt-9.10.0/libvirt.spec.in.orig	2024-04-05 22:06:11.953413407 +0200
-+++ libvirt-9.10.0/libvirt.spec.in	2024-04-05 22:10:58.908525504 +0200
-@@ -1980,7 +1980,7 @@ exit 0
+ %ghost %dir %attr(0700, root, root) %{_rundir}/libvirt/common/
+--- libvirt-10.9.0/libvirt.spec.in.orig	2024-11-17 12:57:04.126437908 +0100
++++ libvirt-10.9.0/libvirt.spec.in	2024-11-17 12:57:44.766217744 +0100
+@@ -2035,7 +2035,7 @@ exit 0
  %files daemon-common
  %{_unitdir}/virt-guest-shutdown.target
  %{_unitdir}/libvirt-guests.service
@@ -31,7 +31,7 @@ diff -ur libvirt-8.4.0/docs/auth.rst libvirt-8.4.0-sasl/docs/auth.rst
 +%config(noreplace) %{_sysconfdir}/sasl/libvirt.conf
  %dir %{_datadir}/libvirt/
  %ghost %dir %{_rundir}/libvirt/
- %ghost %dir %{_rundir}/libvirt/common/
+ %ghost %dir %attr(0700, root, root) %{_rundir}/libvirt/common/
 diff -ur libvirt-8.4.0/src/qemu/qemu.conf.in libvirt-8.4.0-sasl/src/qemu/qemu.conf.in
 --- libvirt-8.4.0/src/qemu/qemu.conf.in	2022-06-01 09:28:24.000000000 +0200
 +++ libvirt-8.4.0-sasl/src/qemu/qemu.conf.in	2022-06-19 22:04:16.306265553 +0200
