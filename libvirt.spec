@@ -520,12 +520,12 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%{?with_vserver:%patch5 -p1}
-%patch6 -p1
+%patch -P0 -p1
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
+%{?with_vserver:%patch -P5 -p1}
+%patch -P6 -p1
 
 %if %{with static_libs}
 %{__sed} -i '/^libvirt\(_admin\|_lxc\|_qemu\)\?_lib = / s/shared_library/library/' src/meson.build
