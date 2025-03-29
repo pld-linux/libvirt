@@ -117,7 +117,7 @@ BuildRequires:	python3 >= 1:3.0
 BuildRequires:	readline-devel >= 7.0
 BuildRequires:	rpcsvc-proto
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 1.752
+BuildRequires:	rpmbuild(macros) >= 2.042
 %{?with_sanlock:BuildRequires:	sanlock-devel >= 3.5.0}
 BuildRequires:	sed >= 4.0
 BuildRequires:	systemd-devel
@@ -537,7 +537,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %{__sed} -i -e 's,/usr/libexec",%{_libexecdir}",' src/qemu/qemu_process.c
 
 %build
-%meson build \
+%meson \
 	-Dbash_completion=enabled \
 	-Dbash_completion_dir=%{bash_compdir} \
 	%{!?with_cloud:-Ddriver_ch=disabled} \
@@ -608,14 +608,14 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 # -Dvstorage_path=???/vstorage
 # -Dvstorage_mount_path=???/vstorage-mount
 
-%ninja_build -C build
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
 	$RPM_BUILD_ROOT%{systemdtmpfilesdir}
 
-%ninja_install -C build
+%meson_install
 
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/libvirtd
 cp -p %{SOURCE2} $RPM_BUILD_ROOT%{systemdtmpfilesdir}/%{name}.conf
