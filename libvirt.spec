@@ -52,7 +52,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	10.9.0
-Release:	4
+Release:	5
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
@@ -276,8 +276,6 @@ Requires:	libiscsi >= 1.18.0
 %{?with_netcf:Requires:	netcf >= 0.2.0}
 Requires:	parted-libs >= 1.8.0
 Requires:	rc-scripts
-# Needed for probing the power management features of the host.
-Requires:	pm-utils
 Requires:	systemd-units >= 37-0.10
 Requires:	udev-libs >= 1:219
 Requires:	util-linux
