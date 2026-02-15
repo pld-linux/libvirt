@@ -51,4 +51,4 @@ diff -urNp -x '*.orig' libvirt-8.4.0.org/src/qemu/qemu_conf.h libvirt-8.4.0/src/
 +    bool vncACL;
      char *vncTLSx509certdir;
      char *vncTLSx509secretUUID;
-     char *vncListen;
+     char *vncTLSpriority;

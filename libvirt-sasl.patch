@@ -57,7 +57,7 @@ diff -ur libvirt-8.4.0/src/qemu/qemu.conf.in libvirt-8.4.0-sasl/src/qemu/qemu.co
  
  
  # QEMU implements an extension for providing audio over a VNC connection,
-@@ -217,17 +217,17 @@
+@@ -217,18 +217,18 @@
  # Enable use of SASL encryption on the SPICE server. This requires
  # a SPICE client which supports the SASL protocol extension.
  #
@@ -66,6 +66,7 @@ diff -ur libvirt-8.4.0/src/qemu/qemu.conf.in libvirt-8.4.0-sasl/src/qemu/qemu.co
  # the desired SASL plugin (eg, GSSPI for Kerberos)
  #
  #spice_sasl = 1
+ 
  
 -# The default SASL configuration file is located in /etc/sasl2/
 +# The default SASL configuration file is located in /etc/sasl/
@@ -76,13 +77,13 @@ diff -ur libvirt-8.4.0/src/qemu/qemu.conf.in libvirt-8.4.0-sasl/src/qemu/qemu.co
 -#spice_sasl_dir = "/some/directory/sasl2"
 +#spice_sasl_dir = "/some/directory/sasl"
  
- # Enable use of TLS encryption on the chardev TCP transports.
- #
+ 
+ # RDP is configured to listen on 127.0.0.1 by default.
 diff -ur libvirt-8.4.0/src/qemu/test_libvirtd_qemu.aug.in libvirt-8.4.0-sasl/src/qemu/test_libvirtd_qemu.aug.in
 --- libvirt-8.4.0/src/qemu/test_libvirtd_qemu.aug.in	2022-06-01 09:28:24.000000000 +0200
 +++ libvirt-8.4.0-sasl/src/qemu/test_libvirtd_qemu.aug.in	2022-06-19 22:04:16.336265751 +0200
 @@ -13,7 +13,7 @@
- { "vnc_tls_x509_verify" = "1" }
+ { "vnc_tls_priority" = "@SYSTEM" }
  { "vnc_password" = "XYZ12345" }
  { "vnc_sasl" = "1" }
 -{ "vnc_sasl_dir" = "/some/directory/sasl2" }
@@ -96,9 +97,9 @@ diff -ur libvirt-8.4.0/src/qemu/test_libvirtd_qemu.aug.in libvirt-8.4.0-sasl/src
  { "spice_sasl" = "1" }
 -{ "spice_sasl_dir" = "/some/directory/sasl2" }
 +{ "spice_sasl_dir" = "/some/directory/sasl" }
- { "chardev_tls" = "1" }
- { "chardev_tls_x509_cert_dir" = "/etc/pki/libvirt-chardev" }
- { "chardev_tls_x509_verify" = "1" }
+ { "rdp_listen" = "0.0.0.0" }
+ { "rdp_tls_x509_cert_dir" = "/etc/pki/libvirt-rdp" }
+ { "rdp_username" = "user" }
 diff -ur libvirt-8.4.0/src/remote/libvirtd.conf.in libvirt-8.4.0-sasl/src/remote/libvirtd.conf.in
 --- libvirt-8.4.0/src/remote/libvirtd.conf.in	2022-06-01 09:28:24.000000000 +0200
 +++ libvirt-8.4.0-sasl/src/remote/libvirtd.conf.in	2022-06-19 22:04:16.336265751 +0200
@@ -145,17 +146,6 @@ diff -ur libvirt-8.4.0/src/remote/meson.build libvirt-8.4.0-sasl/src/remote/meso
  -S \
 --- libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-sasl.x86_64-latest.args.orig	2024-04-05 22:06:12.796742172 +0200
 +++ libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-sasl.x86_64-latest.args	2024-04-05 22:13:53.787578103 +0200
-@@ -6,7 +6,7 @@ LOGNAME=test \
- XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
- XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \
- XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.config \
--SASL_CONF_PATH=/etc/sasl2 \
-+SASL_CONF_PATH=/etc/sasl \
- /usr/bin/qemu-system-x86_64 \
- -name guest=QEMUGuest1,debug-threads=on \
- -S \
---- libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls-secret.x86_64-5.2.0.args.orig	2024-04-05 22:06:12.800075487 +0200
-+++ libvirt-10.2.0/tests/qemuxmlconfdata/graphics-vnc-tls-secret.x86_64-5.2.0.args	2024-04-05 22:14:10.387488174 +0200
 @@ -6,7 +6,7 @@ LOGNAME=test \
  XDG_DATA_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.local/share \
  XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain--1-QEMUGuest1/.cache \

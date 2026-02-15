@@ -6,7 +6,6 @@
 # - numad (https://pagure.io/numad/ or https://github.com/yhaenggi/numad/releases ?)
 # - vstorage, vstorage-mount
 # - pldize virtlockd.init
-# - update vserver patch, if anybody needs it
 # - package firewalld zone definition (see files)
 #
 # Conditional build:
@@ -20,7 +19,6 @@
 %bcond_without	qemu		# Qemu support
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
-%bcond_with	vserver		# Support for Linux-VServer guests
 # - storage
 %bcond_without	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	glusterfs	# GlusterFS storage support
@@ -51,19 +49,17 @@
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
-Version:	10.9.0
-Release:	6
+Version:	12.0.0
+Release:	1
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
-# Source0-md5:	0af359e528833796bb0e49e427e3e756
+# Source0-md5:	8bfd7f72e5d9b74c38000f4bc3fd6bae
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
 Patch0:		%{name}-sasl.patch
 Patch2:		%{name}-qemu-acl.patch
-Patch3:		%{name}-path-options.patch
 Patch4:		%{name}-udevadm-settle.patch
-Patch5:		vserver.patch
 Patch6:		bashisms.patch
 URL:		https://www.libvirt.org/
 BuildRequires:	acl-devel
@@ -520,9 +516,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 %setup -q
 %patch -P0 -p1
 %patch -P2 -p1
-%patch -P3 -p1
 %patch -P4 -p1
-%{?with_vserver:%patch -P5 -p1}
 %patch -P6 -p1
 
 %if %{with static_libs}
@@ -562,49 +556,7 @@ Moduł sekcji Wiresharka do pakietów libvirt.
 	%{!?with_ceph:-Dstorage_rbd=disabled} \
 	-Dunitdir=%{systemdunitdir} \
 	%{?with_vbox:-Dvbox_xpcomc_dir=%{_libdir}/VirtualBox} \
-	%{!?with_wireshark:-Dwireshark_dissector=disabled} \
-	-Daugparse_path=/usr/bin/augparse \
-	-Ddmidecode_path=/usr/sbin/dmidecode \
-	-Ddnsmasq_path=/usr/sbin/dnsmasq \
-	-Debtables_path=/usr/sbin/ebtables \
-	-Dip_path=/sbin/ip \
-	-Dip6tables_path=/usr/sbin/ip6tables \
-	-Diptables_path=/usr/sbin/iptables \
-	-Discsiadm_path=/sbin/iscsiadm \
-	-Dlvchange_path=/sbin/lvchange \
-	-Dlvcreate_path=/sbin/lvcreate \
-	-Dlvremove_path=/sbin/lvremove \
-	-Dlvs_path=/sbin/lvs \
-	-Dmm_ctl_path=/usr/sbin/mm-ctl \
-	-Dmkfs_path=/sbin/mkfs \
-	-Dmodprobe_path=/sbin/modprobe \
-	-Dmount_path=/bin/mount \
-	-Dnumad_path=/usr/bin/numad \
-	-Dovs_vsctl_path=/usr/bin/ovs-vsctl \
-	-Dparted_path=/usr/sbin/parted \
-	-Dpvcreate_path=/sbin/pvcreate \
-	-Dpvremove_path=/sbin/pvremove \
-	-Dpvs_path=/sbin/pvs \
-	-Dradvd_path=/usr/sbin/radvd \
-	-Drmmod_path=/sbin/rmmod \
-	-Dscrub_path=/usr/bin/scrub \
-	-Dtc_path=/sbin/tc \
-	-Dudevadm_path=/sbin/udevadm \
-	-Dumount_path=/bin/umount \
-	-Dvgchange_path=/sbin/vgchange \
-	-Dvgcreate_path=/sbin/vgcreate \
-	-Dvgremove_path=/sbin/vgremove \
-	-Dvgscan_path=/sbin/vgscan \
-	-Dvgs_path=/sbin/vgs \
-	-Dzfs_path=/usr/sbin/zfs \
-	-Dzpool_path=/usr/sbin/zpool
-
-# TODO: package and update paths
-# -Dmdevctl_path=???
-# -Dpdwtags_path=???
-# -Dqemu_slirp_path=???/slirp-helper
-# -Dvstorage_path=???/vstorage
-# -Dvstorage_mount_path=???/vstorage-mount
+	%{!?with_wireshark:-Dwireshark_dissector=disabled}
 
 %meson_build
 
@@ -849,8 +801,8 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_vstorage.so
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_zfs.so
 %dir %{_libdir}/libvirt/storage-file
-%attr(755,root,root) %{_libdir}/libvirt/storage-file/libvirt_storage_file_fs.so
 %{_datadir}/augeas/lenses/libvirtd.aug
+%{_datadir}/augeas/lenses/libvirtd_ch.aug
 %{_datadir}/augeas/lenses/libvirtd_network.aug
 %{_datadir}/augeas/lenses/libvirt_lockd.aug
 %{_datadir}/augeas/lenses/virtinterfaced.aug
@@ -863,6 +815,7 @@ fi
 %{_datadir}/augeas/lenses/virtsecretd.aug
 %{_datadir}/augeas/lenses/virtstoraged.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd.aug
+%{_datadir}/augeas/lenses/tests/test_libvirtd_ch.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd_network.aug
 %{_datadir}/augeas/lenses/tests/test_virtinterfaced.aug
 %{_datadir}/augeas/lenses/tests/test_virtlockd.aug
@@ -897,8 +850,8 @@ fi
 %attr(711,root,root) %dir /var/lib/libvirt/filesystems
 %attr(700,root,root) %dir /var/log/libvirt
 %attr(711,root,root) %dir /var/cache/libvirt
-%dir /var/run/libvirt
-%dir /var/run/libvirt/network
+#%dir /var/run/libvirt
+#%dir /var/run/libvirt/network
 %{systemdtmpfilesdir}/%{name}.conf
 
 %if %{with glusterfs}
@@ -917,6 +870,7 @@ fi
 %if %{with cloud}
 %files daemon-chd
 %defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/ch.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libvirt/virtchd.conf
 %{systemdunitdir}/virtchd.service
 %{systemdunitdir}/virtchd.socket
@@ -947,7 +901,7 @@ fi
 %{_datadir}/augeas/lenses/tests/test_libvirtd_libxl.aug
 %{_datadir}/augeas/lenses/tests/test_virtxend.aug
 %attr(700,root,root) %dir /var/lib/libvirt/libxl
-%attr(700,root,root) %dir /var/run/libvirt/libxl
+#%attr(700,root,root) %dir /var/run/libvirt/libxl
 %attr(700,root,root) %dir /var/log/libvirt/libxl
 %{_mandir}/man8/virtxend.8*
 %endif
@@ -970,7 +924,7 @@ fi
 %{_datadir}/augeas/lenses/tests/test_libvirtd_lxc.aug
 %{_datadir}/augeas/lenses/tests/test_virtlxcd.aug
 %attr(700,root,root) %dir /var/lib/libvirt/lxc
-%attr(700,root,root) %dir /var/run/libvirt/lxc
+#%attr(700,root,root) %dir /var/run/libvirt/lxc
 %attr(700,root,root) %dir /var/log/libvirt/lxc
 %{_mandir}/man8/virtlxcd.8*
 %endif
@@ -1000,8 +954,7 @@ fi
 %attr(750,qemu,qemu) %dir /var/cache/libvirt/qemu
 %attr(750,qemu,qemu) %dir /var/lib/libvirt/qemu
 %attr(700,root,root) %dir /var/log/libvirt/qemu
-%attr(700,root,root) %dir /var/run/libvirt/qemu
-%{_prefix}/lib/sysctl.d/60-qemu-postcopy-migration.conf
+#%attr(700,root,root) %dir /var/run/libvirt/qemu
 %{_mandir}/man1/virt-qemu-qmp-proxy.1*
 %{_mandir}/man1/virt-qemu-run.1*
 %{_mandir}/man1/virt-qemu-sev-validate.1*
@@ -1074,6 +1027,8 @@ fi
 %{_datadir}/libvirt/schemas/storagepool.rng
 %{_datadir}/libvirt/schemas/storagepoolcaps.rng
 %{_datadir}/libvirt/schemas/storagevol.rng
+%{_datadir}/libvirt/schemas/sysinfo.rng
+%{_datadir}/libvirt/schemas/sysinfocommon.rng
 # for test driver (built into libvirt)
 %{_datadir}/libvirt/test-screenshot.png
 
