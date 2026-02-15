@@ -802,7 +802,6 @@ fi
 %attr(755,root,root) %{_libdir}/libvirt/storage-backend/libvirt_storage_backend_zfs.so
 %dir %{_libdir}/libvirt/storage-file
 %{_datadir}/augeas/lenses/libvirtd.aug
-%{_datadir}/augeas/lenses/libvirtd_ch.aug
 %{_datadir}/augeas/lenses/libvirtd_network.aug
 %{_datadir}/augeas/lenses/libvirt_lockd.aug
 %{_datadir}/augeas/lenses/virtinterfaced.aug
@@ -815,7 +814,6 @@ fi
 %{_datadir}/augeas/lenses/virtsecretd.aug
 %{_datadir}/augeas/lenses/virtstoraged.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd.aug
-%{_datadir}/augeas/lenses/tests/test_libvirtd_ch.aug
 %{_datadir}/augeas/lenses/tests/test_libvirtd_network.aug
 %{_datadir}/augeas/lenses/tests/test_virtinterfaced.aug
 %{_datadir}/augeas/lenses/tests/test_virtlockd.aug
@@ -878,7 +876,9 @@ fi
 %{systemdunitdir}/virtchd-ro.socket
 %attr(755,root,root) %{_sbindir}/virtchd
 %attr(755,root,root) %{_libdir}/libvirt/connection-driver/libvirt_driver_ch.so
+%{_datadir}/augeas/lenses/libvirtd_ch.aug
 %{_datadir}/augeas/lenses/virtchd.aug
+%{_datadir}/augeas/lenses/tests/test_libvirtd_ch.aug
 %{_datadir}/augeas/lenses/tests/test_virtchd.aug
 %endif
 
