@@ -20,7 +20,7 @@
 %bcond_without	vbox		# VirtualBox support
 %bcond_without	vmware		# VMware Workstation/Player support
 # - storage
-%bcond_without	ceph		# RADOS BD (Ceph) storage support
+%bcond_with	ceph		# RADOS BD (Ceph) storage support
 %bcond_without	glusterfs	# GlusterFS storage support
 # - storage locking
 %bcond_without	sanlock		# sanlock storage lock manager
@@ -50,7 +50,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	12.1.0
-Release:	2
+Release:	3
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
