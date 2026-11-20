@@ -41,16 +41,21 @@
 %undefine	with_libxl
 %endif
 
-# qemu available only on x86 and ppc
-%ifnarch %{ix86} %{x8664} x32 aarch64 ppc
+# QEMU 11 builds system emulators on 64-bit hosts only
+%ifnarch %{x8664} aarch64 ppc
 %undefine	with_qemu
+%endif
+
+# VirtualBox host is built only on x86_64
+%ifnarch %{x8664}
+%undefine	with_vbox
 %endif
 
 Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	12.1.0
-Release:	3
+Release:	4
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
