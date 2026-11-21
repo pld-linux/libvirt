@@ -55,7 +55,7 @@ Summary:	Toolkit to interact with virtualization capabilities
 Summary(pl.UTF-8):	Narzędzia współpracujące z funkcjami wirtualizacji
 Name:		libvirt
 Version:	12.1.0
-Release:	4
+Release:	5
 License:	LGPL v2.1+
 Group:		Libraries
 Source0:	https://download.libvirt.org/%{name}-%{version}.tar.xz
@@ -477,7 +477,7 @@ Requires:	%{name}-client = %{version}-%{release}
 Requires:	%{name}-daemon = %{version}-%{release}
 %{?with_libxl:Requires:	%{name}-daemon-libxl = %{version}-%{release}}
 Requires:	%{name}-daemon-lxc = %{version}-%{release}
-Requires:	%{name}-daemon-qemu = %{version}-%{release}
+%{?with_qemu:Requires:	%{name}-daemon-qemu = %{version}-%{release}}
 
 %description utils
 Libvirt is a C toolkit to interact with the virtualization
